@@ -1,0 +1,35 @@
+{
+  "mcpServers": {
+    "armature": {
+      "command": "python",
+      "args": ["-m", "armature.mcp.server"],
+      "description": "Armature harness engineering framework"
+    }
+  },
+  "hooks": {
+    "PreSession": [
+      {
+        "command": "armature pre-dev --env-check-only",
+        "description": "Armature: environment validation at session start"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "command": "armature check --file $TOOL_INPUT_FILE_PATH",
+        "description": "Armature: shift-left quality check on file write"
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(armature check *)",
+      "Bash(armature heal *)",
+      "Bash(armature gc *)",
+      "Bash(armature budget *)",
+      "Bash(armature baseline *)",
+      "Bash(armature pre-dev *)",
+      "Bash(armature post-dev *)"
+    ]
+  }
+}
