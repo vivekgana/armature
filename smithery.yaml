@@ -1,0 +1,18 @@
+# Smithery.ai marketplace configuration for Armature MCP Server
+# https://smithery.ai/docs/config
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      projectRoot:
+        type: string
+        description: "Path to the project root directory (defaults to cwd)"
+    required: []
+  commandFunction: |-
+    (config) => ({
+      command: "python",
+      args: ["-m", "armature.mcp.server"],
+      env: config.projectRoot ? { ARMATURE_PROJECT_ROOT: config.projectRoot } : {}
+    })

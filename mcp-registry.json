@@ -1,0 +1,62 @@
+{
+  "name": "armature",
+  "display_name": "Armature",
+  "description": "Harness engineering framework for AI coding agents -- budget-controlled quality checks, architecture guardrails, and self-healing pipelines",
+  "version": "0.1.0",
+  "homepage": "https://github.com/vivekgana/armature",
+  "repository": "https://github.com/vivekgana/armature",
+  "license": "MIT",
+  "authors": ["Armature Contributors"],
+  "keywords": ["ai", "coding-agent", "harness", "quality", "budget", "architecture"],
+  "transport": {
+    "type": "stdio",
+    "command": "python",
+    "args": ["-m", "armature.mcp.server"]
+  },
+  "tools": [
+    {
+      "name": "armature_check",
+      "description": "Run quality checks (lint, type, test) on a file"
+    },
+    {
+      "name": "armature_heal",
+      "description": "Auto-fix failures from a previous check"
+    },
+    {
+      "name": "armature_gc",
+      "description": "Run garbage collection on stale agent artifacts"
+    },
+    {
+      "name": "armature_budget",
+      "description": "Query remaining token budget for the current spec"
+    },
+    {
+      "name": "armature_estimate",
+      "description": "Estimate token cost for a set of files"
+    },
+    {
+      "name": "armature_baseline",
+      "description": "Capture or compare project quality baselines"
+    },
+    {
+      "name": "armature_pre_dev",
+      "description": "Run pre-development environment validation"
+    },
+    {
+      "name": "armature_post_dev",
+      "description": "Run post-development regression detection"
+    },
+    {
+      "name": "armature_preplan",
+      "description": "Generate a budget-aware development plan"
+    },
+    {
+      "name": "armature_calibrate",
+      "description": "Calibrate budget estimates from actual usage data"
+    },
+    {
+      "name": "armature_cache_stats",
+      "description": "Show prompt cache hit/miss statistics"
+    }
+  ]
+}
