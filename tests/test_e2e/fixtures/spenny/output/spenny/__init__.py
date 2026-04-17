@@ -1,0 +1,1 @@
+"""Spenny -- CLI expense tracker."""

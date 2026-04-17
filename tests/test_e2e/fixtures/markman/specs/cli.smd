@@ -1,0 +1,25 @@
+# Markman CLI Bookmark Manager
+
+@id: CLI_BOOKMARKS
+@status: draft
+@priority: medium
+@depends: []
+
+## Overview
+
+A CLI tool for managing web bookmarks with tagging and search.
+
+## Requirements
+
+### Add Bookmark
+
+Add a URL with optional tags and description.
+
+### Search Bookmarks
+
+Search bookmarks by tag, title, or URL substring.
+
+## Acceptance Criteria
+
+- `markman add <url>` stores a new bookmark
+- `markman search <query>` finds matching bookmarks
