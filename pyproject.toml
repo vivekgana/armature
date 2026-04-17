@@ -56,6 +56,12 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["src"]
 
+[tool.hatch.build.targets.wheel.shared-data]
+"data/industry_benchmarks.yaml" = "armature/data/industry_benchmarks.yaml"
+
+[tool.hatch.build]
+artifacts = ["data/*.yaml"]
+
 [tool.ruff]
 target-version = "py311"
 line-length = 120

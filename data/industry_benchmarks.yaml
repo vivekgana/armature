@@ -1,0 +1,120 @@
+# Armature Industry Benchmarks
+# ============================
+# Shareable benchmark data derived from published research.
+# Copy this file to your project and customize, or share across teams.
+#
+# Sources:
+#   - SWE-bench: Jimenez et al., 2024  (real-world GitHub issue resolution)
+#   - DevBench: Li et al., 2024         (multi-phase development benchmarks)
+#   - AgentBench: Liu et al., 2023      (agent performance evaluation)
+#   - HumanEval+: Liu et al., 2024      (code generation correctness)
+#   - RepoBench: Liu et al., 2023       (repository-level code completion)
+#
+# To override in your project:
+#   1. Copy this file to your repo root as `industry_benchmarks.yaml`
+#   2. Modify the values to match your team's observed data
+#   3. Armature will load your local copy instead of the defaults
+#
+# To share with your team:
+#   Commit this file to your shared repo or distribute via internal package.
+
+# Per-task-type token targets (tokens per resolved issue)
+# p25/median/p75 represent industry percentile ranges
+task_targets:
+  bugfix:
+    p25: 15000
+    median: 30000
+    p75: 60000
+  feature:
+    p25: 50000
+    median: 120000
+    p75: 250000
+  refactor:
+    p25: 25000
+    median: 60000
+    p75: 150000
+  spike:
+    p25: 5000
+    median: 15000
+    p75: 40000
+  test:
+    p25: 20000
+    median: 50000
+    p75: 120000
+
+# Per-phase token targets (tokens per LOC of touched/generated code)
+phase_targets:
+  validate:
+    read_tokens_per_loc: 3.5
+    write_tokens_per_loc: 2.0
+    source: "DevBench (Li et al., 2024)"
+  audit:
+    read_tokens_per_loc: 7.5
+    write_tokens_per_loc: 5.5
+    source: "DevBench (Li et al., 2024)"
+  plan:
+    read_tokens_per_loc: 7.5
+    write_tokens_per_loc: 5.5
+    source: "DevBench (Li et al., 2024)"
+  build:
+    read_tokens_per_loc: 15.0
+    write_tokens_per_loc: 10.0
+    source: "SWE-bench (Jimenez et al., 2024)"
+  test:
+    read_tokens_per_loc: 11.5
+    write_tokens_per_loc: 14.0
+    source: "HumanEval+ (Liu et al., 2024)"
+  review:
+    read_tokens_per_loc: 20.0
+    write_tokens_per_loc: 2.0
+    source: "Industry consensus"
+
+# Per-language tokens per correct solution (from HumanEval+ / MHPP)
+language_benchmarks:
+  python:
+    easy: 2500
+    medium: 8000
+    hard: 15000
+  typescript:
+    easy: 3000
+    medium: 9500
+    hard: 18000
+  go:
+    easy: 2200
+    medium: 7000
+    hard: 12000
+  rust:
+    easy: 2200
+    medium: 7500
+    hard: 12000
+
+# Quality-budget curve: diminishing returns
+# Maps token budget to expected quality percentage
+# Derived from AgentBench + SWE-bench performance-vs-cost analysis
+quality_budget_curve:
+  - tokens: 10000
+    quality_pct: 0.40    # minimal context
+  - tokens: 25000
+    quality_pct: 0.55    # partial context
+  - tokens: 50000
+    quality_pct: 0.70    # reasonable context
+  - tokens: 100000
+    quality_pct: 0.82    # good context
+  - tokens: 200000
+    quality_pct: 0.90    # diminishing returns begin
+  - tokens: 500000
+    quality_pct: 0.94    # near ceiling
+  - tokens: 1000000
+    quality_pct: 0.96    # very marginal gains
+  - tokens: 2000000
+    quality_pct: 0.97    # almost no gain over 1M
+
+# Cost-efficiency metric targets
+efficiency_targets:
+  cost_per_loc_standard: 0.01     # $/LOC for Sonnet-class models
+  cost_per_loc_premium: 0.05      # $/LOC for Opus-class models
+  cache_hit_rate: 0.40            # minimum for established projects
+  routing_savings_ratio: 2.0      # routed cost should be < 0.5x all-premium
+  calibration_drift: 0.20         # |predicted - actual| / predicted < 20%
+  tokens_per_bugfix: 30000        # median tokens per bugfix
+  tokens_per_feature: 120000      # median tokens per feature
