@@ -14,8 +14,6 @@
 
 ## Pillar Guides
 
-See the [pillars/](pillars/) directory for deep-dives into each pillar:
-
 | Pillar | Description |
 |--------|-------------|
 | Budget | Token/cost tracking, optimization, calibration |
@@ -27,7 +25,7 @@ See the [pillars/](pillars/) directory for deep-dives into each pillar:
 
 ## Integration Guides
 
-See the [integrations/](integrations/) directory:
+Armature integrates with the following IDEs and CI systems (see [INSTALLATION.md](INSTALLATION.md)):
 
 - Claude Code
 - Cursor
@@ -41,7 +39,6 @@ See the [integrations/](integrations/) directory:
 See the [examples/](../examples/) directory for complete project setups:
 
 - `python-fastapi/` -- FastAPI project with armature
-- `python-django/` -- Django project with armature
 - `typescript-nextjs/` -- Next.js project with armature
 - `monorepo/` -- Monorepo with multiple packages
 
