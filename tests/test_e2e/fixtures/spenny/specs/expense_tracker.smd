@@ -1,0 +1,35 @@
+# Spenny -- Command-Line Expense Tracker
+
+@id: EXPENSE_TRACKER
+@status: draft
+@priority: high
+@depends: []
+
+## Overview
+
+A command-line expense tracker that stores expenses in a local JSON file.
+
+## Goals
+
+- Provide a fast, no-frills CLI for tracking personal expenses
+- Persist data in a single human-readable JSON file
+
+## Requirements
+
+### Add an Expense
+
+Record a new expense with an amount, category, and optional description.
+
+### List Expenses
+
+Display all recorded expenses in a formatted table.
+
+### Spending Summary
+
+Show total spending grouped by category.
+
+## Acceptance Criteria
+
+- `spenny add` creates an expense and writes it to `expenses.json`
+- `spenny list` displays all expenses in a formatted table
+- `spenny summary` shows per-category totals and an overall total

@@ -40,6 +40,7 @@ from armature.cli.budget_cmd import budget_cmd  # noqa: E402
 from armature.cli.baseline_cmd import baseline_cmd  # noqa: E402
 from armature.cli.report_cmd import report_cmd  # noqa: E402
 from armature.cli.hooks_cmd import hooks_cmd  # noqa: E402
+from armature.cli.compat_cmd import compat_cmd  # noqa: E402
 
 cli.add_command(init_cmd, "init")
 cli.add_command(check_cmd, "check")
@@ -49,6 +50,7 @@ cli.add_command(budget_cmd, "budget")
 cli.add_command(baseline_cmd, "baseline")
 cli.add_command(report_cmd, "report")
 cli.add_command(hooks_cmd, "hooks")
+cli.add_command(compat_cmd, "compat")
 
 
 @cli.command("pre-dev")

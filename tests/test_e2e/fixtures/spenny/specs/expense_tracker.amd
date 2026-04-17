@@ -1,0 +1,30 @@
+# Architecture: Expense Tracker
+
+@spec: EXPENSE_TRACKER
+@status: draft
+
+## Components
+
+### Storage
+
+@path: src/spenny/storage.py
+
+Handles reading and writing the `expenses.json` file.
+
+**Depends on:** None
+
+### Core
+
+@path: src/spenny/core.py
+
+Business logic for adding, listing, deleting, and summarizing expenses.
+
+**Depends on:** Storage
+
+### CLI
+
+@path: src/spenny/cli.py
+
+Entry point. Parses arguments, calls core functions, formats output.
+
+**Depends on:** Core, Storage

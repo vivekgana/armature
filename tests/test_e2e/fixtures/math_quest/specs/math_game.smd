@@ -1,0 +1,20 @@
+# Math Quest -- Children's Arithmetic Game
+
+@id: MATH_GAME
+@status: draft
+@priority: medium
+@depends: []
+
+## Overview
+
+An interactive arithmetic game built with LOVE2D framework for children.
+
+## Requirements
+
+### Generate Problems
+
+Generate random arithmetic problems at adjustable difficulty levels.
+
+### Score Tracking
+
+Track correct/incorrect answers and display a running score.
