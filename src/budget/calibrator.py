@@ -27,12 +27,47 @@ from dataclasses import dataclass, field, asdict
 from datetime import datetime, timezone
 from pathlib import Path
 
+import yaml
+
 from armature.budget.benchmark import BudgetBenchmark
 from armature.budget.tracker import SessionTracker
 
 
 # EMA decay factor: 0.3 means 30% weight on newest spec, 70% on accumulated
 EMA_ALPHA = 0.3
+
+
+def _find_benchmarks_file() -> Path | None:
+    """Find industry_benchmarks.yaml: project root first, then package defaults."""
+    cwd = Path.cwd()
+    for candidate in [
+        cwd / "industry_benchmarks.yaml",
+        cwd / "data" / "industry_benchmarks.yaml",
+        cwd / ".armature" / "industry_benchmarks.yaml",
+    ]:
+        if candidate.exists():
+            return candidate
+    pkg_default = Path(__file__).parent.parent.parent / "data" / "industry_benchmarks.yaml"
+    if pkg_default.exists():
+        return pkg_default
+    return None
+
+
+def load_industry_benchmarks() -> dict:
+    """Load industry benchmarks from YAML file.
+
+    Search order:
+      1. ./industry_benchmarks.yaml  (project root override)
+      2. ./data/industry_benchmarks.yaml
+      3. ./.armature/industry_benchmarks.yaml
+      4. Package default (data/industry_benchmarks.yaml shipped with armature)
+
+    Returns raw dict from YAML, or empty dict if no file found.
+    """
+    path = _find_benchmarks_file()
+    if path is None:
+        return {}
+    return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
 
 # Default model verbosity multipliers (before calibration)
 DEFAULT_MODEL_VERBOSITY: dict[str, float] = {
@@ -53,61 +88,40 @@ DEFAULT_TASK_ADJUSTMENT = 1.0
 
 
 # ---------------------------------------------------------------------------
-# Industry benchmark targets (tokens per LOC by SDLC phase)
-# Derived from SWE-bench, DevBench, AgentBench, HumanEval+, RepoBench
+# Industry benchmark targets
+# Loaded from external YAML (data/industry_benchmarks.yaml) for shareability.
+# Hardcoded defaults are used as fallbacks if no YAML file is found.
 # ---------------------------------------------------------------------------
+
+_BENCHMARKS_DATA: dict = {}
+
+
+def _get_benchmarks() -> dict:
+    """Lazy-load benchmarks on first access."""
+    global _BENCHMARKS_DATA
+    if not _BENCHMARKS_DATA:
+        _BENCHMARKS_DATA = load_industry_benchmarks()
+    return _BENCHMARKS_DATA
+
 
 @dataclass(frozen=True)
 class PhaseTokenTarget:
     """Industry benchmark: tokens per LOC for an SDLC phase."""
-    read_tokens_per_loc: float    # input tokens per LOC of touched code
-    write_tokens_per_loc: float   # output tokens per LOC of generated code
-    source: str                   # paper/study name
+    read_tokens_per_loc: float
+    write_tokens_per_loc: float
+    source: str
 
 
-# Per-phase industry token targets (tokens per LOC of touched/generated code)
-INDUSTRY_PHASE_TARGETS: dict[str, PhaseTokenTarget] = {
-    "validate": PhaseTokenTarget(
-        read_tokens_per_loc=3.5, write_tokens_per_loc=2.0,
-        source="DevBench (Li et al., 2024)",
-    ),
-    "audit": PhaseTokenTarget(
-        read_tokens_per_loc=7.5, write_tokens_per_loc=5.5,
-        source="DevBench (Li et al., 2024)",
-    ),
-    "plan": PhaseTokenTarget(
-        read_tokens_per_loc=7.5, write_tokens_per_loc=5.5,
-        source="DevBench (Li et al., 2024)",
-    ),
-    "build": PhaseTokenTarget(
-        read_tokens_per_loc=15.0, write_tokens_per_loc=10.0,
-        source="SWE-bench (Jimenez et al., 2024)",
-    ),
-    "test": PhaseTokenTarget(
-        read_tokens_per_loc=11.5, write_tokens_per_loc=14.0,
-        source="HumanEval+ (Liu et al., 2024)",
-    ),
-    "review": PhaseTokenTarget(
-        read_tokens_per_loc=20.0, write_tokens_per_loc=2.0,
-        source="Industry consensus",
-    ),
+_DEFAULT_PHASE_TARGETS = {
+    "validate": {"read_tokens_per_loc": 3.5, "write_tokens_per_loc": 2.0, "source": "DevBench (Li et al., 2024)"},
+    "audit":    {"read_tokens_per_loc": 7.5, "write_tokens_per_loc": 5.5, "source": "DevBench (Li et al., 2024)"},
+    "plan":     {"read_tokens_per_loc": 7.5, "write_tokens_per_loc": 5.5, "source": "DevBench (Li et al., 2024)"},
+    "build":    {"read_tokens_per_loc": 15.0, "write_tokens_per_loc": 10.0, "source": "SWE-bench (Jimenez et al., 2024)"},
+    "test":     {"read_tokens_per_loc": 11.5, "write_tokens_per_loc": 14.0, "source": "HumanEval+ (Liu et al., 2024)"},
+    "review":   {"read_tokens_per_loc": 20.0, "write_tokens_per_loc": 2.0, "source": "Industry consensus"},
 }
 
-
-# Per-language tokens per correct solution (from HumanEval+ / MHPP)
-INDUSTRY_LANGUAGE_BENCHMARKS: dict[str, dict[str, int]] = {
-    # (easy_tokens, medium_tokens, hard_tokens) per correct solution
-    "python":     {"easy": 2_500, "medium": 8_000, "hard": 15_000},
-    "typescript": {"easy": 3_000, "medium": 9_500, "hard": 18_000},
-    "go":         {"easy": 2_200, "medium": 7_000, "hard": 12_000},
-    "rust":       {"easy": 2_200, "medium": 7_500, "hard": 12_000},
-}
-
-
-# Per-task-type industry targets (tokens per resolved issue)
-# From SWE-bench community leaderboards and DevBench reports
-INDUSTRY_TASK_TARGETS: dict[str, dict[str, int]] = {
-    #              p25       median    p75       source
+_DEFAULT_TASK_TARGETS = {
     "bugfix":   {"p25": 15_000, "median": 30_000, "p75": 60_000},
     "feature":  {"p25": 50_000, "median": 120_000, "p75": 250_000},
     "refactor": {"p25": 25_000, "median": 60_000, "p75": 150_000},
@@ -115,41 +129,96 @@ INDUSTRY_TASK_TARGETS: dict[str, dict[str, int]] = {
     "test":     {"p25": 20_000, "median": 50_000, "p75": 120_000},
 }
 
+_DEFAULT_LANGUAGE_BENCHMARKS = {
+    "python":     {"easy": 2_500, "medium": 8_000, "hard": 15_000},
+    "typescript": {"easy": 3_000, "medium": 9_500, "hard": 18_000},
+    "go":         {"easy": 2_200, "medium": 7_000, "hard": 12_000},
+    "rust":       {"easy": 2_200, "medium": 7_500, "hard": 12_000},
+}
 
-# Quality-budget curve: diminishing returns data points
-# (token_budget, expected_quality_pct)
-# Derived from AgentBench + SWE-bench performance-vs-cost analysis
-QUALITY_BUDGET_CURVE: list[tuple[int, float]] = [
-    (10_000,    0.40),   # minimal context, low quality
-    (25_000,    0.55),   # partial context
-    (50_000,    0.70),   # reasonable context
-    (100_000,   0.82),   # good context
-    (200_000,   0.90),   # diminishing returns begin
-    (500_000,   0.94),   # near ceiling
-    (1_000_000, 0.96),   # very marginal gains
-    (2_000_000, 0.97),   # almost no gain over 1M
+_DEFAULT_QUALITY_CURVE = [
+    (10_000, 0.40), (25_000, 0.55), (50_000, 0.70), (100_000, 0.82),
+    (200_000, 0.90), (500_000, 0.94), (1_000_000, 0.96), (2_000_000, 0.97),
 ]
+
+
+def _build_phase_targets() -> dict[str, PhaseTokenTarget]:
+    data = _get_benchmarks().get("phase_targets", _DEFAULT_PHASE_TARGETS)
+    return {
+        name: PhaseTokenTarget(
+            read_tokens_per_loc=v.get("read_tokens_per_loc", 10.0),
+            write_tokens_per_loc=v.get("write_tokens_per_loc", 5.0),
+            source=v.get("source", "custom"),
+        )
+        for name, v in data.items()
+    }
+
+
+def _build_task_targets() -> dict[str, dict[str, int]]:
+    return _get_benchmarks().get("task_targets", _DEFAULT_TASK_TARGETS)
+
+
+def _build_language_benchmarks() -> dict[str, dict[str, int]]:
+    return _get_benchmarks().get("language_benchmarks", _DEFAULT_LANGUAGE_BENCHMARKS)
+
+
+def _build_quality_curve() -> list[tuple[int, float]]:
+    raw = _get_benchmarks().get("quality_budget_curve")
+    if raw is None:
+        return _DEFAULT_QUALITY_CURVE
+    return [(entry["tokens"], entry["quality_pct"]) for entry in raw]
+
+
+# Public module-level accessors (lazy-loaded from YAML)
+INDUSTRY_PHASE_TARGETS: dict[str, PhaseTokenTarget] = {}
+INDUSTRY_TASK_TARGETS: dict[str, dict[str, int]] = {}
+INDUSTRY_LANGUAGE_BENCHMARKS: dict[str, dict[str, int]] = {}
+QUALITY_BUDGET_CURVE: list[tuple[int, float]] = []
+
+
+def _ensure_loaded() -> None:
+    """Populate module-level dicts on first use."""
+    global INDUSTRY_PHASE_TARGETS, INDUSTRY_TASK_TARGETS
+    global INDUSTRY_LANGUAGE_BENCHMARKS, QUALITY_BUDGET_CURVE
+    if not INDUSTRY_PHASE_TARGETS:
+        INDUSTRY_PHASE_TARGETS.update(_build_phase_targets())
+        INDUSTRY_TASK_TARGETS.update(_build_task_targets())
+        INDUSTRY_LANGUAGE_BENCHMARKS.update(_build_language_benchmarks())
+        QUALITY_BUDGET_CURVE.extend(_build_quality_curve())
+
+
+_ensure_loaded()
 
 
 # Cost-efficiency metric targets
 @dataclass(frozen=True)
 class EfficiencyTargets:
     """Industry targets for cost-efficiency metrics."""
-    # Cost per LOC generated (for Sonnet-class models)
-    target_cost_per_loc_standard: float = 0.01    # $/LOC
-    target_cost_per_loc_premium: float = 0.05     # $/LOC (Opus-class)
-    # Cache efficiency
-    target_cache_hit_rate: float = 0.40           # minimum for established projects
-    # Routing savings
-    target_routing_savings_ratio: float = 2.0     # routed cost should be < 0.5x all-premium
-    # Calibration accuracy
-    target_calibration_drift: float = 0.20        # |predicted - actual| / predicted < 20%
-    # Token per resolved issue (bugfix, median)
+    target_cost_per_loc_standard: float = 0.01
+    target_cost_per_loc_premium: float = 0.05
+    target_cache_hit_rate: float = 0.40
+    target_routing_savings_ratio: float = 2.0
+    target_calibration_drift: float = 0.20
     target_tokens_per_bugfix: int = 30_000
     target_tokens_per_feature: int = 120_000
 
 
-EFFICIENCY_TARGETS = EfficiencyTargets()
+def _build_efficiency_targets() -> EfficiencyTargets:
+    raw = _get_benchmarks().get("efficiency_targets")
+    if raw is None:
+        return EfficiencyTargets()
+    return EfficiencyTargets(
+        target_cost_per_loc_standard=raw.get("cost_per_loc_standard", 0.01),
+        target_cost_per_loc_premium=raw.get("cost_per_loc_premium", 0.05),
+        target_cache_hit_rate=raw.get("cache_hit_rate", 0.40),
+        target_routing_savings_ratio=raw.get("routing_savings_ratio", 2.0),
+        target_calibration_drift=raw.get("calibration_drift", 0.20),
+        target_tokens_per_bugfix=raw.get("tokens_per_bugfix", 30_000),
+        target_tokens_per_feature=raw.get("tokens_per_feature", 120_000),
+    )
+
+
+EFFICIENCY_TARGETS = _build_efficiency_targets()
 
 
 @dataclass
