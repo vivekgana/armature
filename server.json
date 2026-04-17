@@ -1,0 +1,21 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.vivekgana/armature",
+  "title": "Armature",
+  "description": "Harness engineering framework for AI coding agents -- budget-controlled quality checks, architecture guardrails, and self-healing pipelines",
+  "repository": {
+    "url": "https://github.com/vivekgana/armature",
+    "source": "github"
+  },
+  "version": "0.1.0",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "armature",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}

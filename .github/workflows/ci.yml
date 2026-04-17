@@ -27,13 +27,13 @@ jobs:
           pip install -e ".[dev]"
 
       - name: Lint with ruff
-        run: ruff check src/ tests/
+        run: ruff check src/armature/ tests/
 
       - name: Type check with mypy
-        run: mypy src/
+        run: mypy src/armature/
 
       - name: Run tests
-        run: pytest --cov=src --cov-report=xml --cov-fail-under=80
+        run: pytest --cov=src/armature --cov-report=xml --cov-fail-under=80
 
       - name: Upload coverage
         if: matrix.python-version == '3.12'

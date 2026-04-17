@@ -1,5 +1,7 @@
 # Armature
 
+<!-- mcp-name: io.github.vivekgana/armature -->
+
 **The invisible skeleton that gives shape to what AI coding agents produce.**
 
 Armature is a harness engineering framework for AI coding agents. It wraps agents (Claude Code, Cursor, Copilot, Windsurf, Aider) in automated guides, sensors, budget controls, architectural enforcement, garbage collection, and self-healing pipelines.
