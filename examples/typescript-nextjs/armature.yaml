@@ -1,0 +1,61 @@
+# Armature config for a TypeScript Next.js project
+
+project:
+  name: "my-nextjs-app"
+  language: typescript
+  framework: nextjs
+  src_dir: "src/"
+  test_dir: "__tests__/"
+
+quality:
+  enabled: true
+  gates:
+    draft: 0.70
+    review_ready: 0.85
+    merge_ready: 0.95
+  checks:
+    lint:
+      tool: eslint
+      args: ["--ext", ".ts,.tsx"]
+      weight: 25
+    type_check:
+      tool: tsc
+      args: ["--noEmit"]
+      weight: 25
+    test:
+      tool: jest
+      args: ["--passWithNoTests"]
+      weight: 20
+      coverage_min: 80
+  post_write:
+    enabled: true
+    tools: [lint, type_check]
+
+architecture:
+  enabled: true
+  layers:
+    - name: lib
+      dirs: ["src/lib/"]
+    - name: server
+      dirs: ["src/app/api/"]
+    - name: components
+      dirs: ["src/components/"]
+  boundaries:
+    - from: lib
+      to: [components]
+  allowed_shared:
+    - "src/utils/"
+    - "src/types/"
+
+heal:
+  enabled: true
+  healers:
+    lint:
+      enabled: true
+      auto_fix: true
+
+integrations:
+  cursor:
+    enabled: true
+  github_actions:
+    enabled: true

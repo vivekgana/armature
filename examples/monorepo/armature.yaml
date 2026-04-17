@@ -1,0 +1,60 @@
+# Armature config for a monorepo with multiple services
+
+project:
+  name: "my-monorepo"
+  language: python
+  src_dir: "services/"
+  test_dir: "tests/"
+
+budget:
+  enabled: true
+  defaults:
+    low:      { max_tokens: 100000, max_cost_usd: 2.00 }
+    medium:   { max_tokens: 500000, max_cost_usd: 10.00 }
+    high:     { max_tokens: 1000000, max_cost_usd: 20.00 }
+
+quality:
+  enabled: true
+  checks:
+    lint: { tool: ruff, weight: 25 }
+    type_check: { tool: mypy, weight: 25 }
+    test: { tool: pytest, weight: 20, coverage_min: 80 }
+  post_write:
+    enabled: true
+
+architecture:
+  enabled: true
+  layers:
+    - name: shared
+      dirs: ["packages/shared/"]
+    - name: api
+      dirs: ["services/api/"]
+    - name: worker
+      dirs: ["services/worker/"]
+    - name: frontend
+      dirs: ["apps/web/"]
+  boundaries:
+    - from: shared
+      to: [api, worker, frontend]
+    - from: api
+      to: [frontend]
+    - from: worker
+      to: [frontend]
+  allowed_shared:
+    - "packages/shared/"
+
+gc:
+  enabled: true
+  agents:
+    architecture: { enabled: true, cadence: daily }
+    docs: { enabled: true, cadence: weekly, watched_files: ["README.md", "docs/*.md"] }
+    dead_code: { enabled: true, cadence: weekly }
+
+heal:
+  enabled: true
+  healers:
+    lint: { auto_fix: true }
+
+integrations:
+  claude_code: { enabled: true }
+  github_actions: { enabled: true }
