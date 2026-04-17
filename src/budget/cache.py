@@ -138,6 +138,16 @@ class SemanticCache:
 
         response = response_path.read_text(encoding="utf-8")
 
+        # Verify response integrity
+        import hashlib
+        import hmac
+        expected_hash = meta.get("response_sha256")
+        if expected_hash:
+            actual_hash = hashlib.sha256(response.encode()).hexdigest()
+            if not hmac.compare_digest(actual_hash, expected_hash):
+                self._evict(fingerprint)
+                return None
+
         # Increment hit count
         meta["hit_count"] = meta.get("hit_count", 0) + 1
         self._save_index(index)
@@ -184,9 +194,16 @@ class SemanticCache:
             "hit_count": 0,
         }
 
-        # Write response file
+        # Write response file with integrity hash and restricted permissions
+        import hashlib
+        import os
         response_path = self.responses_dir / f"{fingerprint}.txt"
         response_path.write_text(response, encoding="utf-8")
+        try:
+            os.chmod(response_path, 0o600)
+        except OSError:
+            pass
+        meta["response_sha256"] = hashlib.sha256(response.encode()).hexdigest()
 
         # Update index
         index[fingerprint] = meta

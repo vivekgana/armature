@@ -13,6 +13,7 @@ from pathlib import Path
 from armature._internal.output import console
 from armature._internal.subprocess_utils import run_tool
 from armature._internal.types import HealResult
+from armature._internal.validation import validate_spec_id
 from armature.config.schema import HealConfig
 from armature.heal.circuit_breaker import CircuitBreaker
 
@@ -121,6 +122,7 @@ class HealPipeline:
 
     def save_failure_report(self, spec_id: str, results: list[HealResult]) -> Path:
         """Save structured failure report for human review."""
+        spec_id = validate_spec_id(spec_id)
         report_dir = self.root / self.config.failure_report_dir
         report_dir.mkdir(parents=True, exist_ok=True)
 

@@ -12,17 +12,22 @@ CONFIG_FILENAMES = ["armature.yaml", "armature.yml", ".armature.yaml", ".armatur
 
 
 def find_config(start_dir: Path | None = None) -> Path | None:
-    """Search for armature.yaml starting from start_dir, walking up to root."""
-    current = start_dir or Path.cwd()
-    for _ in range(20):  # max depth to prevent infinite loop
+    """Search for armature.yaml starting from start_dir, walking up to root.
+
+    Stops at git repository boundaries and the user home directory
+    to prevent loading a malicious config from an ancestor directory.
+    """
+    current = (start_dir or Path.cwd()).resolve()
+    home = Path.home().resolve()
+
+    for _ in range(20):
         for name in CONFIG_FILENAMES:
             candidate = current / name
             if candidate.exists():
                 return candidate
-        parent = current.parent
-        if parent == current:
+        if (current / ".git").exists() or current == home or current.parent == current:
             break
-        current = parent
+        current = current.parent
     return None
 
 

@@ -2,7 +2,15 @@
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+import re
+
+from pydantic import BaseModel, Field, field_validator
+
+from armature._internal.validation import (
+    ALLOWED_LANGUAGES,
+    ALLOWED_TOOLS,
+    _DANGEROUS_ARG_CHARS,
+)
 
 
 # --- Project ---
@@ -14,6 +22,13 @@ class ProjectConfig(BaseModel):
     framework: str = ""
     src_dir: str = "src/"
     test_dir: str = "tests/"
+
+    @field_validator("language")
+    @classmethod
+    def _validate_language(cls, v: str) -> str:
+        if v and v not in ALLOWED_LANGUAGES:
+            raise ValueError(f"Language {v!r} not in allowed list: {sorted(ALLOWED_LANGUAGES)}")
+        return v
 
 
 # --- Budget (Pillar 1) ---
@@ -95,6 +110,21 @@ class ToolCheckConfig(BaseModel):
     args: list[str] = Field(default_factory=list)
     weight: int = 25
     coverage_min: int | None = None
+
+    @field_validator("tool")
+    @classmethod
+    def _validate_tool(cls, v: str) -> str:
+        if v and v not in ALLOWED_TOOLS:
+            raise ValueError(f"Tool {v!r} not in allowed list: {sorted(ALLOWED_TOOLS)}")
+        return v
+
+    @field_validator("args")
+    @classmethod
+    def _validate_args(cls, v: list[str]) -> list[str]:
+        for arg in v:
+            if any(c in arg for c in _DANGEROUS_ARG_CHARS):
+                raise ValueError(f"Dangerous character in tool argument: {arg!r}")
+        return v
 
 
 class ComplexityConfig(BaseModel):
@@ -241,6 +271,17 @@ class TraceabilityConfig(BaseModel):
     """AC-to-test traceability settings."""
     enabled: bool = False
     pattern: str = r"(SPEC-\d{4}-Q\d-\d{3})\s*/\s*(AC-\d+)"
+
+    @field_validator("pattern")
+    @classmethod
+    def _validate_regex(cls, v: str) -> str:
+        try:
+            re.compile(v)
+        except re.error as e:
+            raise ValueError(f"Invalid regex pattern: {e}")
+        if re.search(r"\([^)]*[+*]\)[+*?]", v):
+            raise ValueError("Pattern may be vulnerable to ReDoS (nested quantifiers)")
+        return v
 
 
 class SpecConfig(BaseModel):

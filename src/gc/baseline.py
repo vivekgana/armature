@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import json
+import tempfile
 from pathlib import Path
 
 from armature._internal.types import BaselineSnapshot
+from armature._internal.validation import validate_spec_id
 
 
 class BaselineManager:
@@ -17,6 +19,7 @@ class BaselineManager:
 
     def save(self, spec_id: str, snapshot: BaselineSnapshot) -> Path:
         """Save a baseline snapshot."""
+        spec_id = validate_spec_id(spec_id)
         path = self.baselines_dir / f"{spec_id}.json"
         data = {
             "timestamp": snapshot.timestamp,
@@ -27,11 +30,22 @@ class BaselineManager:
             "coverage_pct": snapshot.coverage_pct,
             **snapshot.extra,
         }
-        path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+        tmp = tempfile.NamedTemporaryFile(
+            mode="w", dir=self.baselines_dir, suffix=".json.tmp",
+            delete=False, encoding="utf-8",
+        )
+        try:
+            tmp.write(json.dumps(data, indent=2))
+            tmp.close()
+            Path(tmp.name).replace(path)
+        except Exception:
+            Path(tmp.name).unlink(missing_ok=True)
+            raise
         return path
 
     def load(self, spec_id: str) -> BaselineSnapshot | None:
         """Load a baseline snapshot, returning None if not found."""
+        spec_id = validate_spec_id(spec_id)
         path = self.baselines_dir / f"{spec_id}.json"
         if not path.exists():
             return None
