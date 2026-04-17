@@ -10,6 +10,7 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
+from armature._internal.validation import validate_spec_id
 from armature.config.schema import BudgetConfig
 
 
@@ -45,6 +46,7 @@ class SessionTracker:
         optional for backward compatibility. Old callers passing only
         positional (spec_id, phase, tokens, cost_usd) continue to work.
         """
+        spec_id = validate_spec_id(spec_id)
         log_path = self.storage_dir / f"{spec_id}_cost.jsonl"
         entry: dict = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -186,6 +188,7 @@ class SessionTracker:
 
     def _load_entries(self, spec_id: str) -> list[dict]:
         """Load all JSONL entries for a spec (backward-compatible)."""
+        spec_id = validate_spec_id(spec_id)
         log_path = self.storage_dir / f"{spec_id}_cost.jsonl"
         if not log_path.exists():
             return []

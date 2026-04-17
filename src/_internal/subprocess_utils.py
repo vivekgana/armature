@@ -53,4 +53,4 @@ def run_tool(
     except FileNotFoundError:
         return RunResult(returncode=-1, stdout="", stderr=f"Command not found: {args[0]}")
     except subprocess.TimeoutExpired:
-        return RunResult(returncode=-2, stdout="", stderr=f"Command timed out after {timeout}s: {' '.join(args)}")
+        return RunResult(returncode=-2, stdout="", stderr=f"Command timed out after {timeout}s")

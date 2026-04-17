@@ -3,4 +3,11 @@
 The invisible skeleton that gives shape to what agents produce.
 """
 
-__version__ = "0.1.0"
+from importlib.metadata import version, PackageNotFoundError
+
+try:
+    __version__ = version("armature")
+except PackageNotFoundError:
+    __version__ = "0.1.0"
+
+__all__ = ["__version__"]

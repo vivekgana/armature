@@ -67,7 +67,7 @@ spec_id: "SPEC-2026-Q2-001"
 title: "Add Benford Analysis to Data Quality Stage"
 type: feature  # feature | bugfix | refactor | spike
 priority: high
-author: "gekambaram"
+author: "your-username"
 date: "2026-04-14"
 
 # WHAT -- the requirement
@@ -112,25 +112,25 @@ constraints:
 # HUMAN GATES -- where human approval is required
 human_gates:
   - gate: "plan_review"
-    approver: "gekambaram"
+    approver: "your-username"
     description: "Review implementation plan before coding starts"
   - gate: "test_plan_review"
-    approver: "gekambaram"
+    approver: "your-username"
     description: "Review test plan (unit/integration/e2e cases) before writing tests"
   - gate: "code_review"
-    approver: "gekambaram"
+    approver: "your-username"
     description: "Review generated code diff"
   - gate: "unit_test_review"
-    approver: "gekambaram"
+    approver: "your-username"
     description: "Validate unit test logic, edge cases, and coverage"
   - gate: "integration_test_review"
-    approver: "gekambaram"
+    approver: "your-username"
     description: "Validate integration tests exercise real boundaries"
   - gate: "e2e_test_review"
-    approver: "gekambaram"
+    approver: "your-username"
     description: "Validate Playwright tests match real user journeys"
   - gate: "final_test_signoff"
-    approver: "gekambaram"
+    approver: "your-username"
     description: "Approve full traceability matrix before merge"
 
 # DEPENDENCIES

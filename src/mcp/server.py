@@ -14,8 +14,13 @@ import json
 import sys
 from pathlib import Path
 
-# MCP server protocol (simplified -- follows Claude Code MCP spec)
-# Full MCP SDK integration would use `mcp` package when available
+from armature._internal.validation import (
+    VALID_COMPLEXITIES,
+    VALID_FAILURE_TYPES,
+    VALID_GC_AGENTS,
+    validate_path_within_root,
+    validate_spec_id,
+)
 
 
 def handle_tool_call(tool_name: str, arguments: dict) -> dict:
@@ -246,7 +251,18 @@ def _tool_check(args: dict) -> dict:
 
     config = load_config_or_defaults()
     root = Path.cwd()
-    results = run_quality_checks(config.quality, root, file_path=args.get("file"))
+
+    file_path = args.get("file")
+    if file_path is not None:
+        try:
+            resolved = validate_path_within_root(file_path, root)
+        except ValueError as e:
+            return {"error": str(e)}
+        if not resolved.exists():
+            return {"error": f"File not found: {file_path}"}
+        file_path = str(resolved)
+
+    results = run_quality_checks(config.quality, root, file_path=file_path)
     return {
         "checks": [{"name": r.name, "passed": r.passed, "violations": r.violation_count, "details": r.details}
                     for r in results],
@@ -262,6 +278,9 @@ def _tool_heal(args: dict) -> dict:
     config = load_config_or_defaults()
     pipeline = HealPipeline(config.heal)
     failure_types = set(args.get("failures", "lint,type,test").split(","))
+    invalid = failure_types - VALID_FAILURE_TYPES
+    if invalid:
+        return {"error": f"Invalid failure types: {invalid}. Valid: {sorted(VALID_FAILURE_TYPES)}"}
     results = pipeline.heal(failure_types)
     return {
         "results": [{"type": r.failure_type, "fixed": r.fixed, "details": r.details} for r in results],
@@ -275,8 +294,11 @@ def _tool_gc(args: dict) -> dict:
     from armature.gc.runner import GCRunner
 
     config = load_config_or_defaults()
+    agent_name = args.get("agent")
+    if agent_name and agent_name not in VALID_GC_AGENTS:
+        return {"error": f"Unknown agent: {agent_name!r}. Valid: {sorted(VALID_GC_AGENTS)}"}
     runner = GCRunner(config.gc, config)
-    findings = runner.run(agent_name=args.get("agent"))
+    findings = runner.run(agent_name=agent_name)
     return {
         "findings": [{"agent": f.agent, "category": f.category, "file": f.file, "message": f.message}
                      for f in findings],
@@ -290,14 +312,18 @@ def _tool_budget(args: dict) -> dict:
     from armature.config.loader import load_config_or_defaults
 
     config = load_config_or_defaults()
+    try:
+        spec_id = validate_spec_id(args["spec_id"])
+    except ValueError as e:
+        return {"error": str(e)}
     tracker = SessionTracker(config.budget)
 
     if args["action"] == "log":
-        tracker.log(args["spec_id"], args.get("phase", ""), args.get("tokens", 0), args.get("cost_usd", 0.0))
+        tracker.log(spec_id, args.get("phase", ""), args.get("tokens", 0), args.get("cost_usd", 0.0))
         return {"logged": True}
     else:
-        usage = tracker.get_usage(args["spec_id"])
-        suggestions = tracker.get_optimization_suggestions(args["spec_id"])
+        usage = tracker.get_usage(spec_id)
+        suggestions = tracker.get_optimization_suggestions(spec_id)
         return {**usage, "suggestions": suggestions}
 
 
@@ -306,6 +332,15 @@ def _tool_preplan(args: dict) -> dict:
     from armature.budget.optimizer import AdaptiveOptimizer, TaskSpec
     from armature.budget.planner import RequestPlanner
     from armature.config.loader import load_config_or_defaults
+
+    try:
+        validate_spec_id(args["spec_id"])
+    except ValueError as e:
+        return {"error": str(e)}
+
+    complexity = args.get("complexity", "medium")
+    if complexity not in VALID_COMPLEXITIES:
+        return {"error": f"Invalid complexity: {complexity!r}. Valid: {sorted(VALID_COMPLEXITIES)}"}
 
     config = load_config_or_defaults()
     if not config.budget.enabled:
@@ -452,9 +487,16 @@ def _tool_estimate(args: dict) -> dict:
     from armature.config.loader import load_config_or_defaults
 
     config = load_config_or_defaults()
+    root = Path.cwd()
+
+    try:
+        validated_files = [str(validate_path_within_root(f, root)) for f in args["files"]]
+    except ValueError as e:
+        return {"error": str(e)}
+
     optimizer = AdaptiveOptimizer(config.budget)
     estimate = optimizer.estimate_tokens(
-        context_files=args["files"],
+        context_files=validated_files,
         model=args.get("model", "sonnet"),
     )
     return {
@@ -475,16 +517,20 @@ def _tool_baseline(args: dict) -> dict:
 
     config = load_config_or_defaults()
     root = Path.cwd()
+    try:
+        spec_id = validate_spec_id(args["spec_id"])
+    except ValueError as e:
+        return {"error": str(e)}
     manager = BaselineManager(root / ".armature" / "baselines")
 
     if args["action"] == "capture":
         snapshot = capture_baseline_snapshot(config.quality, root)
-        path = manager.save(args["spec_id"], snapshot)
+        path = manager.save(spec_id, snapshot)
         return {"saved": str(path), "lint": snapshot.lint_violations, "type_errors": snapshot.type_errors}
     else:
-        baseline = manager.load(args["spec_id"])
+        baseline = manager.load(spec_id)
         if baseline is None:
-            return {"error": f"No baseline for {args['spec_id']}"}
+            return {"error": f"No baseline for {spec_id}"}
         current = capture_baseline_snapshot(config.quality, root)
         diff = manager.diff(baseline, current)
         return diff
@@ -513,6 +559,11 @@ def _tool_pre_dev(args: dict) -> dict:
         return {"environment": checks, "all_ok": env_ok}
 
     spec_id = args.get("spec_id")
+    if spec_id:
+        try:
+            spec_id = validate_spec_id(spec_id)
+        except ValueError as e:
+            return {"error": str(e)}
     result: dict = {"environment": checks, "all_ok": env_ok}
 
     if spec_id:
@@ -541,7 +592,10 @@ def _tool_post_dev(args: dict) -> dict:
 
     config = load_config_or_defaults()
     root = Path.cwd()
-    spec_id = args["spec_id"]
+    try:
+        spec_id = validate_spec_id(args["spec_id"])
+    except ValueError as e:
+        return {"error": str(e)}
 
     manager = BaselineManager(root / ".armature" / "baselines")
     baseline = manager.load(spec_id)
@@ -643,6 +697,10 @@ def _tool_calibrate(args: dict) -> dict:
     spec_id = args.get("spec_id", "")
     if not spec_id:
         return {"error": "spec_id required for calibration"}
+    try:
+        spec_id = validate_spec_id(spec_id)
+    except ValueError as e:
+        return {"error": str(e)}
 
     tracker = SessionTracker(config.budget)
     scope = scan_project(root, config)
@@ -675,9 +733,12 @@ def _tool_cache_stats(args: dict) -> dict:
 
     stats = cache.stats()
 
-    # Add per-spec stats if spec_id provided
     spec_id = args.get("spec_id")
     if spec_id:
+        try:
+            spec_id = validate_spec_id(spec_id)
+        except ValueError as e:
+            return {"error": str(e)}
         from armature.budget.tracker import SessionTracker
         tracker = SessionTracker(config.budget)
         spec_stats = tracker.get_semantic_cache_stats(spec_id)
