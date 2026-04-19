@@ -1,0 +1,67 @@
+spec_id: "SPEC-2026-Q2-001"
+title: "Add user authentication endpoint"
+type: feature
+priority: high
+author: "developer"
+date: "2026-04-15"
+
+description: |
+  Add JWT-based authentication to the FastAPI application. Implement
+  registration, login, and token refresh endpoints. Protected routes
+  should require a valid Bearer token in the Authorization header.
+
+scope:
+  modules: ["app/routes", "app/services"]
+  touches_api: true
+  touches_ui: false
+  new_files_expected:
+    - "app/routes/auth.py"
+    - "app/services/auth_service.py"
+    - "app/models/user.py"
+  modified_files_expected:
+    - "app/routes/__init__.py"
+    - "app/config/settings.py"
+
+acceptance_criteria:
+  - id: AC-1
+    description: "POST /auth/register creates a new user and returns 201"
+    testable: true
+  - id: AC-2
+    description: "POST /auth/login returns a JWT access token for valid credentials"
+    testable: true
+  - id: AC-3
+    description: "POST /auth/login returns 401 for invalid credentials"
+    testable: true
+  - id: AC-4
+    description: "Protected endpoints return 401 without a valid Bearer token"
+    testable: true
+  - id: AC-5
+    description: "Token expires after configured TTL (default 24h)"
+    testable: true
+
+constraints:
+  - "Use PyJWT for token generation and validation"
+  - "Passwords hashed with bcrypt (via passlib)"
+  - "No new database dependencies -- use existing JSON file storage pattern"
+  - "Token secret loaded from environment variable JWT_SECRET"
+
+human_gates:
+  - gate: "plan_review"
+    approver: "developer"
+    description: "Review implementation plan before coding"
+  - gate: "code_review"
+    approver: "developer"
+    description: "Review generated code diff"
+  - gate: "test_signoff"
+    approver: "developer"
+    description: "Validate test coverage and edge cases"
+
+depends_on: []
+blocks: ["SPEC-2026-Q2-003"]
+
+eval:
+  unit_test_coverage_min: 90
+  integration_test_required: true
+  e2e_test_required: false
+  linting_must_pass: true
+  type_check_must_pass: true

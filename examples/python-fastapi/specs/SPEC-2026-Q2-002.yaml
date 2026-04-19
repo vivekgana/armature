@@ -1,0 +1,54 @@
+spec_id: "SPEC-2026-Q2-002"
+title: "Fix pagination off-by-one error"
+type: bugfix
+priority: medium
+author: "developer"
+date: "2026-04-16"
+
+description: |
+  The GET /items endpoint returns one fewer item than expected when
+  using offset-based pagination. Requesting page 2 with limit=10
+  skips the 11th item.
+
+root_cause: |
+  The offset calculation uses `(page - 1) * limit + 1` instead of
+  `(page - 1) * limit`. The extra +1 skips one item at each page
+  boundary.
+
+reproduction_steps:
+  - "Insert 25 items into the database"
+  - "GET /items?page=1&limit=10 -- returns items 1-10 (correct)"
+  - "GET /items?page=2&limit=10 -- returns items 12-21 (skips item 11)"
+  - "GET /items?page=3&limit=10 -- returns items 23-25 (skips item 22)"
+
+scope:
+  modules: ["app/routes"]
+  touches_api: true
+  touches_ui: false
+  modified_files_expected:
+    - "app/routes/items.py"
+
+acceptance_criteria:
+  - id: AC-1
+    description: "Page 2 with limit=10 returns items 11-20"
+    testable: true
+  - id: AC-2
+    description: "Last page returns remaining items without gaps"
+    testable: true
+  - id: AC-3
+    description: "Page 1 behavior unchanged"
+    testable: true
+
+constraints:
+  - "Fix must not change the API response schema"
+  - "Existing tests must continue to pass"
+
+depends_on: []
+blocks: []
+
+eval:
+  unit_test_coverage_min: 85
+  integration_test_required: true
+  e2e_test_required: false
+  linting_must_pass: true
+  type_check_must_pass: true

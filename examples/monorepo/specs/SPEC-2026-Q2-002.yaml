@@ -1,0 +1,46 @@
+spec_id: "SPEC-2026-Q2-002"
+title: "Investigate GraphQL gateway"
+type: spike
+priority: low
+author: "developer"
+date: "2026-04-16"
+
+question: |
+  Should we add a GraphQL gateway in front of the API and worker services?
+  What would the performance, complexity, and developer experience trade-offs
+  look like compared to the current REST approach?
+
+scope:
+  modules: ["services/api"]
+  touches_api: true
+  touches_ui: true
+
+time_box: "3 days"
+
+deliverable: |
+  A written decision document covering:
+  - GraphQL gateway architecture diagram
+  - Performance benchmarks (REST vs GraphQL for our top 5 queries)
+  - Schema stitching approach for multi-service aggregation
+  - Migration path from REST to GraphQL (can they coexist?)
+  - Go/no-go recommendation with trade-off analysis
+
+constraints:
+  - "Time-boxed to 3 days of investigation"
+  - "Must produce runnable prototype, not just a document"
+  - "Evaluate Strawberry (Python) and Apollo Server (Node) options"
+
+human_gates:
+  - gate: "findings_review"
+    approver: "developer"
+    description: "Review spike findings and go/no-go recommendation"
+
+depends_on: []
+blocks: []
+
+eval:
+  unit_test_coverage_min: 0
+  integration_test_required: false
+  e2e_test_required: false
+  linting_must_pass: true
+  type_check_must_pass: false

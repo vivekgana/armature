@@ -1,0 +1,60 @@
+spec_id: "SPEC-2026-Q2-002"
+title: "Refactor API routes to use middleware"
+type: refactor
+priority: medium
+author: "developer"
+date: "2026-04-16"
+
+description: |
+  Extract common request validation, error handling, and logging
+  from individual API route handlers into shared middleware. This
+  reduces duplication and ensures consistent error response format
+  across all endpoints.
+
+scope:
+  modules: ["src/app/api"]
+  touches_api: true
+  touches_ui: false
+  new_files_expected:
+    - "src/app/api/middleware.ts"
+    - "src/app/api/errors.ts"
+  modified_files_expected:
+    - "src/app/api/users/route.ts"
+    - "src/app/api/items/route.ts"
+
+acceptance_criteria:
+  - id: AC-1
+    description: "All API routes use shared validation middleware"
+    testable: true
+  - id: AC-2
+    description: "Error responses follow consistent JSON schema"
+    testable: true
+  - id: AC-3
+    description: "Request logging captures method, path, status, and duration"
+    testable: true
+  - id: AC-4
+    description: "Existing API behavior and response shapes unchanged"
+    testable: true
+
+constraints:
+  - "No changes to external API contracts"
+  - "Middleware must be composable (withValidation, withAuth, withLogging)"
+  - "Use Next.js native middleware patterns, no Express-style frameworks"
+
+human_gates:
+  - gate: "plan_review"
+    approver: "developer"
+    description: "Approve middleware composition pattern"
+  - gate: "code_review"
+    approver: "developer"
+    description: "Verify no API contract breaks"
+
+depends_on: []
+blocks: []
+
+eval:
+  unit_test_coverage_min: 85
+  integration_test_required: true
+  e2e_test_required: false
+  linting_must_pass: true
+  type_check_must_pass: true

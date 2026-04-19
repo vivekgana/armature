@@ -1,0 +1,38 @@
+# Armature Spec Template: Spike (Investigation)
+
+spec_id: "SPEC-YYYY-QN-NNN"
+title: ""
+type: spike
+priority: low
+author: ""
+date: ""
+
+question: |
+  The question this spike aims to answer.
+
+scope:
+  modules: []
+  touches_api: false
+  touches_ui: false
+
+time_box: "N days"
+
+deliverable: |
+  What the spike must produce (document, prototype, benchmark, etc.)
+
+constraints: []
+
+human_gates:
+  - gate: "findings_review"
+    approver: ""
+    description: "Review spike findings and recommendation"
+
+depends_on: []
+blocks: []
+
+eval:
+  unit_test_coverage_min: 0
+  integration_test_required: false
+  e2e_test_required: false
+  linting_must_pass: false
+  type_check_must_pass: false

@@ -55,6 +55,16 @@ heal:
   healers:
     lint: { auto_fix: true }
 
+specs:
+  enabled: true
+  dir: "specs/"
+  templates_dir: "specs/templates/"
+  id_pattern: "^SPEC-\\d{4}-Q[1-4]-\\d{3}$"
+  required_fields: [spec_id, title, type, description, acceptance_criteria]
+  traceability:
+    enabled: true
+    pattern: "(SPEC-\\d{4}-Q\\d-\\d{3})\\s*/\\s*(AC-\\d+)"
+
 integrations:
   claude_code: { enabled: true }
   github_actions: { enabled: true }
