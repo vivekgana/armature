@@ -1,0 +1,69 @@
+spec_id: "SPEC-2026-Q2-001"
+title: "Add shared auth middleware package"
+type: feature
+priority: high
+author: "developer"
+date: "2026-04-15"
+
+description: |
+  Create a shared authentication middleware package in packages/shared/
+  that both the API service and worker service can consume. The middleware
+  should validate JWT tokens, extract user context, and provide typed
+  request decorators. This eliminates duplicate auth logic across services.
+
+scope:
+  modules: ["packages/shared", "services/api", "services/worker"]
+  touches_api: true
+  touches_ui: false
+  new_files_expected:
+    - "packages/shared/auth/__init__.py"
+    - "packages/shared/auth/middleware.py"
+    - "packages/shared/auth/tokens.py"
+  modified_files_expected:
+    - "services/api/main.py"
+    - "services/worker/main.py"
+    - "packages/shared/__init__.py"
+
+acceptance_criteria:
+  - id: AC-1
+    description: "Auth middleware validates JWT tokens from Authorization header"
+    testable: true
+  - id: AC-2
+    description: "Invalid tokens return 401 with structured error response"
+    testable: true
+  - id: AC-3
+    description: "User context (id, roles) available in request after auth"
+    testable: true
+  - id: AC-4
+    description: "API service uses shared middleware instead of local auth"
+    testable: true
+  - id: AC-5
+    description: "Worker service uses shared middleware for webhook validation"
+    testable: true
+
+constraints:
+  - "Package must work with both FastAPI (api) and Celery (worker)"
+  - "No circular dependencies between packages/shared and services"
+  - "Token validation must support RS256 and HS256 algorithms"
+  - "Shared package versioned independently via packages/shared/pyproject.toml"
+
+human_gates:
+  - gate: "plan_review"
+    approver: "developer"
+    description: "Review cross-service auth architecture"
+  - gate: "code_review"
+    approver: "developer"
+    description: "Verify no circular deps, review token handling"
+  - gate: "integration_test_review"
+    approver: "developer"
+    description: "Validate auth works across both services"
+
+depends_on: []
+blocks: ["SPEC-2026-Q2-003"]
+
+eval:
+  unit_test_coverage_min: 90
+  integration_test_required: true
+  e2e_test_required: false
+  linting_must_pass: true
+  type_check_must_pass: true

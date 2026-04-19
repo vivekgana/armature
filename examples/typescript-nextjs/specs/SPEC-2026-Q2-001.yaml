@@ -1,0 +1,60 @@
+spec_id: "SPEC-2026-Q2-001"
+title: "Add dark mode toggle component"
+type: feature
+priority: medium
+author: "developer"
+date: "2026-04-15"
+
+description: |
+  Add a dark mode toggle to the application. The toggle should persist
+  the user's preference in localStorage and apply the theme via CSS
+  custom properties. The component should respect the system
+  prefers-color-scheme setting on first visit.
+
+scope:
+  modules: ["src/components", "src/lib"]
+  touches_api: false
+  touches_ui: true
+  new_files_expected:
+    - "src/components/ThemeToggle.tsx"
+    - "src/lib/theme.ts"
+  modified_files_expected:
+    - "src/app/layout.tsx"
+    - "src/app/globals.css"
+
+acceptance_criteria:
+  - id: AC-1
+    description: "Toggle switches between light and dark themes"
+    testable: true
+  - id: AC-2
+    description: "Theme preference persists across page reloads"
+    testable: true
+  - id: AC-3
+    description: "First visit respects system prefers-color-scheme"
+    testable: true
+  - id: AC-4
+    description: "No flash of unstyled content on page load"
+    testable: true
+
+constraints:
+  - "Use CSS custom properties for theming, not Tailwind dark: prefix"
+  - "No additional runtime dependencies"
+  - "Toggle accessible via keyboard (Tab + Enter/Space)"
+
+human_gates:
+  - gate: "plan_review"
+    approver: "developer"
+    description: "Review component architecture and styling approach"
+  - gate: "code_review"
+    approver: "developer"
+    description: "Review implementation"
+
+depends_on: []
+blocks: []
+
+eval:
+  unit_test_coverage_min: 80
+  integration_test_required: false
+  e2e_test_required: true
+  linting_must_pass: true
+  type_check_must_pass: true

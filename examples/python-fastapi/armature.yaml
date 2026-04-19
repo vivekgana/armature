@@ -65,6 +65,16 @@ heal:
       enabled: true
       auto_fix: false
 
+specs:
+  enabled: true
+  dir: "specs/"
+  templates_dir: "specs/templates/"
+  id_pattern: "^SPEC-\\d{4}-Q[1-4]-\\d{3}$"
+  required_fields: [spec_id, title, type, description, acceptance_criteria]
+  traceability:
+    enabled: true
+    pattern: "(SPEC-\\d{4}-Q\\d-\\d{3})\\s*/\\s*(AC-\\d+)"
+
 integrations:
   claude_code:
     enabled: true

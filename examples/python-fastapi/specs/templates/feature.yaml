@@ -1,0 +1,44 @@
+# Armature Spec Template: Feature
+# Copy this file and fill in the values for your feature spec.
+
+spec_id: "SPEC-YYYY-QN-NNN"    # e.g. SPEC-2026-Q2-001
+title: ""                        # short title
+type: feature
+priority: medium                 # low | medium | high | critical
+author: ""
+date: ""                         # YYYY-MM-DD
+
+description: |
+  What needs to be built and why.
+
+scope:
+  modules: []                    # affected source directories
+  touches_api: false
+  touches_ui: false
+  new_files_expected: []
+  modified_files_expected: []
+
+acceptance_criteria:
+  - id: AC-1
+    description: ""
+    testable: true
+
+constraints: []
+
+human_gates:
+  - gate: "plan_review"
+    approver: ""
+    description: "Review implementation plan"
+  - gate: "code_review"
+    approver: ""
+    description: "Review generated code"
+
+depends_on: []
+blocks: []
+
+eval:
+  unit_test_coverage_min: 80
+  integration_test_required: false
+  e2e_test_required: false
+  linting_must_pass: true
+  type_check_must_pass: true

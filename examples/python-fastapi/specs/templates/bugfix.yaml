@@ -1,0 +1,43 @@
+# Armature Spec Template: Bugfix
+# Copy this file and fill in the values for your bugfix spec.
+
+spec_id: "SPEC-YYYY-QN-NNN"
+title: ""
+type: bugfix
+priority: medium
+author: ""
+date: ""
+
+description: |
+  What is broken and what the user observes.
+
+root_cause: |
+  Why the bug happens (fill in after investigation).
+
+reproduction_steps:
+  - "Step 1"
+  - "Step 2"
+  - "Observe: ..."
+
+scope:
+  modules: []
+  touches_api: false
+  touches_ui: false
+  modified_files_expected: []
+
+acceptance_criteria:
+  - id: AC-1
+    description: ""
+    testable: true
+
+constraints: []
+
+depends_on: []
+blocks: []
+
+eval:
+  unit_test_coverage_min: 80
+  integration_test_required: false
+  e2e_test_required: false
+  linting_must_pass: true
+  type_check_must_pass: true
