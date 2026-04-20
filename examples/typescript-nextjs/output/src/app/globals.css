@@ -1,0 +1,30 @@
+/* SPEC-2026-Q2-001 / AC-1 — CSS custom properties for dark mode theming */
+
+:root,
+[data-theme="light"] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --text-primary: #1a1a1a;
+  --text-secondary: #666666;
+  --border-color: #e0e0e0;
+  --toggle-bg: #f0f0f0;
+  --toggle-fg: #333333;
+}
+
+[data-theme="dark"] {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2d2d2d;
+  --text-primary: #f0f0f0;
+  --text-secondary: #a0a0a0;
+  --border-color: #404040;
+  --toggle-bg: #333333;
+  --toggle-fg: #f0f0f0;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: system-ui, -apple-system, sans-serif;
+  margin: 0;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
