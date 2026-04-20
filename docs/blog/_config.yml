@@ -1,0 +1,17 @@
+title: Armature Blog
+description: Harness engineering framework for AI coding agents
+baseurl: "/armature/blog"
+url: "https://vivekgana.github.io"
+theme: minima
+markdown: kramdown
+
+plugins:
+  - jekyll-seo-tag
+
+author:
+  name: Vivek Gana
+  url: https://github.com/vivekgana
+
+social:
+  links:
+    - https://github.com/vivekgana/armature
