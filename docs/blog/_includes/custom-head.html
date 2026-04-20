@@ -1,0 +1,14 @@
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Jekyll renders ```mermaid blocks as <pre><code class="language-mermaid">
+    // Convert them to <div class="mermaid"> so mermaid.js can render them
+    document.querySelectorAll("pre code.language-mermaid").forEach(function (codeBlock) {
+      var div = document.createElement("div");
+      div.className = "mermaid";
+      div.textContent = codeBlock.textContent;
+      codeBlock.parentElement.replaceWith(div);
+    });
+    mermaid.initialize({ startOnLoad: true, theme: "default" });
+  });
+</script>
