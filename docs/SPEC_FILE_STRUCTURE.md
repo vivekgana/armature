@@ -25,6 +25,52 @@ your-project/
       SPEC-2026-Q2-001_cost.jsonl  # token/cost log (auto-generated)
 ```
 
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#2196F3', 'lineColor': '#333'}}}%%
+flowchart TB
+    Root["📁 your-project/"]
+    Config["⚙️ armature.yaml\nProject config"]
+    Specs["📂 specs/"]
+    Templates["📂 templates/"]
+    Dotdir["📂 .armature/"]
+    Baselines["📂 baselines/"]
+    BudgetDir["📂 budget/"]
+
+    Spec1["📄 SPEC-2026-Q2-001.yaml"]
+    Spec2["📄 SPEC-2026-Q2-002.yaml"]
+    Tmpl1["📄 feature.yaml"]
+    Tmpl2["📄 bugfix.yaml"]
+    Base1["📄 SPEC-2026-Q2-001.json"]
+    Cost1["📄 SPEC-2026-Q2-001_cost.jsonl"]
+
+    Root --> Config
+    Root --> Specs
+    Root --> Dotdir
+    Specs --> Spec1
+    Specs --> Spec2
+    Specs --> Templates
+    Templates --> Tmpl1
+    Templates --> Tmpl2
+    Dotdir --> Baselines
+    Dotdir --> BudgetDir
+    Baselines --> Base1
+    BudgetDir --> Cost1
+
+    style Root fill:#1a1a2e,color:#fff,stroke:#e94560,stroke-width:2px
+    style Config fill:#FF9800,color:#fff,stroke:#E65100
+    style Specs fill:#4CAF50,color:#fff,stroke:#2E7D32
+    style Templates fill:#81C784,color:#000,stroke:#2E7D32
+    style Dotdir fill:#9C27B0,color:#fff,stroke:#6A1B9A
+    style Baselines fill:#CE93D8,color:#000,stroke:#6A1B9A
+    style BudgetDir fill:#CE93D8,color:#000,stroke:#6A1B9A
+    style Spec1 fill:#A5D6A7,color:#000,stroke:#2E7D32
+    style Spec2 fill:#A5D6A7,color:#000,stroke:#2E7D32
+    style Tmpl1 fill:#C8E6C9,color:#000,stroke:#2E7D32
+    style Tmpl2 fill:#C8E6C9,color:#000,stroke:#2E7D32
+    style Base1 fill:#E1BEE7,color:#000,stroke:#6A1B9A
+    style Cost1 fill:#E1BEE7,color:#000,stroke:#6A1B9A
+```
+
 ## Enabling Specs in armature.yaml
 
 ```yaml
@@ -62,6 +108,31 @@ The ID is used as:
 - Baseline key: `.armature/baselines/SPEC-2026-Q2-001.json`
 - CLI argument: `armature pre-dev SPEC-2026-Q2-001`
 - Test traceability: `SPEC-2026-Q2-001 / AC-1` in test docstrings
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#FF9800', 'lineColor': '#333'}}}%%
+flowchart LR
+    ID["🔑 SPEC-2026-Q2-001"]
+
+    File["📄 Spec File\nspecs/SPEC-2026-Q2-001.yaml"]
+    Baseline["📊 Baseline\n.armature/baselines/\nSPEC-2026-Q2-001.json"]
+    Budget["💰 Budget Log\n.armature/budget/\nSPEC-2026-Q2-001_cost.jsonl"]
+    CLI["⌨️ CLI Argument\narmature pre-dev\nSPEC-2026-Q2-001"]
+    Test["🧪 Test Docstring\nSPEC-2026-Q2-001 / AC-1"]
+
+    ID --> File
+    ID --> Baseline
+    ID --> Budget
+    ID --> CLI
+    ID --> Test
+
+    style ID fill:#FF9800,color:#fff,stroke:#E65100,stroke-width:3px
+    style File fill:#4CAF50,color:#fff,stroke:#2E7D32
+    style Baseline fill:#2196F3,color:#fff,stroke:#1565C0
+    style Budget fill:#9C27B0,color:#fff,stroke:#6A1B9A
+    style CLI fill:#f44336,color:#fff,stroke:#C62828
+    style Test fill:#009688,color:#fff,stroke:#00695C
+```
 
 ## Spec File Format (YAML)
 

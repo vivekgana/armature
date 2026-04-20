@@ -18,39 +18,68 @@ Spec-driven development treats a **structured specification** as the single sour
 - **On the loop, not in the loop** -- invest in the harness that produces correct output, don't just review every line (from Kief Morris).
 - **Verify after every task, not just at the end** -- catch breakage at generation time.
 
-```
- SPEC (human writes intent)
-   |
-   v
- VALIDATE (no LLM -- check deps, cycles, schema)     <-- Instant, deterministic
-   |
-   v
- AUDIT (LLM finds ambiguities, gaps, contradictions)  <-- Human reviews findings
-   |
-   v
- BUILD PLAN (task graph with narrow context per task)  <-- Human approves / edits
-   |
-   v
- TEST PLAN (3-tier: unit, integration, e2e)            <-- Human validates strategy
-   |
-   v
- BUILD (task-by-task with verify + self-fix loop)      <-- Human reviews each diff
-   |                                                       (verify runs after each task;
-   |                                                        on failure: self-fix up to 3x)
-   v
- UNIT TESTS (Claude writes + runs)                     <-- Human validates logic + coverage
-   |
-   v
- INTEGRATION TESTS (Claude writes + runs)              <-- Human validates boundaries
-   |
-   v
- E2E / PLAYWRIGHT (Claude writes + runs)               <-- Human validates user journeys
-   |
-   v
- TRACEABILITY + SELF-REVIEW                            <-- Human final sign-off
-   |
-   v
- DEPLOY
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#2196F3', 'lineColor': '#333'}}}%%
+flowchart TB
+    Spec["📝 1. SPEC\nHuman writes intent"]
+    Validate["🔍 2. VALIDATE\nNo LLM — deps, cycles, schema"]
+    Audit["🤖 3. AUDIT\nLLM finds gaps & ambiguities"]
+    Plan["📋 4. BUILD PLAN\nTask graph + narrow context"]
+    Build["🔨 5. BUILD\nTask-by-task + verify loop"]
+    TestPlan["📐 6. TEST PLAN\n3-tier: unit, integration, e2e"]
+    Unit["🧪 7. UNIT TESTS\nClaude writes + runs"]
+    Integ["🔗 8. INTEGRATION\nClaude writes + runs"]
+    E2E["🌐 9. E2E / PLAYWRIGHT\nClaude writes + runs"]
+    Trace["📊 10. TRACEABILITY\n+ Self-Review"]
+    Deploy["🚀 11. DEPLOY"]
+
+    HG1{"🧑 Human\nReviews"}
+    HG2{"🧑 Human\nApproves"}
+    HG3{"🧑 Human\nReviews"}
+    HG4{"🧑 Human\nApproves"}
+    HG5{"🧑 Human\nValidates"}
+    HG6{"🧑 Human\nValidates"}
+    HG7{"🧑 Human\nValidates"}
+    HG8{"🧑 Human\nSign-off"}
+
+    Spec --> Validate
+    Validate --> Audit
+    Audit --> HG1
+    HG1 --> Plan
+    Plan --> HG2
+    HG2 --> Build
+    Build --> HG3
+    HG3 --> TestPlan
+    TestPlan --> HG4
+    HG4 --> Unit
+    Unit --> HG5
+    HG5 --> Integ
+    Integ --> HG6
+    HG6 --> E2E
+    E2E --> HG7
+    HG7 --> Trace
+    Trace --> HG8
+    HG8 --> Deploy
+
+    style Spec fill:#FF9800,color:#fff,stroke:#E65100
+    style Validate fill:#4CAF50,color:#fff,stroke:#2E7D32
+    style Audit fill:#2196F3,color:#fff,stroke:#1565C0
+    style Plan fill:#9C27B0,color:#fff,stroke:#6A1B9A
+    style Build fill:#009688,color:#fff,stroke:#00695C
+    style TestPlan fill:#3F51B5,color:#fff,stroke:#1A237E
+    style Unit fill:#00BCD4,color:#fff,stroke:#006064
+    style Integ fill:#8BC34A,color:#fff,stroke:#33691E
+    style E2E fill:#FF5722,color:#fff,stroke:#BF360C
+    style Trace fill:#607D8B,color:#fff,stroke:#263238
+    style Deploy fill:#4CAF50,color:#fff,stroke:#1B5E20
+    style HG1 fill:#FFCDD2,color:#000,stroke:#C62828
+    style HG2 fill:#FFCDD2,color:#000,stroke:#C62828
+    style HG3 fill:#FFCDD2,color:#000,stroke:#C62828
+    style HG4 fill:#FFCDD2,color:#000,stroke:#C62828
+    style HG5 fill:#FFCDD2,color:#000,stroke:#C62828
+    style HG6 fill:#FFCDD2,color:#000,stroke:#C62828
+    style HG7 fill:#FFCDD2,color:#000,stroke:#C62828
+    style HG8 fill:#FFCDD2,color:#000,stroke:#C62828
 ```
 
 ---
@@ -442,6 +471,24 @@ You: "Execute the approved build plan for SPEC-2026-Q2-001"
 └─────────────────────────────────────────────────┘
 ```
 
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#009688', 'lineColor': '#333'}}}%%
+flowchart TB
+    Start["🔨 Run Task\nGenerate/modify code"] --> Verify{"🔍 Run Verify\nCommand"}
+    Verify -->|"✅ Pass"| Done["✅ Task Complete\nProceed to next"]
+    Verify -->|"❌ Fail"| Check{"Attempt\n≤ 3?"}
+    Check -->|"Yes"| Fix["🔧 Self-Fix\nRead error, fix issue"]
+    Fix --> Verify
+    Check -->|"No (3 failures)"| Escalate["🚨 ESCALATE\nStop & ask human"]
+
+    style Start fill:#9C27B0,color:#fff,stroke:#6A1B9A
+    style Verify fill:#FFC107,color:#000,stroke:#FF8F00,stroke-width:2px
+    style Done fill:#4CAF50,color:#fff,stroke:#2E7D32
+    style Check fill:#2196F3,color:#fff,stroke:#1565C0
+    style Fix fill:#FF9800,color:#fff,stroke:#E65100
+    style Escalate fill:#f44336,color:#fff,stroke:#C62828
+```
+
 **Verify-fix loop rules:**
 - After each file edit, run the task's `verify` command immediately
 - If verify fails, Claude reads the error output and attempts a fix
@@ -496,6 +543,37 @@ After all build tasks complete, the human reviews:
 - [ ] The combined diff makes sense as a whole
 
 ### 3.6 Phase 6: Test Plan Design (Claude + Human Gate)
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#2196F3', 'lineColor': '#333'}}}%%
+flowchart TB
+    subgraph Pyramid["Test Pyramid"]
+        direction TB
+        E2E["🌐 E2E / Playwright\nFull user journeys\nSlowest, fewest tests"]
+        Integration["🔗 Integration Tests\nModule boundaries, Delta writes\nMedium speed, medium count"]
+        Unit["🧪 Unit Tests\nIsolated logic, edge cases\nFastest, most tests"]
+    end
+
+    E2E --> Integration
+    Integration --> Unit
+
+    Spec["📄 Spec ACs"] -->|"maps to"| Unit
+    Spec -->|"maps to"| Integration
+    Spec -->|"maps to"| E2E
+
+    Matrix["📋 Traceability Matrix\nEvery AC → at least one test\nat each appropriate tier"]
+
+    Unit --> Matrix
+    Integration --> Matrix
+    E2E --> Matrix
+
+    style E2E fill:#f44336,color:#fff,stroke:#C62828,stroke-width:2px
+    style Integration fill:#FF9800,color:#fff,stroke:#E65100,stroke-width:2px
+    style Unit fill:#4CAF50,color:#fff,stroke:#2E7D32,stroke-width:2px
+    style Spec fill:#2196F3,color:#fff,stroke:#1565C0
+    style Matrix fill:#9C27B0,color:#fff,stroke:#6A1B9A
+    style Pyramid fill:#FAFAFA,stroke:#E0E0E0
+```
 
 Before writing any test code, Claude produces a **test plan** that the human must approve. This prevents wasted effort writing tests that miss the point or test the wrong thing.
 
