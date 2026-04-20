@@ -1,6 +1,6 @@
 title: Armature Blog
 description: Harness engineering framework for AI coding agents
-baseurl: "/armature/blog"
+baseurl: "/armature"
 url: "https://vivekgana.github.io"
 theme: minima
 markdown: kramdown
