@@ -2,7 +2,7 @@
 layout: default
 title: "Introducing Armature: Governance for AI Coding Agents"
 date: 2026-04-20
-author: Vivek Gana
+author: Ganapathi Ekambaram
 description: "How Armature brings budget control, quality gates, and spec traceability to AI-assisted development."
 image: https://raw.githubusercontent.com/vivekgana/armature/main/docs/blog/assets/armature-banner.png
 ---
@@ -37,10 +37,57 @@ Armature answers all of them — automatically, during development, not after.
 | **GC** | Background agents detect drift, dead code, stale docs |
 | **Self-Heal** | Auto-fix pipeline for lint and type errors |
 
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#4CAF50', 'primaryTextColor': '#fff', 'lineColor': '#333', 'secondaryColor': '#2196F3'}}}%%
+flowchart TB
+    Agent["🤖 AI Coding Agent"]
+
+    Budget["💰 Budget\nToken & cost tracking\nCircuit breakers"]
+    Quality["✅ Quality\nLint, type-check, tests\nQuality gates"]
+    Arch["🏗️ Architecture\nLayer boundaries\nImport enforcement"]
+    Context["📋 Context\nProgressive disclosure\nNarrow scope"]
+    GC["🧹 GC\nDrift detection\nDead code removal"]
+    Heal["🔧 Self-Heal\nAuto-fix lint errors\n3-attempt pipeline"]
+
+    Budget --> Agent
+    Quality --> Agent
+    Arch --> Agent
+    Context --> Agent
+    GC --> Agent
+    Heal --> Agent
+
+    style Agent fill:#1a1a2e,color:#fff,stroke:#e94560,stroke-width:3px
+    style Budget fill:#4CAF50,color:#fff,stroke:#2E7D32,stroke-width:2px
+    style Quality fill:#2196F3,color:#fff,stroke:#1565C0,stroke-width:2px
+    style Arch fill:#9C27B0,color:#fff,stroke:#6A1B9A,stroke-width:2px
+    style Context fill:#FF9800,color:#fff,stroke:#E65100,stroke-width:2px
+    style GC fill:#f44336,color:#fff,stroke:#C62828,stroke-width:2px
+    style Heal fill:#009688,color:#fff,stroke:#00695C,stroke-width:2px
+```
+
 ## Spec-Driven Workflow
 
-```
-Write Spec → armature pre-dev → Develop → armature post-dev → Merge
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#2196F3', 'lineColor': '#333'}}}%%
+flowchart LR
+    A["📝 Write Spec"] --> B["🔍 pre-dev\nCapture baseline"]
+    B --> C["🤖 Develop\nAgent writes code"]
+    C --> D{"post-write\nhook"}
+    D -->|"lint + type\ncheck pass"| C
+    D -->|"all done"| E["📊 post-dev\nRegression check"]
+    E --> F["💰 Budget\nReport"]
+    F --> G{"🧑 Human\nGate"}
+    G -->|"approved"| H["✅ Merge"]
+    G -->|"rejected"| C
+
+    style A fill:#FF9800,color:#fff,stroke:#E65100
+    style B fill:#2196F3,color:#fff,stroke:#1565C0
+    style C fill:#9C27B0,color:#fff,stroke:#6A1B9A
+    style D fill:#FFC107,color:#000,stroke:#FF8F00
+    style E fill:#2196F3,color:#fff,stroke:#1565C0
+    style F fill:#4CAF50,color:#fff,stroke:#2E7D32
+    style G fill:#f44336,color:#fff,stroke:#C62828
+    style H fill:#4CAF50,color:#fff,stroke:#2E7D32
 ```
 
 Every spec is a YAML contract:
@@ -96,6 +143,34 @@ my-monorepo    vs markman      | MEETS=2, GAPS=4
 ```
 
 The gaps are where Armature adds value: human gates, spec traceability, quality thresholds, and budget controls that Ossature doesn't provide.
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#673AB7'}}}%%
+flowchart LR
+    Spec["📄 Spec\nSPEC-2026-Q2-001"] --> AC1["AC-1\nRegister returns 201"]
+    Spec --> AC2["AC-2\nLogin returns JWT"]
+    Spec --> AC3["AC-3\n401 on bad creds"]
+
+    AC1 --> UT1["🧪 Unit Test\ntest_register_creates_user"]
+    AC2 --> UT2["🧪 Unit Test\ntest_valid_credentials_return_token"]
+    AC3 --> UT3["🧪 Unit Test\ntest_invalid_password_returns_none"]
+
+    UT1 --> IT["🔗 Integration\ntest_auth_endpoint"]
+    UT2 --> IT
+    UT3 --> IT
+
+    IT --> TM["📋 Traceability\nMatrix: 100% covered"]
+
+    style Spec fill:#FF9800,color:#fff,stroke:#E65100
+    style AC1 fill:#FFC107,color:#000,stroke:#FF8F00
+    style AC2 fill:#FFC107,color:#000,stroke:#FF8F00
+    style AC3 fill:#FFC107,color:#000,stroke:#FF8F00
+    style UT1 fill:#2196F3,color:#fff,stroke:#1565C0
+    style UT2 fill:#2196F3,color:#fff,stroke:#1565C0
+    style UT3 fill:#2196F3,color:#fff,stroke:#1565C0
+    style IT fill:#9C27B0,color:#fff,stroke:#6A1B9A
+    style TM fill:#4CAF50,color:#fff,stroke:#2E7D32
+```
 
 ## MCP Integration
 
