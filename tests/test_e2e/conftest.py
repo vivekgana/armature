@@ -29,3 +29,27 @@ def markman_project(ossature_fixtures_dir: Path) -> Path:
 def math_quest_project(ossature_fixtures_dir: Path) -> Path:
     """Math Quest: Lua game (unsupported language test)."""
     return ossature_fixtures_dir / "math_quest"
+
+
+@pytest.fixture(scope="session")
+def examples_dir() -> Path:
+    """Return path to example projects."""
+    return Path(__file__).parent.parent.parent / "examples"
+
+
+@pytest.fixture(scope="session")
+def python_fastapi_project(examples_dir: Path) -> Path:
+    """Python FastAPI example project with specs."""
+    return examples_dir / "python-fastapi"
+
+
+@pytest.fixture(scope="session")
+def typescript_nextjs_project(examples_dir: Path) -> Path:
+    """TypeScript Next.js example project with specs."""
+    return examples_dir / "typescript-nextjs"
+
+
+@pytest.fixture(scope="session")
+def monorepo_project(examples_dir: Path) -> Path:
+    """Monorepo example project with specs."""
+    return examples_dir / "monorepo"
