@@ -1,6 +1,6 @@
 # Armature: The Invisible Skeleton That Gives Shape to What AI Agents Produce
 
-![Armature Banner](assets/armature-banner.svg)
+![Armature Banner](assets/armature-banner.png)
 
 *How we built a harness engineering framework that turns AI coding agents from unpredictable code generators into governed, budget-aware, quality-controlled development partners.*
 
