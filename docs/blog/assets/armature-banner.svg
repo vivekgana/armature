@@ -1,0 +1,169 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0c29"/>
+      <stop offset="50%" style="stop-color:#302b63"/>
+      <stop offset="100%" style="stop-color:#24243e"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#e94560"/>
+      <stop offset="50%" style="stop-color:#ff6b6b"/>
+      <stop offset="100%" style="stop-color:#e94560"/>
+    </linearGradient>
+    <linearGradient id="pillarGreen" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#66BB6A"/>
+      <stop offset="100%" style="stop-color:#2E7D32"/>
+    </linearGradient>
+    <linearGradient id="pillarBlue" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#42A5F5"/>
+      <stop offset="100%" style="stop-color:#1565C0"/>
+    </linearGradient>
+    <linearGradient id="pillarPurple" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#AB47BC"/>
+      <stop offset="100%" style="stop-color:#6A1B9A"/>
+    </linearGradient>
+    <linearGradient id="pillarOrange" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFA726"/>
+      <stop offset="100%" style="stop-color:#E65100"/>
+    </linearGradient>
+    <linearGradient id="pillarRed" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#EF5350"/>
+      <stop offset="100%" style="stop-color:#C62828"/>
+    </linearGradient>
+    <linearGradient id="pillarTeal" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#26A69A"/>
+      <stop offset="100%" style="stop-color:#00695C"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+    <filter id="glowFilter">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <!-- Grid pattern for tech feel -->
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+    </pattern>
+    <!-- Dot pattern -->
+    <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="10" cy="10" r="0.8" fill="rgba(255,255,255,0.05)"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+
+  <!-- Decorative circles -->
+  <circle cx="950" cy="100" r="200" fill="none" stroke="rgba(233,69,96,0.08)" stroke-width="1"/>
+  <circle cx="950" cy="100" r="280" fill="none" stroke="rgba(233,69,96,0.05)" stroke-width="1"/>
+  <circle cx="150" cy="530" r="150" fill="none" stroke="rgba(33,150,243,0.08)" stroke-width="1"/>
+  <circle cx="150" cy="530" r="220" fill="none" stroke="rgba(33,150,243,0.05)" stroke-width="1"/>
+
+  <!-- Accent line at top -->
+  <rect x="0" y="0" width="1200" height="4" fill="url(#glow)"/>
+
+  <!-- Main title area -->
+  <text x="600" y="160" text-anchor="middle" fill="#ffffff" font-size="72" font-weight="700" letter-spacing="6" filter="url(#glowFilter)">ARMATURE</text>
+  <text x="600" y="205" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="18" font-weight="400" letter-spacing="8" text-transform="uppercase">HARNESS ENGINEERING FRAMEWORK</text>
+
+  <!-- Divider -->
+  <line x1="450" y1="230" x2="750" y2="230" stroke="url(#glow)" stroke-width="2" opacity="0.6"/>
+
+  <!-- Tagline -->
+  <text x="600" y="270" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-size="22" font-weight="300">The invisible skeleton that governs what AI agents produce</text>
+
+  <!-- Six Pillars visual -->
+  <!-- Pillar 1: Budget -->
+  <g transform="translate(145, 320)" filter="url(#shadow)">
+    <rect x="0" y="0" width="140" height="160" rx="12" fill="url(#pillarGreen)" opacity="0.9"/>
+    <text x="70" y="45" text-anchor="middle" fill="#fff" font-size="32">&#x1F4B0;</text>
+    <text x="70" y="80" text-anchor="middle" fill="#fff" font-size="16" font-weight="600">Budget</text>
+    <text x="70" y="105" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="11">Token tracking</text>
+    <text x="70" y="122" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="11">Circuit breakers</text>
+    <text x="70" y="139" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="11">Cost control</text>
+  </g>
+
+  <!-- Pillar 2: Quality -->
+  <g transform="translate(305, 320)" filter="url(#shadow)">
+    <rect x="0" y="0" width="140" height="160" rx="12" fill="url(#pillarBlue)" opacity="0.9"/>
+    <text x="70" y="45" text-anchor="middle" fill="#fff" font-size="32">&#x2705;</text>
+    <text x="70" y="80" text-anchor="middle" fill="#fff" font-size="16" font-weight="600">Quality</text>
+    <text x="70" y="105" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="11">Lint &amp; type-check</text>
+    <text x="70" y="122" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="11">Test scoring</text>
+    <text x="70" y="139" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="11">Quality gates</text>
+  </g>
+
+  <!-- Pillar 3: Architecture -->
+  <g transform="translate(465, 320)" filter="url(#shadow)">
+    <rect x="0" y="0" width="140" height="160" rx="12" fill="url(#pillarPurple)" opacity="0.9"/>
+    <text x="70" y="45" text-anchor="middle" fill="#fff" font-size="32">&#x1F3D7;</text>
+    <text x="70" y="80" text-anchor="middle" fill="#fff" font-size="16" font-weight="600">Architecture</text>
+    <text x="70" y="105" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="11">Layer boundaries</text>
+    <text x="70" y="122" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="11">Import rules</text>
+    <text x="70" y="139" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="11">Enforcement</text>
+  </g>
+
+  <!-- Pillar 4: Context -->
+  <g transform="translate(625, 320)" filter="url(#shadow)">
+    <rect x="0" y="0" width="140" height="160" rx="12" fill="url(#pillarOrange)" opacity="0.9"/>
+    <text x="70" y="45" text-anchor="middle" fill="#fff" font-size="32">&#x1F4CB;</text>
+    <text x="70" y="80" text-anchor="middle" fill="#fff" font-size="16" font-weight="600">Context</text>
+    <text x="70" y="105" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="11">Progressive</text>
+    <text x="70" y="122" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="11">disclosure</text>
+    <text x="70" y="139" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="11">Narrow scope</text>
+  </g>
+
+  <!-- Pillar 5: GC -->
+  <g transform="translate(785, 320)" filter="url(#shadow)">
+    <rect x="0" y="0" width="140" height="160" rx="12" fill="url(#pillarRed)" opacity="0.9"/>
+    <text x="70" y="45" text-anchor="middle" fill="#fff" font-size="32">&#x1F9F9;</text>
+    <text x="70" y="80" text-anchor="middle" fill="#fff" font-size="16" font-weight="600">GC</text>
+    <text x="70" y="105" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="11">Drift detection</text>
+    <text x="70" y="122" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="11">Dead code</text>
+    <text x="70" y="139" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="11">Doc staleness</text>
+  </g>
+
+  <!-- Pillar 6: Self-Heal -->
+  <g transform="translate(945, 320)" filter="url(#shadow)">
+    <rect x="0" y="0" width="140" height="160" rx="12" fill="url(#pillarTeal)" opacity="0.9"/>
+    <text x="70" y="45" text-anchor="middle" fill="#fff" font-size="32">&#x1F527;</text>
+    <text x="70" y="80" text-anchor="middle" fill="#fff" font-size="16" font-weight="600">Self-Heal</text>
+    <text x="70" y="105" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="11">Auto-fix lint</text>
+    <text x="70" y="122" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="11">Type errors</text>
+    <text x="70" y="139" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="11">3-attempt loop</text>
+  </g>
+
+  <!-- Connection lines from pillars to center concept -->
+  <line x1="215" y1="315" x2="540" y2="300" stroke="rgba(102,187,106,0.3)" stroke-width="1"/>
+  <line x1="375" y1="315" x2="560" y2="300" stroke="rgba(66,165,245,0.3)" stroke-width="1"/>
+  <line x1="535" y1="315" x2="580" y2="300" stroke="rgba(171,71,188,0.3)" stroke-width="1"/>
+  <line x1="695" y1="315" x2="620" y2="300" stroke="rgba(255,167,38,0.3)" stroke-width="1"/>
+  <line x1="855" y1="315" x2="640" y2="300" stroke="rgba(239,83,80,0.3)" stroke-width="1"/>
+  <line x1="1015" y1="315" x2="660" y2="300" stroke="rgba(38,166,154,0.3)" stroke-width="1"/>
+
+  <!-- Bottom bar -->
+  <rect x="0" y="510" width="1200" height="120" fill="rgba(0,0,0,0.3)"/>
+  <text x="80" y="558" fill="rgba(255,255,255,0.5)" font-size="13" letter-spacing="3">SPEC-DRIVEN</text>
+  <text x="80" y="580" fill="rgba(255,255,255,0.5)" font-size="13" letter-spacing="3">DEVELOPMENT</text>
+
+  <text x="340" y="558" fill="rgba(255,255,255,0.5)" font-size="13" letter-spacing="3">MCP SERVER</text>
+  <text x="340" y="580" fill="rgba(255,255,255,0.5)" font-size="13" letter-spacing="3">INTEGRATION</text>
+
+  <text x="570" y="558" fill="rgba(255,255,255,0.5)" font-size="13" letter-spacing="3">CLAUDE CODE</text>
+  <text x="570" y="580" fill="rgba(255,255,255,0.5)" font-size="13" letter-spacing="3">COMPATIBLE</text>
+
+  <text x="800" y="558" fill="rgba(255,255,255,0.5)" font-size="13" letter-spacing="3">OPEN SOURCE</text>
+  <text x="800" y="580" fill="rgba(255,255,255,0.5)" font-size="13" letter-spacing="3">MIT LICENSE</text>
+
+  <!-- GitHub URL -->
+  <text x="1040" y="570" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="12">github.com/vivekgana/armature</text>
+
+  <!-- Accent line at bottom -->
+  <rect x="0" y="626" width="1200" height="4" fill="url(#glow)"/>
+</svg>
