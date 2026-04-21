@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-04-20
+
+### Added
+
+- **Spec comparison engine**: Compare armature specs against ossature output with structural diff
+- **Spec file structure**: Documentation and sample specs for all three example projects
+- **Spec output generation**: Generated output artifacts for python-fastapi, typescript-nextjs, and monorepo examples
+- **Budget tracking examples**: JSONL cost tracking files with realistic per-request token/cost data across all spec phases
+- **Budget reports**: Per-spec, per-project, and cross-project budget summary reports with phase allocation analysis
+- **Estimated vs actual cost report**: Cross-project comparison of tier-cap budgets against actual token/cost usage
+- **Test cases report**: Cross-project test phase analysis with coverage matrix, quality gates, and test file inventory
+- **Blog and social media content**: Medium article, dev.to post, and social media launch content
+- **GitHub Pages**: Documentation site at vivekgana.github.io/armature with Mermaid diagram rendering
+- **Hero banner**: SVG/PNG banner image for documentation and articles
+- **Ossature compatibility bridge**: Bridge layer for ossature integration
+
+### Fixed
+
+- Mermaid diagram rendering on GitHub Pages (explicit `mermaid.run()` with layout override)
+- GitHub Pages baseurl configuration for correct asset loading
+
 ## [0.1.0] - 2026-04-17
 
 ### Added
@@ -32,5 +53,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Tool execution restricted to validated allowlist
 - Cache integrity verification with SHA-256 checksums
 
-[Unreleased]: https://github.com/vivekgana/armature/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/vivekgana/armature/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/vivekgana/armature/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/vivekgana/armature/releases/tag/v0.1.0
