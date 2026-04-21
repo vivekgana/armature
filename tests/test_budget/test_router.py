@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from armature.budget.router import ModelRouter, RoutingDecision, get_pricing, PROVIDERS, CAPABILITIES
+from armature.budget.router import PROVIDERS, ModelRouter, RoutingDecision, get_pricing
 
 
 class TestModelRouter:

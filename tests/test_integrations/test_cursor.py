@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from armature.config.schema import ArmatureConfig
 from armature.integrations.cursor import generate_cursor_rules
 

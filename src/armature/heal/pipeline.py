@@ -7,7 +7,7 @@ Saves structured failure reports for human review when circuit opens.
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from armature._internal.output import console
@@ -60,7 +60,7 @@ class HealPipeline:
             if result.ok:
                 return HealResult("lint", attempt, fixed=True, remaining_errors=0, details="No lint violations")
 
-            violation_count = len([l for l in result.stdout.strip().split("\n") if l.strip()])
+            violation_count = len([line for line in result.stdout.strip().split("\n") if line.strip()])
 
             # Attempt auto-fix
             run_tool(["ruff", "check", ".", "--fix"], cwd=self.root)
@@ -72,7 +72,7 @@ class HealPipeline:
                 return HealResult("lint", attempt, fixed=True, remaining_errors=0,
                                   details=f"Fixed {violation_count} violations on attempt {attempt}")
 
-            remaining = len([l for l in recheck.stdout.strip().split("\n") if l.strip()])
+            remaining = len([line for line in recheck.stdout.strip().split("\n") if line.strip()])
             circuit.record_failure(f"{remaining} violations remain after ruff --fix")
 
         return HealResult("lint", self.config.max_attempts, fixed=False, remaining_errors=remaining,
@@ -91,7 +91,7 @@ class HealPipeline:
             if result.ok:
                 return HealResult("type", attempt, fixed=True, remaining_errors=0, details="No type errors")
 
-            error_lines = [l for l in result.stdout.strip().split("\n") if ": error:" in l]
+            error_lines = [line for line in result.stdout.strip().split("\n") if ": error:" in line]
             error_count = len(error_lines)
             circuit.record_failure(f"{error_count} mypy errors remain")
 
@@ -113,7 +113,7 @@ class HealPipeline:
                 return HealResult("test", attempt, fixed=True, remaining_errors=0, details="All tests pass")
 
             output = result.stdout + result.stderr
-            failure_lines = [l for l in output.split("\n") if "FAILED" in l or "ERROR" in l]
+            failure_lines = [line for line in output.split("\n") if "FAILED" in line or "ERROR" in line]
             error_count = len(failure_lines)
             circuit.record_failure(f"{error_count} test failure(s)")
 
@@ -128,7 +128,7 @@ class HealPipeline:
 
         report = {
             "spec_id": spec_id,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "results": [
                 {"failure_type": r.failure_type, "fixed": r.fixed, "attempts": r.attempt,
                  "remaining_errors": r.remaining_errors, "details": r.details}

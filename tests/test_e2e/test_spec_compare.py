@@ -9,7 +9,6 @@ import pytest
 from click.testing import CliRunner
 
 from armature.cli.main import cli
-from armature.spec.loader import load_all_specs, load_project_specs, load_spec
 from armature.spec.compare import (
     build_armature_summary,
     build_ossature_summary,
@@ -19,6 +18,7 @@ from armature.spec.compare import (
     format_spec_comparison_report,
     spec_comparison_report_to_dict,
 )
+from armature.spec.loader import load_all_specs, load_project_specs, load_spec
 
 
 @pytest.fixture()

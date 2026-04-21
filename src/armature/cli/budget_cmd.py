@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+
 import click
 
 from armature._internal.output import console, print_header
@@ -71,8 +72,8 @@ def budget_cmd(
         console.print("[yellow]Budget tracking is disabled in armature.yaml[/yellow]")
         return
 
+    from armature.budget.reporter import generate_provider_report, generate_report, generate_trend_report
     from armature.budget.tracker import SessionTracker
-    from armature.budget.reporter import generate_report, generate_provider_report, generate_trend_report
 
     tracker = SessionTracker(config.budget)
 
@@ -144,9 +145,13 @@ def _handle_benchmark(
 ) -> None:
     """Scan project scope and check if budget tiers are right-sized."""
     from pathlib import Path
+
     from armature.budget.benchmark import (
-        scan_project, calculate_benchmark, check_budget_fit,
-        format_benchmark, format_warning,
+        calculate_benchmark,
+        check_budget_fit,
+        format_benchmark,
+        format_warning,
+        scan_project,
     )
 
     root = Path.cwd()
@@ -168,11 +173,10 @@ def _handle_benchmark(
         else:
             # No tracker available -- use benchmark-only comparison with a stub tracker
             from armature.budget.calibrator import (
-                assess_quality_budget_position,
-                format_industry_comparison,
-                IndustryComparison,
-                INDUSTRY_TASK_TARGETS,
                 INDUSTRY_PHASE_TARGETS,
+                INDUSTRY_TASK_TARGETS,
+                IndustryComparison,
+                assess_quality_budget_position,
             )
             quality_pct, quality_note = assess_quality_budget_position(benchmark.recommended_tokens)
             # Build a benchmark-only comparison (no actuals)
@@ -273,9 +277,9 @@ def _handle_benchmark(
             console.print("")
             console.print(format_warning(warning))
         else:
-            console.print(f"\n  Budget tracking is disabled. To enable, add to armature.yaml:")
-            console.print(f"    budget:")
-            console.print(f"      enabled: true")
+            console.print("\n  Budget tracking is disabled. To enable, add to armature.yaml:")
+            console.print("    budget:")
+            console.print("      enabled: true")
             console.print(f"      # Recommended tier: {benchmark.recommended_tier}")
 
 
@@ -302,6 +306,7 @@ def _handle_preplan(config, preplan_file: str, complexity: str, json_output: boo
     }
     """
     from pathlib import Path
+
     from armature.budget.optimizer import AdaptiveOptimizer, TaskSpec
     from armature.budget.planner import RequestPlanner
 
@@ -413,6 +418,7 @@ def _handle_plan(plan_files: str, json_output: bool) -> None:
 def _handle_progress(config, tracker, spec_id: str, progress_file: str, complexity: str) -> None:
     """Check progress against a pre-plan."""
     from pathlib import Path
+
     from armature.budget.optimizer import AdaptiveOptimizer, TaskSpec
 
     plan_path = Path(progress_file)
@@ -493,7 +499,8 @@ def _handle_calibrate(config, spec_id: str) -> None:
         return
 
     from pathlib import Path
-    from armature.budget.benchmark import scan_project, calculate_benchmark
+
+    from armature.budget.benchmark import calculate_benchmark, scan_project
     root = Path.cwd()
     scope = scan_project(root, config)
     benchmark = calculate_benchmark(scope)
@@ -506,13 +513,13 @@ def _handle_calibrate(config, spec_id: str) -> None:
     console.print(f"  Confidence:        {profile.confidence:.2f}")
     console.print(f"  Last calibrated:   {profile.last_calibrated}")
 
-    console.print(f"\n  Task adjustments (actual/predicted ratio):")
+    console.print("\n  Task adjustments (actual/predicted ratio):")
     for task_type, adj in sorted(profile.task_adjustments.items()):
         direction = "high" if adj > 1.0 else "low"
         pct = abs(adj - 1.0) * 100
         console.print(f"    {task_type:<15} {adj:.2f}  (predictions were {pct:.0f}% too {direction})")
 
-    console.print(f"\n  Model verbosity:")
+    console.print("\n  Model verbosity:")
     for model, mult in sorted(profile.model_verbosity.items()):
         console.print(f"    {model:<15} {mult:.2f}")
 
@@ -522,6 +529,7 @@ def _handle_calibrate(config, spec_id: str) -> None:
 def _handle_calibration_status(config) -> None:
     """Show current calibration profile."""
     from pathlib import Path
+
     from armature.budget.calibrator import CalibrationStore
 
     root = Path.cwd()
@@ -538,11 +546,11 @@ def _handle_calibration_status(config) -> None:
     console.print(f"  Confidence:        {profile.confidence:.2f}")
     console.print(f"  Last calibrated:   {profile.last_calibrated}")
 
-    console.print(f"\n  Task adjustments:")
+    console.print("\n  Task adjustments:")
     for task_type, adj in sorted(profile.task_adjustments.items()):
         console.print(f"    {task_type:<15} {adj:.2f}")
 
-    console.print(f"\n  Model verbosity:")
+    console.print("\n  Model verbosity:")
     for model, mult in sorted(profile.model_verbosity.items()):
         console.print(f"    {model:<15} {mult:.2f}")
 
@@ -551,7 +559,7 @@ def _handle_calibration_status(config) -> None:
     # Show overrides from config
     overrides = config.budget.calibration
     if overrides.task_overrides or overrides.model_verbosity_overrides or overrides.cache_hit_rate_override is not None:
-        console.print(f"\n  [yellow]Manual overrides (armature.yaml):[/yellow]")
+        console.print("\n  [yellow]Manual overrides (armature.yaml):[/yellow]")
         for k, v in overrides.task_overrides.items():
             console.print(f"    task: {k} = {v}")
         for k, v in overrides.model_verbosity_overrides.items():
@@ -563,7 +571,8 @@ def _handle_calibration_status(config) -> None:
 def _handle_industry_report(config, tracker, spec_id: str, model: str) -> None:
     """Show industry benchmark comparison for a spec's actual usage."""
     from pathlib import Path
-    from armature.budget.benchmark import scan_project, calculate_benchmark
+
+    from armature.budget.benchmark import calculate_benchmark, scan_project
     from armature.budget.calibrator import compare_against_industry, format_industry_comparison
 
     root = Path.cwd()

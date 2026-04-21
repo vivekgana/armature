@@ -7,7 +7,7 @@ compares against declared budgets, and provides optimization recommendations.
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from armature._internal.validation import validate_spec_id
@@ -49,7 +49,7 @@ class SessionTracker:
         spec_id = validate_spec_id(spec_id)
         log_path = self.storage_dir / f"{spec_id}_cost.jsonl"
         entry: dict = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "spec_id": spec_id,
             "phase": phase,
             "tokens": tokens,

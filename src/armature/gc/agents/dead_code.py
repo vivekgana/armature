@@ -40,17 +40,17 @@ def _check_function_size(file_path: Path, root: Path, max_lines: int) -> list[GC
         return findings
 
     for node in ast.walk(tree):
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            if hasattr(node, "end_lineno") and node.end_lineno:
-                size = node.end_lineno - node.lineno
-                if size > max_lines:
-                    findings.append(GCFinding(
-                        agent="dead_code",
-                        category="oversized_function",
-                        file=str(file_path.relative_to(root)),
-                        message=f"{node.name}() is {size} lines (max {max_lines})",
-                        severity=Severity.WARNING,
-                    ))
+        is_func = isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        if is_func and hasattr(node, "end_lineno") and node.end_lineno:
+            size = node.end_lineno - node.lineno
+            if size > max_lines:
+                findings.append(GCFinding(
+                    agent="dead_code",
+                    category="oversized_function",
+                    file=str(file_path.relative_to(root)),
+                    message=f"{node.name}() is {size} lines (max {max_lines})",
+                    severity=Severity.WARNING,
+                ))
 
     return findings
 

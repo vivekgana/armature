@@ -2,14 +2,11 @@
 
 from __future__ import annotations
 
-import pytest
-
 from armature._internal.types import (
     BaselineSnapshot,
     CheckResult,
     CircuitState,
     Complexity,
-    GCFinding,
     HealResult,
     QualityLevel,
     Severity,

@@ -10,8 +10,8 @@ Pricing is per 1M tokens. Capability scores are 0.0-1.0 per dimension.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Sequence
 
 
 @dataclass(frozen=True)

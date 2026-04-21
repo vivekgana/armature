@@ -52,7 +52,7 @@ def generate_report(tracker: SessionTracker, spec_id: str, config: BudgetConfig)
     # Optimization suggestions
     suggestions = tracker.get_optimization_suggestions(spec_id)
     if suggestions:
-        console.print(f"\n  [yellow]Optimization suggestions:[/yellow]")
+        console.print("\n  [yellow]Optimization suggestions:[/yellow]")
         for s in suggestions:
             console.print(f"    - {s}")
 
@@ -125,7 +125,7 @@ def generate_provider_report(
     # Anomaly detection
     anomalies = detect_anomalies(tracker, spec_id, config.monitoring.anomaly_threshold)
     if anomalies:
-        console.print(f"\n  [yellow]Anomalies detected:[/yellow]")
+        console.print("\n  [yellow]Anomalies detected:[/yellow]")
         for a in anomalies:
             console.print(f"    [!] {a}")
 
@@ -166,7 +166,7 @@ def generate_trend_report(tracker: SessionTracker, limit: int = 10) -> None:
 def detect_anomalies(
     tracker: SessionTracker, spec_id: str, threshold: float = 3.0,
 ) -> list[str]:
-    """Detect cost anomalies: tasks costing >threshold× the average for their intent."""
+    """Detect cost anomalies: tasks costing >threshold x the average for their intent."""
     intent_usage = tracker.get_usage_by_intent(spec_id)
     anomalies: list[str] = []
 

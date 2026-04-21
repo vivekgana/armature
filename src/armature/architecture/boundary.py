@@ -44,10 +44,7 @@ def _import_to_layer(import_module: str, config: ArchitectureConfig) -> str | No
 def _is_shared_import(import_module: str, config: ArchitectureConfig) -> bool:
     """Check if an import is from shared infrastructure (always allowed)."""
     parts = import_module.replace(".", "/")
-    for shared in config.allowed_shared:
-        if parts.startswith(shared.rstrip("/")):
-            return True
-    return False
+    return any(parts.startswith(shared.rstrip("/")) for shared in config.allowed_shared)
 
 
 def check_boundaries(config: ArchitectureConfig, root: Path) -> list[Violation]:

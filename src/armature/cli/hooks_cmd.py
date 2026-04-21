@@ -23,31 +23,31 @@ def hooks_cmd(gen_claude: bool, gen_cursor: bool, gen_copilot: bool,
 
     generated = False
 
-    if gen_claude or gen_all and config.integrations.claude_code.enabled:
+    if gen_claude or (gen_all and config.integrations.claude_code.enabled):
         from armature.integrations.claude_code import generate_claude_code_hooks
         path = generate_claude_code_hooks(config)
         console.print(f"[green]Generated:[/green] {path}")
         generated = True
 
-    if gen_cursor or gen_all and config.integrations.cursor.enabled:
+    if gen_cursor or (gen_all and config.integrations.cursor.enabled):
         from armature.integrations.cursor import generate_cursor_rules
         path = generate_cursor_rules(config)
         console.print(f"[green]Generated:[/green] {path}")
         generated = True
 
-    if gen_copilot or gen_all and config.integrations.copilot.enabled:
+    if gen_copilot or (gen_all and config.integrations.copilot.enabled):
         from armature.integrations.copilot import generate_copilot_instructions
         path = generate_copilot_instructions(config)
         console.print(f"[green]Generated:[/green] {path}")
         generated = True
 
-    if gen_gha or gen_all and config.integrations.github_actions.enabled:
+    if gen_gha or (gen_all and config.integrations.github_actions.enabled):
         from armature.integrations.github_actions import generate_github_actions
         path = generate_github_actions(config)
         console.print(f"[green]Generated:[/green] {path}")
         generated = True
 
-    if gen_precommit or gen_all and config.integrations.pre_commit.enabled:
+    if gen_precommit or (gen_all and config.integrations.pre_commit.enabled):
         from armature.integrations.pre_commit import generate_pre_commit
         path = generate_pre_commit(config)
         console.print(f"[green]Generated:[/green] {path}")

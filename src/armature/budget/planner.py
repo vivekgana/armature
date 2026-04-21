@@ -21,8 +21,6 @@ from pathlib import Path
 
 from armature.budget.optimizer import (
     TOKENS_PER_CHAR,
-    AdaptiveOptimizer,
-    BuildBudgetPlan,
     TaskSpec,
 )
 
@@ -288,7 +286,7 @@ class RequestPlanner:
     def analyze_imports(self, file_path: str) -> list[str]:
         """Extract local imports from a Python file to build dependency chain."""
         path = self.root / file_path
-        if not path.exists() or not path.suffix == ".py":
+        if not path.exists() or path.suffix != ".py":
             return []
 
         try:
@@ -352,7 +350,7 @@ class RequestPlanner:
                 lines.append(f"    ... and {len(plan.shared_context_files) - 10} more")
 
         if plan.execution_order:
-            lines.append(f"\n  Recommended execution order (cache-optimized):")
+            lines.append("\n  Recommended execution order (cache-optimized):")
             for i, tid in enumerate(plan.execution_order, 1):
                 lines.append(f"    {i}. {tid}")
 

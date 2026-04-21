@@ -2,32 +2,27 @@
 
 from __future__ import annotations
 
-import json
-import math
 from pathlib import Path
 
 import pytest
 
+from armature.budget.benchmark import ProjectScope, calculate_benchmark
 from armature.budget.calibrator import (
+    EMA_ALPHA,
+    QUALITY_BUDGET_CURVE,
     CalibrationProfile,
     CalibrationStore,
-    EMA_ALPHA,
     IndustryComparison,
-    INDUSTRY_TASK_TARGETS,
-    QUALITY_BUDGET_CURVE,
+    _calculate_confidence,
+    _ema_update,
     apply_calibration,
     assess_quality_budget_position,
     calibrate_from_spec,
-    compare_against_industry,
     compute_efficiency_grades,
     format_industry_comparison,
-    _calculate_confidence,
-    _ema_update,
 )
-from armature.budget.benchmark import calculate_benchmark, ProjectScope
 from armature.budget.tracker import SessionTracker
 from armature.config.schema import BudgetConfig
-
 
 # --- EMA and Confidence ---
 
@@ -141,7 +136,7 @@ class TestQualityBudgetPosition:
         assert "no budget" in note.lower()
 
     def test_below_minimum(self):
-        quality, note = assess_quality_budget_position(5_000)
+        quality, _note = assess_quality_budget_position(5_000)
         assert quality == QUALITY_BUDGET_CURVE[0][1]
 
     def test_above_maximum(self):
@@ -150,7 +145,7 @@ class TestQualityBudgetPosition:
         assert "ceiling" in note.lower()
 
     def test_interpolation_500k(self):
-        quality, note = assess_quality_budget_position(500_000)
+        quality, _note = assess_quality_budget_position(500_000)
         assert 0.90 <= quality <= 0.96
 
     def test_monotonically_increasing(self):

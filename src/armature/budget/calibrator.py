@@ -23,15 +23,14 @@ from __future__ import annotations
 
 import json
 import math
-from dataclasses import dataclass, field, asdict
-from datetime import datetime, timezone
+from dataclasses import asdict, dataclass, field
+from datetime import UTC, datetime
 from pathlib import Path
 
 import yaml
 
 from armature.budget.benchmark import BudgetBenchmark
 from armature.budget.tracker import SessionTracker
-
 
 # EMA decay factor: 0.3 means 30% weight on newest spec, 70% on accumulated
 EMA_ALPHA = 0.3
@@ -116,7 +115,10 @@ _DEFAULT_PHASE_TARGETS = {
     "validate": {"read_tokens_per_loc": 3.5, "write_tokens_per_loc": 2.0, "source": "DevBench (Li et al., 2024)"},
     "audit":    {"read_tokens_per_loc": 7.5, "write_tokens_per_loc": 5.5, "source": "DevBench (Li et al., 2024)"},
     "plan":     {"read_tokens_per_loc": 7.5, "write_tokens_per_loc": 5.5, "source": "DevBench (Li et al., 2024)"},
-    "build":    {"read_tokens_per_loc": 15.0, "write_tokens_per_loc": 10.0, "source": "SWE-bench (Jimenez et al., 2024)"},
+    "build":    {
+        "read_tokens_per_loc": 15.0, "write_tokens_per_loc": 10.0,
+        "source": "SWE-bench (Jimenez et al., 2024)",
+    },
     "test":     {"read_tokens_per_loc": 11.5, "write_tokens_per_loc": 14.0, "source": "HumanEval+ (Liu et al., 2024)"},
     "review":   {"read_tokens_per_loc": 20.0, "write_tokens_per_loc": 2.0, "source": "Industry consensus"},
 }
@@ -340,8 +342,8 @@ def calibrate_from_spec(
         profile.task_adjustments[task_type] = round(updated, 3)
 
     # --- 2. Model verbosity: output ratio per model ---
-    intent_usage = tracker.get_usage_by_intent(spec_id)
-    provider_usage = tracker.get_usage_by_provider(spec_id)
+    tracker.get_usage_by_intent(spec_id)
+    tracker.get_usage_by_provider(spec_id)
 
     # Aggregate per-model input/output tokens from JSONL entries
     entries = tracker._load_entries(spec_id)
@@ -386,7 +388,7 @@ def calibrate_from_spec(
 
     # --- 4. Update metadata ---
     profile.specs_calibrated += 1
-    profile.last_calibrated = datetime.now(timezone.utc).isoformat()
+    profile.last_calibrated = datetime.now(UTC).isoformat()
     profile.confidence = _calculate_confidence(profile.specs_calibrated)
 
     # --- 5. Persist ---
@@ -708,14 +710,14 @@ def format_industry_comparison(comparison: IndustryComparison) -> str:
         )
 
     # Quality-budget position
-    lines.append(f"\n  Quality-Budget Position")
+    lines.append("\n  Quality-Budget Position")
     lines.append(f"  {'-' * 50}")
     lines.append(f"  Budget:           {comparison.budget_tokens:,} tokens")
     lines.append(f"  Expected quality: {comparison.estimated_quality_pct:.0%}")
     lines.append(f"  Note:             {comparison.quality_ceiling_note}")
 
     # Phase allocation
-    lines.append(f"\n  Phase Allocation vs Industry (DevBench/SWE-bench)")
+    lines.append("\n  Phase Allocation vs Industry (DevBench/SWE-bench)")
     lines.append(f"  {'Phase':<12} {'Actual%':>10} {'Industry%':>10} {'Delta':>10}  Source")
     lines.append(f"  {'-' * 65}")
     for phase in ["validate", "audit", "plan", "build", "test", "review"]:
@@ -729,7 +731,7 @@ def format_industry_comparison(comparison: IndustryComparison) -> str:
         )
 
     # Efficiency metrics
-    lines.append(f"\n  Cost-Efficiency Metrics")
+    lines.append("\n  Cost-Efficiency Metrics")
     lines.append(f"  {'-' * 50}")
     if comparison.cost_per_loc is not None:
         lines.append(f"  Cost/LOC:            ${comparison.cost_per_loc:.3f}")
@@ -741,7 +743,7 @@ def format_industry_comparison(comparison: IndustryComparison) -> str:
 
     # Grades
     if comparison.grades:
-        lines.append(f"\n  Efficiency Grades")
+        lines.append("\n  Efficiency Grades")
         lines.append(f"  {'-' * 50}")
         for metric, grade in sorted(comparison.grades.items()):
             label = metric.replace("_", " ").title()

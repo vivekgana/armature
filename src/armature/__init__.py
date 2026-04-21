@@ -3,7 +3,7 @@
 The invisible skeleton that gives shape to what agents produce.
 """
 
-from importlib.metadata import version, PackageNotFoundError
+from importlib.metadata import PackageNotFoundError, version
 
 try:
     __version__ = version("armature")

@@ -6,13 +6,12 @@ from pathlib import Path
 
 import pytest
 
-from armature._internal.types import Violation
 from armature.architecture.boundary import (
-    check_boundaries,
-    run_boundary_check,
-    _resolve_layer,
     _import_to_layer,
     _is_shared_import,
+    _resolve_layer,
+    check_boundaries,
+    run_boundary_check,
 )
 from armature.config.schema import ArchitectureConfig, BoundaryRule, LayerDef
 

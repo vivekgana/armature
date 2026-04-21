@@ -11,7 +11,6 @@ import tomllib
 from dataclasses import dataclass, field
 from pathlib import Path
 
-
 _DIRECTIVE_RE = re.compile(r"^@(\w+):\s*(.+)$", re.MULTILINE)
 _DEPENDS_SPLIT_RE = re.compile(r"[,\s]+")
 

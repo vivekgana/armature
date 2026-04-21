@@ -17,7 +17,6 @@ every task uses narrow context, not just the last few. This prevents the
 
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -298,7 +297,7 @@ class AdaptiveOptimizer:
 
         # Scope-based budget fit check (warns if tier is wrong for project size)
         try:
-            from armature.budget.benchmark import scan_project, check_budget_fit
+            from armature.budget.benchmark import check_budget_fit, scan_project
             from armature.config.schema import ArmatureConfig
             scope = scan_project(self.root, ArmatureConfig())
             if scope.total_loc > 0:
@@ -555,7 +554,8 @@ class AdaptiveOptimizer:
         lines.append(f"Feasible: {'YES' if plan.feasible else 'NO -- exceeds budget'}")
         lines.append("")
         lines.append(f"  Total budget:    {plan.total_budget_tokens:>12,} tokens")
-        lines.append(f"  Reserve (fix):   {int(plan.total_budget_tokens * plan.reserve_pct):>12,} tokens ({plan.reserve_pct:.0%})")
+        reserve = int(plan.total_budget_tokens * plan.reserve_pct)
+        lines.append(f"  Reserve (fix):   {reserve:>12,} tokens ({plan.reserve_pct:.0%})")
         lines.append(f"  Usable budget:   {int(plan.total_budget_tokens * (1 - plan.reserve_pct)):>12,} tokens")
         lines.append(f"  Estimated need:  {plan.total_estimated_tokens:>12,} tokens")
         lines.append(f"  Utilization:     {plan.budget_utilization_pct:>11.0f}%")

@@ -5,9 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-import pytest
-
-from armature.config.schema import ArmatureConfig, ClaudeCodeConfig, IntegrationsConfig
+from armature.config.schema import ArmatureConfig
 from armature.integrations.claude_code import generate_claude_code_hooks
 
 

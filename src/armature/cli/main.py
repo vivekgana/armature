@@ -32,15 +32,15 @@ def cli() -> None:
 
 # --- Import and register commands ---
 
-from armature.cli.init_cmd import init_cmd  # noqa: E402
-from armature.cli.check_cmd import check_cmd  # noqa: E402
-from armature.cli.heal_cmd import heal_cmd  # noqa: E402
-from armature.cli.gc_cmd import gc_cmd  # noqa: E402
-from armature.cli.budget_cmd import budget_cmd  # noqa: E402
 from armature.cli.baseline_cmd import baseline_cmd  # noqa: E402
-from armature.cli.report_cmd import report_cmd  # noqa: E402
-from armature.cli.hooks_cmd import hooks_cmd  # noqa: E402
+from armature.cli.budget_cmd import budget_cmd  # noqa: E402
+from armature.cli.check_cmd import check_cmd  # noqa: E402
 from armature.cli.compat_cmd import compat_cmd  # noqa: E402
+from armature.cli.gc_cmd import gc_cmd  # noqa: E402
+from armature.cli.heal_cmd import heal_cmd  # noqa: E402
+from armature.cli.hooks_cmd import hooks_cmd  # noqa: E402
+from armature.cli.init_cmd import init_cmd  # noqa: E402
+from armature.cli.report_cmd import report_cmd  # noqa: E402
 from armature.cli.spec_cmd import spec_cmd  # noqa: E402
 
 cli.add_command(init_cmd, "init")

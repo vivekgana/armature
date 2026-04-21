@@ -10,7 +10,6 @@ Usage:
 
 from __future__ import annotations
 
-import json
 import sys
 from pathlib import Path
 
@@ -395,7 +394,7 @@ def _tool_preplan(args: dict) -> dict:
 
 def _tool_benchmark(args: dict) -> dict:
     """Scan project scope and check budget fit."""
-    from armature.budget.benchmark import scan_project, calculate_benchmark, check_budget_fit
+    from armature.budget.benchmark import calculate_benchmark, check_budget_fit, scan_project
     from armature.config.loader import load_config_or_defaults
 
     config = load_config_or_defaults()
@@ -434,7 +433,7 @@ def _tool_benchmark(args: dict) -> dict:
         }
 
     if args.get("include_industry"):
-        from armature.budget.calibrator import compare_against_industry, assess_quality_budget_position
+        from armature.budget.calibrator import assess_quality_budget_position, compare_against_industry
         from armature.budget.tracker import SessionTracker
 
         if config.budget.enabled:
@@ -445,7 +444,8 @@ def _tool_benchmark(args: dict) -> dict:
         else:
             # Benchmark-only comparison without actual usage data
             from armature.budget.calibrator import (
-                IndustryComparison, INDUSTRY_TASK_TARGETS, INDUSTRY_PHASE_TARGETS,
+                INDUSTRY_TASK_TARGETS,
+                IndustryComparison,
                 compute_efficiency_grades,
             )
             quality_pct, quality_note = assess_quality_budget_position(benchmark.recommended_tokens)
@@ -539,7 +539,7 @@ def _tool_baseline(args: dict) -> dict:
 def _tool_pre_dev(args: dict) -> dict:
     """Run pre-dev checks: environment validation, spec readiness, baseline capture."""
     import shutil
-    import sys
+
     from armature.config.loader import load_config_or_defaults
 
     config = load_config_or_defaults()
@@ -671,8 +671,8 @@ def _tool_route(args: dict) -> dict:
 
 def _tool_calibrate(args: dict) -> dict:
     """Calibrate multipliers from a completed spec or show status."""
-    from armature.budget.calibrator import CalibrationStore, calibrate_from_spec, apply_calibration
-    from armature.budget.benchmark import scan_project, calculate_benchmark
+    from armature.budget.benchmark import calculate_benchmark, scan_project
+    from armature.budget.calibrator import CalibrationStore, apply_calibration, calibrate_from_spec
     from armature.budget.tracker import SessionTracker
     from armature.config.loader import load_config_or_defaults
 

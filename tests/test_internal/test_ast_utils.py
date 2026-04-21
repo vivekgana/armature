@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from armature._internal.ast_utils import extract_classes, extract_imports, parse_file
 
 

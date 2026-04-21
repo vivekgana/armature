@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from armature.budget.budget import DevBudget, REQUEST_OPTIMIZATION_PATTERNS
+from armature.budget.budget import REQUEST_OPTIMIZATION_PATTERNS, DevBudget
 
 
 class TestDevBudget:
@@ -65,7 +65,7 @@ class TestOptimizationPatterns:
     """Tests for the REQUEST_OPTIMIZATION_PATTERNS constant."""
 
     def test_patterns_have_required_keys(self):
-        for name, pattern in REQUEST_OPTIMIZATION_PATTERNS.items():
+        for _name, pattern in REQUEST_OPTIMIZATION_PATTERNS.items():
             assert "description" in pattern
             assert "token_savings_pct" in pattern
             assert 0 < pattern["token_savings_pct"] <= 100

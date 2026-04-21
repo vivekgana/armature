@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from armature._internal.types import CircuitState
 from armature.heal.circuit_breaker import CircuitBreaker
 

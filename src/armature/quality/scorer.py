@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import UTC
 from pathlib import Path
 
 from armature._internal.subprocess_utils import run_tool
@@ -78,7 +79,7 @@ def run_quality_checks(config: QualityConfig, root: Path, *, file_path: str | No
 
 def capture_baseline_snapshot(config: QualityConfig, root: Path) -> BaselineSnapshot:
     """Capture current quality metrics as a baseline snapshot."""
-    from datetime import datetime, timezone
+    from datetime import datetime
 
     results = run_quality_checks(config, root)
     lint_violations = 0
@@ -96,7 +97,7 @@ def capture_baseline_snapshot(config: QualityConfig, root: Path) -> BaselineSnap
             test_failed = r.violation_count
 
     return BaselineSnapshot(
-        timestamp=datetime.now(timezone.utc).isoformat(),
+        timestamp=datetime.now(UTC).isoformat(),
         lint_violations=lint_violations,
         type_errors=type_errors,
         test_passed=test_passed,

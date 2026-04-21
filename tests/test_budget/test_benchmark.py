@@ -8,15 +8,12 @@ import pytest
 
 from armature.budget.benchmark import (
     ProjectScope,
-    BudgetBenchmark,
-    ScopeWarning,
+    _count_loc,
+    _is_test_file,
     calculate_benchmark,
     check_budget_fit,
     format_benchmark,
-    format_warning,
     scan_project,
-    _count_loc,
-    _is_test_file,
 )
 from armature.config.schema import ArmatureConfig, BudgetConfig, BudgetTier, ProjectConfig
 

@@ -30,13 +30,12 @@ class BaselineManager:
             "coverage_pct": snapshot.coverage_pct,
             **snapshot.extra,
         }
-        tmp = tempfile.NamedTemporaryFile(
+        with tempfile.NamedTemporaryFile(
             mode="w", dir=self.baselines_dir, suffix=".json.tmp",
             delete=False, encoding="utf-8",
-        )
-        try:
+        ) as tmp:
             tmp.write(json.dumps(data, indent=2))
-            tmp.close()
+        try:
             Path(tmp.name).replace(path)
         except Exception:
             Path(tmp.name).unlink(missing_ok=True)

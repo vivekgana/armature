@@ -17,8 +17,8 @@ from armature.compat._ossature_model import (
     load_ossature_project,
 )
 from armature.config.schema import (
-    ArmatureConfig,
     ArchitectureConfig,
+    ArmatureConfig,
     BoundaryRule,
     BudgetConfig,
     BudgetTier,
@@ -32,7 +32,6 @@ from armature.config.schema import (
     ToolCheckConfig,
     TraceabilityConfig,
 )
-
 
 _LANGUAGE_MAP: dict[str, str] = {
     "python": "python",
@@ -203,10 +202,8 @@ def _build_quality(
 
 def _build_budget(ossature: OssatureProjectFull) -> BudgetConfig:
     """Build armature BudgetConfig from ossature LLM model config."""
-    tier = _infer_model_tier(ossature.llm.model)
+    _infer_model_tier(ossature.llm.model)
 
-    tier_to_tokens = {"low": 100_000, "medium": 500_000, "high": 1_000_000}
-    tier_to_cost = {"low": 2.0, "medium": 10.0, "high": 20.0}
 
     return BudgetConfig(
         enabled=True,
@@ -288,7 +285,7 @@ def conversion_result_to_yaml(result: ConversionResult) -> str:
 
 def _clean_for_yaml(d: dict) -> None:
     """Recursively convert Pydantic-style dict for cleaner YAML output."""
-    for key, val in list(d.items()):
+    for _key, val in list(d.items()):
         if isinstance(val, dict):
             _clean_for_yaml(val)
         elif isinstance(val, list):

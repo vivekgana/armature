@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-import json
-from dataclasses import asdict, dataclass, field
-from datetime import datetime, timezone
+from dataclasses import asdict, dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 
 from armature.compat._ossature_model import OssatureProjectFull, load_ossature_project
@@ -118,7 +117,7 @@ def build_armature_summary(
 
     quality_tools = []
     if config.quality.enabled:
-        for check_name, check_cfg in config.quality.checks.items():
+        for _check_name, check_cfg in config.quality.checks.items():
             if check_cfg.tool:
                 quality_tools.append(check_cfg.tool)
 
@@ -275,7 +274,10 @@ def _compute_dimensions(
     dims.append(ComparisonDimension(
         dimension="Linting enforced",
         armature_value="Yes" if arm.linting_enforced else "No",
-        ossature_value="Pass" if "lint" in oss.quality_checks_passed else ("Fail" if "lint" in oss.quality_checks_failed else "Unknown"),
+        ossature_value=(
+            "Pass" if "lint" in oss.quality_checks_passed
+            else ("Fail" if "lint" in oss.quality_checks_failed else "Unknown")
+        ),
         gap=lint_gap,
     ))
 
@@ -291,7 +293,10 @@ def _compute_dimensions(
     dims.append(ComparisonDimension(
         dimension="Type checking enforced",
         armature_value="Yes" if arm.type_check_enforced else "No",
-        ossature_value="Pass" if "type_check" in oss.quality_checks_passed else ("Fail" if "type_check" in oss.quality_checks_failed else "Unknown"),
+        ossature_value=(
+            "Pass" if "type_check" in oss.quality_checks_passed
+            else ("Fail" if "type_check" in oss.quality_checks_failed else "Unknown")
+        ),
         gap=tc_gap,
     ))
 
@@ -375,7 +380,7 @@ def compare_projects(
         dimensions=dimensions,
         overall_gap_count=gap_count,
         overall_meets_count=meets_count,
-        generated_at=datetime.now(timezone.utc).isoformat(),
+        generated_at=datetime.now(UTC).isoformat(),
     )
 
 

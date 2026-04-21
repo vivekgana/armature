@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from armature.mcp.server import get_tool_definitions, handle_tool_call
 
 

@@ -26,7 +26,7 @@ def init_cmd(project_dir: str, force: bool) -> None:
 
     # Auto-detect project
     detection = detect_project(root)
-    console.print(f"\n[bold]Armature Init[/bold]")
+    console.print("\n[bold]Armature Init[/bold]")
     console.print("=" * 40)
     print_check("Language", True, detection.language)
     print_check("Framework", True, detection.framework or "(none detected)")
@@ -45,7 +45,7 @@ def init_cmd(project_dir: str, force: bool) -> None:
         language=detection.language, framework=detection.framework,
         src_dir=detection.src_dir, test_dir=detection.test_dir,
     ))
-    from armature.budget.benchmark import scan_project, calculate_benchmark
+    from armature.budget.benchmark import calculate_benchmark, scan_project
     scope = scan_project(root, benchmark_config)
     benchmark = calculate_benchmark(scope)
 
@@ -74,11 +74,11 @@ def init_cmd(project_dir: str, force: bool) -> None:
     (storage_dir / ".gitkeep").touch()
     console.print(f"[green]Created:[/green] {storage_dir}/")
 
-    console.print(f"\n[bold]Next steps:[/bold]")
-    console.print(f"  1. Review and customize armature.yaml")
-    console.print(f"  2. Run: armature budget --benchmark   (verify budget fit)")
-    console.print(f"  3. Run: armature hooks --claude-code  (wire into Claude Code)")
-    console.print(f"  4. Run: armature check               (verify setup)")
+    console.print("\n[bold]Next steps:[/bold]")
+    console.print("  1. Review and customize armature.yaml")
+    console.print("  2. Run: armature budget --benchmark   (verify budget fit)")
+    console.print("  3. Run: armature hooks --claude-code  (wire into Claude Code)")
+    console.print("  4. Run: armature check               (verify setup)")
 
 
 def _generate_config(detection: detect_project.__class__) -> dict:  # type: ignore[name-defined]

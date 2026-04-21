@@ -54,8 +54,8 @@ def run_post_dev(*, spec_id: str) -> None:
 
     # Verdict
     if diff["has_regression"]:
-        console.print(f"\n  [red]RESULT: REGRESSION DETECTED[/red]")
+        console.print("\n  [red]RESULT: REGRESSION DETECTED[/red]")
         console.print("  Fix regressions before proceeding to human review.")
         raise SystemExit(1)
     else:
-        console.print(f"\n  [green]RESULT: PASS -- proceed to human review[/green]")
+        console.print("\n  [green]RESULT: PASS -- proceed to human review[/green]")

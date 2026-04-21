@@ -2,22 +2,14 @@
 
 from __future__ import annotations
 
-import pytest
-
 from armature.config.schema import (
-    ArchitectureConfig,
     ArmatureConfig,
     BoundaryRule,
     BudgetConfig,
     BudgetTier,
     ConformanceRule,
-    GCConfig,
-    HealConfig,
-    IntegrationsConfig,
     LayerDef,
-    ProjectConfig,
     QualityConfig,
-    SpecConfig,
 )
 
 

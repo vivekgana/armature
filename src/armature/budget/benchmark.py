@@ -11,13 +11,12 @@ armature init, armature budget --benchmark, and armature budget --pre-plan.
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 
-from armature.budget.optimizer import TOKENS_PER_CHAR, OUTPUT_TO_INPUT_RATIO
+from armature.budget.optimizer import OUTPUT_TO_INPUT_RATIO
 from armature.budget.router import get_pricing
 from armature.config.schema import ArmatureConfig, BudgetConfig
-
 
 # --- Dataclasses ---
 
@@ -472,7 +471,7 @@ def format_benchmark(
         lines.append(f"  Specs:              {scope.spec_count} specs, "
                       f"{scope.ac_count} acceptance criteria")
 
-    model = list(benchmark.estimates.values())[0].model if benchmark.estimates else "sonnet"
+    model = next(iter(benchmark.estimates.values())).model if benchmark.estimates else "sonnet"
     lines.append(f"\nCOST BENCHMARKS ({model.capitalize()})")
     lines.append("=" * 40)
     lines.append(f"  {'Task Type':<15} {'Est. Tokens':>12} {'Est. Cost':>12}")
@@ -509,9 +508,7 @@ def format_warning(warning: ScopeWarning) -> str:
         ratio = warning.configured_tokens / warning.benchmark_tokens
         lines.append(f"  Ratio:        {ratio:.1f}x benchmark")
 
-    if warning.level == "too_low":
-        lines.append(f"\n  [!] WARNING: {warning.message}")
-    elif warning.level == "too_high":
+    if warning.level == "too_low" or warning.level == "too_high":
         lines.append(f"\n  [!] WARNING: {warning.message}")
     elif warning.level == "mismatched_tier":
         lines.append(f"\n  [~] NOTE: {warning.message}")

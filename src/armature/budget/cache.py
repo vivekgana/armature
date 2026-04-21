@@ -15,11 +15,11 @@ Estimated savings:
 
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import json
-import time
-from dataclasses import dataclass, field, asdict
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 
 
@@ -118,7 +118,7 @@ class SemanticCache:
 
         # Check TTL
         created = datetime.fromisoformat(meta["created_at"])
-        age = (datetime.now(timezone.utc) - created).total_seconds()
+        age = (datetime.now(UTC) - created).total_seconds()
         if age > self.ttl_seconds:
             self._evict(fingerprint)
             return None
@@ -185,7 +185,7 @@ class SemanticCache:
             checksums[f] = self._file_checksum(f)
 
         meta = {
-            "created_at": datetime.now(timezone.utc).isoformat(),
+            "created_at": datetime.now(UTC).isoformat(),
             "context_checksums": checksums,
             "task_type": task_type,
             "intent": intent,
@@ -199,10 +199,8 @@ class SemanticCache:
         import os
         response_path = self.responses_dir / f"{fingerprint}.txt"
         response_path.write_text(response, encoding="utf-8")
-        try:
+        with contextlib.suppress(OSError):
             os.chmod(response_path, 0o600)
-        except OSError:
-            pass
         meta["response_sha256"] = hashlib.sha256(response.encode()).hexdigest()
 
         # Update index
@@ -253,7 +251,7 @@ class SemanticCache:
                 disk_bytes += f.stat().st_size
 
         # Age distribution
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         ages = []
         for m in index.values():
             created = datetime.fromisoformat(m["created_at"])

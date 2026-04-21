@@ -5,7 +5,6 @@ Runs architectural checks and compares against baseline to detect drift.
 
 from __future__ import annotations
 
-from armature._internal.types import GCFinding
 
 
 # Architecture GC is handled directly in gc/runner.py via boundary + conformance checks.

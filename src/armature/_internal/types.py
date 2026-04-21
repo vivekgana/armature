@@ -3,31 +3,31 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 
 
-class Severity(str, Enum):
+class Severity(StrEnum):
     """Violation severity levels."""
     ERROR = "error"
     WARNING = "warning"
     INFO = "info"
 
 
-class CircuitState(str, Enum):
+class CircuitState(StrEnum):
     """Circuit breaker states."""
     CLOSED = "closed"
     OPEN = "open"
     HALF_OPEN = "half_open"
 
 
-class QualityLevel(str, Enum):
+class QualityLevel(StrEnum):
     """Quality gate levels."""
     DRAFT = "draft"
     REVIEW_READY = "review_ready"
     MERGE_READY = "merge_ready"
 
 
-class Complexity(str, Enum):
+class Complexity(StrEnum):
     """Budget complexity tiers."""
     LOW = "low"
     MEDIUM = "medium"

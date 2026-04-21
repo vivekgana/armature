@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from armature.budget.cache import SemanticCache, CacheEntry
+from armature.budget.cache import SemanticCache
 
 
 @pytest.fixture

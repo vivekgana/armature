@@ -12,10 +12,10 @@ from armature.compat._ossature_model import (
     parse_smd_file,
 )
 from armature.compat.ossature import (
-    convert_ossature_project,
-    conversion_result_to_yaml,
     _infer_model_tier,
     _map_language,
+    conversion_result_to_yaml,
+    convert_ossature_project,
 )
 
 
@@ -64,7 +64,7 @@ class TestOssatureParser:
         assert len(proj.components) == 3
 
     def test_load_project_no_toml_raises(self, tmp_path: Path) -> None:
-        with pytest.raises(FileNotFoundError, match="No ossature.toml"):
+        with pytest.raises(FileNotFoundError, match=r"No ossature\.toml"):
             load_ossature_project(tmp_path)
 
     def test_markman_has_specs_no_components(self, markman_project: Path) -> None:

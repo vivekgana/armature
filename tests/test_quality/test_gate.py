@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from armature._internal.types import QualityLevel
 from armature.quality.gate import QualityGate, evaluate_quality_level
 

@@ -6,14 +6,13 @@ from pathlib import Path
 
 import pytest
 
-from armature.gc.runner import GCRunner
 from armature.config.schema import (
     ArmatureConfig,
-    ArchitectureConfig,
-    GCConfig,
     GCAgentConfig,
+    GCConfig,
     ProjectConfig,
 )
+from armature.gc.runner import GCRunner
 
 
 @pytest.fixture

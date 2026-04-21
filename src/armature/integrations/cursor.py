@@ -45,7 +45,7 @@ def generate_cursor_rules(config: ArmatureConfig) -> Path:
     # Quality gates
     if config.quality.enabled:
         lines.append("## Quality Requirements")
-        lines.append(f"- Run `armature check` before committing")
+        lines.append("- Run `armature check` before committing")
         lines.append(f"- Quality gates: draft={config.quality.gates.get('draft', 0.7)}, "
                      f"review_ready={config.quality.gates.get('review_ready', 0.85)}, "
                      f"merge_ready={config.quality.gates.get('merge_ready', 0.95)}")

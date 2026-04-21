@@ -7,11 +7,10 @@ import re
 from pydantic import BaseModel, Field, field_validator
 
 from armature._internal.validation import (
+    _DANGEROUS_ARG_CHARS,
     ALLOWED_LANGUAGES,
     ALLOWED_TOOLS,
-    _DANGEROUS_ARG_CHARS,
 )
-
 
 # --- Project ---
 
@@ -278,7 +277,7 @@ class TraceabilityConfig(BaseModel):
         try:
             re.compile(v)
         except re.error as e:
-            raise ValueError(f"Invalid regex pattern: {e}")
+            raise ValueError(f"Invalid regex pattern: {e}") from e
         if re.search(r"\([^)]*[+*]\)[+*?]", v):
             raise ValueError("Pattern may be vulnerable to ReDoS (nested quantifiers)")
         return v

@@ -2,10 +2,6 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
-import pytest
-
 from armature._internal.subprocess_utils import RunResult, run_tool
 
 

@@ -4,10 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
-from armature.gc.agents.dead_code import scan_dead_code, _check_function_size
 from armature.config.schema import ArmatureConfig, ProjectConfig
+from armature.gc.agents.dead_code import _check_function_size, scan_dead_code
 
 
 class TestCheckFunctionSize:
