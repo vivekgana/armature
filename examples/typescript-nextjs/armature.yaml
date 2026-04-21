@@ -7,6 +7,14 @@ project:
   src_dir: "src/"
   test_dir: "__tests__/"
 
+budget:
+  enabled: true
+  defaults:
+    low:      { max_tokens: 100000,  max_cost_usd: 2.00 }
+    medium:   { max_tokens: 500000,  max_cost_usd: 10.00 }
+    high:     { max_tokens: 1000000, max_cost_usd: 20.00 }
+    critical: { max_tokens: 2000000, max_cost_usd: 40.00 }
+
 quality:
   enabled: true
   gates:
