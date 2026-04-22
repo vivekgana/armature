@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
-## [0.2.0] - 2026-04-20
+## [0.1.1] - 2026-04-21
 
 ### Added
 
@@ -53,6 +53,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Tool execution restricted to validated allowlist
 - Cache integrity verification with SHA-256 checksums
 
-[Unreleased]: https://github.com/vivekgana/armature/compare/v0.2.0...HEAD
-[0.2.0]: https://github.com/vivekgana/armature/compare/v0.1.0...v0.2.0
+[Unreleased]: https://github.com/vivekgana/armature/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/vivekgana/armature/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/vivekgana/armature/releases/tag/v0.1.0
