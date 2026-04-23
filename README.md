@@ -9,7 +9,7 @@ Armature is a harness engineering framework for AI coding agents. It wraps agent
 ## Quick Start
 
 ```bash
-pip install armature
+pip install armature-harness
 
 # Initialize in your project
 cd your-project/

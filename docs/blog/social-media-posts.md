@@ -67,7 +67,7 @@ Ships as an MCP server — connects directly to Claude Code, Cursor, or any MCP-
 
 11 tools: check_quality, get_budget_status, check_architecture, capture_baseline, detect_regressions...
 
-`pip install armature && armature init`
+`pip install armature-harness && armature init`
 
 **Tweet 5:**
 Full examples included:

@@ -266,7 +266,7 @@ The circuit breaker trips after 3 consecutive over-budget runs. The optimizer su
 ## Getting Started
 
 ```bash
-pip install armature
+pip install armature-harness
 armature init
 ```
 

@@ -31,7 +31,7 @@ dependencies = [
 [project.optional-dependencies]
 python = ["ruff>=0.3.0", "mypy>=1.8.0", "pytest>=8.0.0"]
 typescript = []
-all = ["armature[python]", "armature[typescript]"]
+all = ["armature-harness[python]", "armature-harness[typescript]"]
 dev = [
     "pytest>=8.0.0",
     "pytest-cov>=4.1.0",

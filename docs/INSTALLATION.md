@@ -9,7 +9,7 @@ Armature can be installed as a **CLI tool**, used as an **MCP server**, or added
 ### From PyPI
 
 ```bash
-pip install armature
+pip install armature-harness
 ```
 
 ### From Source
@@ -24,13 +24,13 @@ pip install -e ".[dev]"
 
 ```bash
 # Python quality tools (ruff, mypy, pytest)
-pip install armature[python]
+pip install armature-harness[python]
 
 # All language support
-pip install armature[all]
+pip install armature-harness[all]
 
 # Development (includes testing tools)
-pip install armature[dev]
+pip install armature-harness[dev]
 ```
 
 ### Verify Installation
@@ -230,7 +230,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install armature[python]
+      - run: pip install armature-harness[python]
       - run: armature check --gate merge
 ```
 

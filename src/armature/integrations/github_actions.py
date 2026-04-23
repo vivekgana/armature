@@ -38,7 +38,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install armature[{config.project.language}]
+          pip install armature-harness[{config.project.language}]
           pip install -e ".[dev]" 2>/dev/null || true
 
       - name: Armature Check

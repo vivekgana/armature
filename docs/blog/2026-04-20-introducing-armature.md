@@ -177,7 +177,7 @@ flowchart LR
 Armature is an MCP server — it connects directly to Claude Code, Cursor, or any MCP-compatible agent:
 
 ```bash
-pip install armature
+pip install armature-harness
 ```
 
 11 tools available: `check_quality`, `get_budget_status`, `check_architecture`, `capture_baseline`, `detect_regressions`, `suggest_optimizations`, and more.
@@ -185,7 +185,7 @@ pip install armature
 ## Get Started
 
 ```bash
-pip install armature
+pip install armature-harness
 armature init
 # Write your first spec
 armature pre-dev SPEC-2026-Q2-001
