@@ -1,5 +1,5 @@
 [project]
-name = "armature"
+name = "armature-harness"
 version = "0.1.1"
 description = "Harness engineering framework for AI coding agents -- the invisible skeleton that shapes agent output"
 readme = "README.md"
