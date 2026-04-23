@@ -84,10 +84,10 @@ class BudgetConfig(BaseModel):
     """Pillar 1: Budgeted Development."""
     enabled: bool = False
     defaults: dict[str, BudgetTier] = Field(default_factory=lambda: {
-        "low": BudgetTier(max_tokens=100_000, max_cost_usd=2.0),
-        "medium": BudgetTier(max_tokens=500_000, max_cost_usd=10.0),
-        "high": BudgetTier(max_tokens=1_000_000, max_cost_usd=20.0),
-        "critical": BudgetTier(max_tokens=2_000_000, max_cost_usd=40.0),
+        "low": BudgetTier(max_tokens=250_000, max_cost_usd=5.0),
+        "medium": BudgetTier(max_tokens=1_250_000, max_cost_usd=25.0),
+        "high": BudgetTier(max_tokens=2_500_000, max_cost_usd=50.0),
+        "critical": BudgetTier(max_tokens=5_000_000, max_cost_usd=100.0),
     })
     phase_allocation: dict[str, int] = Field(default_factory=lambda: {
         "validate": 5, "audit": 10, "plan": 15,

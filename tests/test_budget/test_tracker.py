@@ -86,8 +86,8 @@ class TestSessionTracker:
         assert stats["hit_rate"] == 0.5
 
     def test_is_over_budget(self, tracker: SessionTracker):
-        # Medium tier: 500K tokens
-        tracker.log("SPEC-001", "build", 600_000, 15.0)
+        # Medium tier: 1.25M tokens / $25
+        tracker.log("SPEC-001", "build", 1_500_000, 30.0)
         assert tracker.is_over_budget("SPEC-001", "medium") is True
         assert tracker.is_over_budget("SPEC-001", "high") is False
 
@@ -99,8 +99,8 @@ class TestSessionTracker:
         assert "SPEC-002" in specs
 
     def test_get_optimization_suggestions_high_usage(self, tracker: SessionTracker):
-        # Push past 80% of medium tier (500K)
-        tracker.log("SPEC-001", "build", 450_000, 9.0)
+        # Push past 80% of medium tier (1.25M)
+        tracker.log("SPEC-001", "build", 1_100_000, 22.0)
         suggestions = tracker.get_optimization_suggestions("SPEC-001")
         assert len(suggestions) > 0
         assert any("token budget" in s.lower() or "approaching" in s.lower() for s in suggestions)

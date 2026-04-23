@@ -155,6 +155,7 @@ PREMIUM_INTENT_FLOORS: dict[str, float] = {
     "complex_code_gen": 0.90,
     "architecture": 0.90,
     "test_gen": 0.80,
+    "research": 0.85,
 }
 
 # Default quality floor for intents not listed above

@@ -11,10 +11,25 @@ project:
 budget:
   enabled: true
   defaults:
-    low:      { max_tokens: 100000,  max_cost_usd: 2.00 }
-    medium:   { max_tokens: 500000,  max_cost_usd: 10.00 }
-    high:     { max_tokens: 1000000, max_cost_usd: 20.00 }
-    critical: { max_tokens: 2000000, max_cost_usd: 40.00 }
+    low:          { max_tokens: 250000,   max_cost_usd: 5.00 }
+    medium:       { max_tokens: 1250000,  max_cost_usd: 25.00 }
+    high:         { max_tokens: 2500000,  max_cost_usd: 50.00 }
+    critical:     { max_tokens: 5000000,  max_cost_usd: 100.00 }
+  providers:
+    strategy: cost_optimized
+    default_model: claude-sonnet
+    enabled_models: [claude-sonnet, claude-haiku, claude-opus]
+    quality_floor: 0.75
+    premium_intents: [complex_code_gen, architecture]
+  cache:
+    enabled: true
+    storage: ".armature/cache/"
+    max_size_mb: 200
+    ttl_days: 14
+  calibration:
+    enabled: true
+    auto_calibrate: true
+    min_specs: 3
 
 quality:
   enabled: true

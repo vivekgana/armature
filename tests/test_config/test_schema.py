@@ -52,7 +52,7 @@ class TestBudgetConfig:
         assert "medium" in config.defaults
         assert "high" in config.defaults
         assert "critical" in config.defaults
-        assert config.defaults["medium"].max_tokens == 500_000
+        assert config.defaults["medium"].max_tokens == 1_250_000
 
     def test_phase_allocation_sums_to_100(self):
         config = BudgetConfig()
