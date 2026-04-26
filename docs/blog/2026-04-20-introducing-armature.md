@@ -26,16 +26,20 @@ Every team using AI coding agents faces the same questions:
 
 Armature answers all of them — automatically, during development, not after.
 
+## System Architecture
+
+![Armature Architecture](./assets/architecture-diagram.svg)
+
 ## The Six Pillars
 
 | Pillar | What It Does |
 |--------|-------------|
-| **Budget** | Per-spec token/cost tracking with circuit breakers |
-| **Quality** | Lint + type-check + test scoring with merge-ready gates |
-| **Architecture** | Layer definitions, boundary enforcement, import rules |
+| **Budget** | Per-spec token/cost tracking, multi-provider routing, semantic cache, auto-calibration |
+| **Quality** | 8 weighted checks (lint, type, test, security, complexity, deps, docstring, ratio) |
+| **Architecture** | Layer definitions, boundary enforcement, import rules, schema sync |
 | **Context** | Progressive disclosure — agents see only relevant code |
 | **GC** | Background agents detect drift, dead code, stale docs |
-| **Self-Heal** | Auto-fix pipeline for lint and type errors |
+| **Self-Heal** | Auto-fix pipeline for lint and type errors, 3-attempt circuit breaker |
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#4CAF50', 'primaryTextColor': '#fff', 'lineColor': '#333', 'secondaryColor': '#2196F3'}}}%%
@@ -171,6 +175,39 @@ flowchart LR
     style IT fill:#9C27B0,color:#fff,stroke:#6A1B9A
     style TM fill:#4CAF50,color:#fff,stroke:#2E7D32
 ```
+
+## Usage Flow
+
+![Armature Usage Flow](./assets/usage-flow-diagram.svg)
+
+## Quality Checks (v0.2.1)
+
+8 weighted checks with configurable quality gates:
+
+| Check | Tool | Weight | Score Formula |
+|-------|------|--------|---------------|
+| Lint | ruff | 25 | violations-based |
+| Type-check | mypy | 25 | error count |
+| Tests | pytest | 20 | pass/fail + coverage |
+| Security | bandit | 20 | HIGH+MEDIUM findings |
+| Complexity | radon | 15 | functions over threshold |
+| Dep Audit | pip-audit | 15 | CVE count |
+| Docstring | AST | 10 | coverage % |
+| Test Ratio | LOC | 10 | test/src ratio |
+
+**Scoring:** `weighted_score = sum(score * weight) / sum(weight)`
+
+**Gates:** Draft (70%) → Review Ready (85%) → Merge Ready (95%)
+
+## Implementation Roadmap
+
+| Version | Features | Status |
+|---------|----------|--------|
+| v0.1.x | Core framework, 3 quality checks, budget tracking | Shipped |
+| v0.2.0 | Budget 2.5x, multi-provider routing, semantic cache | Shipped |
+| v0.2.1 | 5 new quality checks, weighted scoring, baseline deltas | Shipped |
+| v0.3.0 | Cognitive complexity, mutation testing, flaky test detection | Planned |
+| v0.4.0 | Change failure rate, agent edit accuracy, dashboards | Planned |
 
 ## MCP Integration
 

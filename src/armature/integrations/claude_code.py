@@ -21,15 +21,16 @@ def generate_claude_code_hooks(config: ArmatureConfig) -> Path:
     settings_path = claude_dir / "settings.local.json"
 
     # Load existing settings if present
-    existing: dict = {}
+    existing: dict[str, object] = {}
     if settings_path.exists():
         try:
             existing = json.loads(settings_path.read_text(encoding="utf-8"))
         except json.JSONDecodeError:
             existing = {}
 
-    hooks: dict = existing.get("hooks", {})
-    permissions: list = existing.get("permissions", {}).get("allow", [])
+    hooks: dict[str, object] = existing.get("hooks", {}) if isinstance(existing.get("hooks"), dict) else {}
+    perms_raw = existing.get("permissions", {})
+    permissions: list[object] = perms_raw.get("allow", []) if isinstance(perms_raw, dict) else []
 
     # PostToolUse hook for shift-left quality checks
     if config.integrations.claude_code.post_tool_use:

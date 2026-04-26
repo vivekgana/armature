@@ -60,23 +60,28 @@ class BaselineManager:
             extra={k: v for k, v in data.items() if k not in known},
         )
 
-    def diff(self, baseline: BaselineSnapshot, current: BaselineSnapshot) -> dict:
+    @staticmethod
+    def _extra_int(snap: BaselineSnapshot, key: str) -> int:
+        val = snap.extra.get(key, 0)
+        return int(val) if isinstance(val, (int, float, str)) else 0
+
+    def diff(self, baseline: BaselineSnapshot, current: BaselineSnapshot) -> dict[str, object]:
         """Compare current metrics against baseline."""
         lint_delta = current.lint_violations - baseline.lint_violations
         type_delta = current.type_errors - baseline.type_errors
         test_fail_delta = current.test_failed - baseline.test_failed
 
         complexity_delta = (
-            int(current.extra.get("complexity_over_threshold", 0))
-            - int(baseline.extra.get("complexity_over_threshold", 0))
+            self._extra_int(current, "complexity_over_threshold")
+            - self._extra_int(baseline, "complexity_over_threshold")
         )
         security_delta = (
-            int(current.extra.get("security_findings", 0))
-            - int(baseline.extra.get("security_findings", 0))
+            self._extra_int(current, "security_findings")
+            - self._extra_int(baseline, "security_findings")
         )
         vuln_delta = (
-            int(current.extra.get("vuln_count", 0))
-            - int(baseline.extra.get("vuln_count", 0))
+            self._extra_int(current, "vuln_count")
+            - self._extra_int(baseline, "vuln_count")
         )
 
         has_regression = (

@@ -279,9 +279,9 @@ class ModelRouter:
         intent: str,
         estimated_input: int,
         estimated_output: int,
-    ) -> list[dict]:
+    ) -> list[dict[str, object]]:
         """Compare all enabled models for a given task -- useful for reports."""
-        results = []
+        results: list[dict[str, object]] = []
         for model_name in self.enabled:
             caps = CAPABILITIES.get(model_name)
             if caps is None:
@@ -297,7 +297,7 @@ class ModelRouter:
                 "context": provider.context,
                 "meets_floor": score >= self.quality_floor,
             })
-        results.sort(key=lambda r: r["cost_usd"])
+        results.sort(key=lambda r: float(r.get("cost_usd", 0) if isinstance(r.get("cost_usd"), (int, float)) else 0))
         return results
 
     def format_comparison(

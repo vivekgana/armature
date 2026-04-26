@@ -68,7 +68,7 @@ class SemanticCache:
         self.root = root or Path.cwd()
 
         # Lazy init -- directories created on first write
-        self._index: dict[str, dict] | None = None
+        self._index: dict[str, dict[str, object]] | None = None
 
     def fingerprint(
         self,
@@ -234,7 +234,7 @@ class SemanticCache:
             self._evict(fp)
         return count
 
-    def stats(self) -> dict:
+    def stats(self) -> dict[str, object]:
         """Return cache statistics."""
         index = self._load_index()
         total_entries = len(index)
@@ -267,9 +267,9 @@ class SemanticCache:
             "by_intent": self._stats_by_intent(index),
         }
 
-    def _stats_by_intent(self, index: dict) -> dict[str, dict]:
+    def _stats_by_intent(self, index: dict) -> dict[str, dict[str, object]]:
         """Break down cache stats by intent."""
-        by_intent: dict[str, dict] = {}
+        by_intent: dict[str, dict[str, object]] = {}
         for meta in index.values():
             intent = meta.get("intent", "unknown")
             if intent not in by_intent:
@@ -292,7 +292,7 @@ class SemanticCache:
         except OSError:
             return "error"
 
-    def _load_index(self) -> dict[str, dict]:
+    def _load_index(self) -> dict[str, dict[str, object]]:
         """Load the cache index from disk."""
         if self._index is not None:
             return self._index
@@ -305,7 +305,7 @@ class SemanticCache:
             self._index = {}
         return self._index
 
-    def _save_index(self, index: dict[str, dict]) -> None:
+    def _save_index(self, index: dict[str, dict[str, object]]) -> None:
         """Persist the cache index to disk."""
         self._index = index
         self._ensure_dirs()

@@ -1,0 +1,287 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d1117"/>
+      <stop offset="50%" style="stop-color:#161b22"/>
+      <stop offset="100%" style="stop-color:#0d1117"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#58a6ff"/>
+      <stop offset="100%" style="stop-color:#bc8cff"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#2ea043"/>
+      <stop offset="100%" style="stop-color:#238636"/>
+    </linearGradient>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#388bfd"/>
+      <stop offset="100%" style="stop-color:#1f6feb"/>
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#bc8cff"/>
+      <stop offset="100%" style="stop-color:#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f0883e"/>
+      <stop offset="100%" style="stop-color:#d29922"/>
+    </linearGradient>
+    <linearGradient id="redGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f85149"/>
+      <stop offset="100%" style="stop-color:#da3633"/>
+    </linearGradient>
+    <linearGradient id="tealGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#3fb950"/>
+      <stop offset="100%" style="stop-color:#2ea043"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#000" flood-opacity="0.4"/>
+    </filter>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(88,166,255,0.04)" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="900" fill="url(#bg)"/>
+  <rect width="1200" height="900" fill="url(#grid)"/>
+
+  <!-- Top accent bar -->
+  <rect x="0" y="0" width="1200" height="3" fill="url(#accent)"/>
+
+  <!-- Title -->
+  <text x="600" y="48" text-anchor="middle" fill="#e6edf3" font-size="28" font-weight="700" letter-spacing="2">ARMATURE</text>
+  <text x="600" y="72" text-anchor="middle" fill="#8b949e" font-size="14" letter-spacing="4">SYSTEM ARCHITECTURE &amp; DESIGN</text>
+  <line x1="480" y1="82" x2="720" y2="82" stroke="url(#accent)" stroke-width="1.5" opacity="0.5"/>
+
+  <!-- ========== TOP: Entry Points ========== -->
+  <text x="600" y="112" text-anchor="middle" fill="#58a6ff" font-size="12" font-weight="600" letter-spacing="2">ENTRY POINTS</text>
+
+  <!-- CLI Box -->
+  <g filter="url(#shadow)">
+    <rect x="60" y="124" width="200" height="60" rx="10" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
+    <text x="160" y="149" text-anchor="middle" fill="#f0883e" font-size="18">&#x2318;</text>
+    <text x="160" y="170" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="600">CLI (Click)</text>
+  </g>
+
+  <!-- MCP Server Box -->
+  <g filter="url(#shadow)">
+    <rect x="310" y="124" width="200" height="60" rx="10" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
+    <text x="410" y="149" text-anchor="middle" fill="#bc8cff" font-size="18">&#x26A1;</text>
+    <text x="410" y="170" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="600">MCP Server</text>
+  </g>
+
+  <!-- IDE Integrations Box -->
+  <g filter="url(#shadow)">
+    <rect x="560" y="124" width="200" height="60" rx="10" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
+    <text x="660" y="149" text-anchor="middle" fill="#3fb950" font-size="18">&#x1F4BB;</text>
+    <text x="660" y="170" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="600">IDE Integrations</text>
+  </g>
+
+  <!-- Harness Lifecycle Box -->
+  <g filter="url(#shadow)">
+    <rect x="810" y="124" width="200" height="60" rx="10" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
+    <text x="910" y="149" text-anchor="middle" fill="#f85149" font-size="18">&#x1F504;</text>
+    <text x="910" y="170" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="600">Harness Lifecycle</text>
+  </g>
+
+  <!-- IDE sub-labels -->
+  <text x="660" y="198" text-anchor="middle" fill="#484f58" font-size="9">Claude Code | Cursor | Copilot | Windsurf</text>
+
+  <!-- Harness sub-labels -->
+  <text x="910" y="198" text-anchor="middle" fill="#484f58" font-size="9">pre-dev &#x2192; session &#x2192; post-dev</text>
+
+  <!-- Down arrows from entry points -->
+  <line x1="160" y1="184" x2="160" y2="220" stroke="#484f58" stroke-width="1.5" marker-end="url(#arrowDown)"/>
+  <line x1="410" y1="184" x2="410" y2="220" stroke="#484f58" stroke-width="1.5"/>
+  <line x1="660" y1="184" x2="660" y2="220" stroke="#484f58" stroke-width="1.5"/>
+  <line x1="910" y1="184" x2="910" y2="220" stroke="#484f58" stroke-width="1.5"/>
+
+  <!-- Connecting horizontal line -->
+  <line x1="160" y1="220" x2="910" y2="220" stroke="#484f58" stroke-width="1.5"/>
+  <line x1="535" y1="220" x2="535" y2="242" stroke="#484f58" stroke-width="1.5"/>
+
+  <!-- ========== Config Layer ========== -->
+  <g filter="url(#shadow)">
+    <rect x="340" y="242" width="390" height="44" rx="8" fill="#1c2128" stroke="#58a6ff" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="535" y="260" text-anchor="middle" fill="#58a6ff" font-size="10" font-weight="600" letter-spacing="1">CONFIG LAYER</text>
+    <text x="535" y="276" text-anchor="middle" fill="#8b949e" font-size="10">armature.yaml &#x2192; schema.py &#x2192; loader.py &#x2192; discovery.py</text>
+  </g>
+
+  <!-- Down from config to pillars -->
+  <line x1="535" y1="286" x2="535" y2="310" stroke="#484f58" stroke-width="1.5"/>
+
+  <!-- Fan out lines to 6 pillars -->
+  <line x1="535" y1="310" x2="115" y2="310" stroke="#484f58" stroke-width="1"/>
+  <line x1="535" y1="310" x2="955" y2="310" stroke="#484f58" stroke-width="1"/>
+  <line x1="115" y1="310" x2="115" y2="330" stroke="#484f58" stroke-width="1"/>
+  <line x1="315" y1="310" x2="315" y2="330" stroke="#484f58" stroke-width="1"/>
+  <line x1="495" y1="310" x2="495" y2="330" stroke="#484f58" stroke-width="1"/>
+  <line x1="675" y1="310" x2="675" y2="330" stroke="#484f58" stroke-width="1"/>
+  <line x1="855" y1="310" x2="855" y2="330" stroke="#484f58" stroke-width="1"/>
+  <line x1="1035" y1="310" x2="1035" y2="330" stroke="#484f58" stroke-width="1"/>
+
+  <!-- ========== 6 PILLARS ========== -->
+  <text x="600" y="348" text-anchor="middle" fill="#58a6ff" font-size="12" font-weight="600" letter-spacing="2">THE 6 GOVERNANCE PILLARS</text>
+
+  <!-- Pillar 1: Budget -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="360" width="170" height="250" rx="12" fill="#21262d" stroke="#2ea043" stroke-width="1.5"/>
+    <rect x="30" y="360" width="170" height="36" rx="12" fill="url(#greenGrad)"/>
+    <rect x="30" y="382" width="170" height="14" fill="url(#greenGrad)"/>
+    <text x="115" y="383" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">&#x1F4B0; BUDGET</text>
+    <text x="50" y="416" fill="#8b949e" font-size="10">&#x25CF; Token/cost tracking</text>
+    <text x="50" y="434" fill="#8b949e" font-size="10">&#x25CF; Phase allocation</text>
+    <text x="50" y="452" fill="#8b949e" font-size="10">&#x25CF; Circuit breakers</text>
+    <text x="50" y="470" fill="#8b949e" font-size="10">&#x25CF; Multi-provider routing</text>
+    <text x="50" y="488" fill="#8b949e" font-size="10">&#x25CF; Semantic cache</text>
+    <text x="50" y="506" fill="#8b949e" font-size="10">&#x25CF; Auto-calibration</text>
+    <text x="50" y="524" fill="#8b949e" font-size="10">&#x25CF; Anomaly detection</text>
+    <rect x="44" y="544" width="142" height="20" rx="4" fill="rgba(46,160,67,0.15)"/>
+    <text x="115" y="558" text-anchor="middle" fill="#3fb950" font-size="9" font-weight="600">budget/ | tracker.py</text>
+    <rect x="44" y="570" width="142" height="20" rx="4" fill="rgba(46,160,67,0.1)"/>
+    <text x="115" y="584" text-anchor="middle" fill="#2ea043" font-size="9">router | calibrator | cache</text>
+  </g>
+
+  <!-- Pillar 2: Quality -->
+  <g filter="url(#shadow)">
+    <rect x="220" y="360" width="170" height="250" rx="12" fill="#21262d" stroke="#388bfd" stroke-width="1.5"/>
+    <rect x="220" y="360" width="170" height="36" rx="12" fill="url(#blueGrad)"/>
+    <rect x="220" y="382" width="170" height="14" fill="url(#blueGrad)"/>
+    <text x="305" y="383" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">&#x2705; QUALITY</text>
+    <text x="240" y="416" fill="#8b949e" font-size="10">&#x25CF; 8 weighted checks</text>
+    <text x="240" y="434" fill="#8b949e" font-size="10">&#x25CF; Lint (ruff) W:25</text>
+    <text x="240" y="452" fill="#8b949e" font-size="10">&#x25CF; Type-check (mypy) W:25</text>
+    <text x="240" y="470" fill="#8b949e" font-size="10">&#x25CF; Tests (pytest) W:20</text>
+    <text x="240" y="488" fill="#8b949e" font-size="10">&#x25CF; Complexity (radon) W:15</text>
+    <text x="240" y="506" fill="#8b949e" font-size="10">&#x25CF; Security (bandit) W:20</text>
+    <text x="240" y="524" fill="#8b949e" font-size="10">&#x25CF; Docstring + Deps + Ratio</text>
+    <rect x="234" y="544" width="142" height="20" rx="4" fill="rgba(56,139,253,0.15)"/>
+    <text x="305" y="558" text-anchor="middle" fill="#58a6ff" font-size="9" font-weight="600">quality/ | scorer.py</text>
+    <rect x="234" y="570" width="142" height="20" rx="4" fill="rgba(56,139,253,0.1)"/>
+    <text x="305" y="584" text-anchor="middle" fill="#388bfd" font-size="9">gate | post_write | runners</text>
+  </g>
+
+  <!-- Pillar 3: Architecture -->
+  <g filter="url(#shadow)">
+    <rect x="410" y="360" width="170" height="250" rx="12" fill="#21262d" stroke="#8b5cf6" stroke-width="1.5"/>
+    <rect x="410" y="360" width="170" height="36" rx="12" fill="url(#purpleGrad)"/>
+    <rect x="410" y="382" width="170" height="14" fill="url(#purpleGrad)"/>
+    <text x="495" y="383" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">&#x1F3D7; ARCHITECTURE</text>
+    <text x="430" y="416" fill="#8b949e" font-size="10">&#x25CF; Layer boundaries</text>
+    <text x="430" y="434" fill="#8b949e" font-size="10">&#x25CF; Import enforcement</text>
+    <text x="430" y="452" fill="#8b949e" font-size="10">&#x25CF; Class conformance</text>
+    <text x="430" y="470" fill="#8b949e" font-size="10">&#x25CF; Required methods</text>
+    <text x="430" y="488" fill="#8b949e" font-size="10">&#x25CF; Schema-DDL sync</text>
+    <text x="430" y="506" fill="#8b949e" font-size="10">&#x25CF; Custom linters</text>
+    <rect x="424" y="544" width="142" height="20" rx="4" fill="rgba(139,92,246,0.15)"/>
+    <text x="495" y="558" text-anchor="middle" fill="#bc8cff" font-size="9" font-weight="600">architecture/ | boundary.py</text>
+    <rect x="424" y="570" width="142" height="20" rx="4" fill="rgba(139,92,246,0.1)"/>
+    <text x="495" y="584" text-anchor="middle" fill="#8b5cf6" font-size="9">conformance | linters/</text>
+  </g>
+
+  <!-- Pillar 4: Context -->
+  <g filter="url(#shadow)">
+    <rect x="600" y="360" width="170" height="250" rx="12" fill="#21262d" stroke="#d29922" stroke-width="1.5"/>
+    <rect x="600" y="360" width="170" height="36" rx="12" fill="url(#orangeGrad)"/>
+    <rect x="600" y="382" width="170" height="14" fill="url(#orangeGrad)"/>
+    <text x="685" y="383" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">&#x1F4CB; CONTEXT</text>
+    <text x="620" y="416" fill="#8b949e" font-size="10">&#x25CF; Progressive disclosure</text>
+    <text x="620" y="434" fill="#8b949e" font-size="10">&#x25CF; CLAUDE.md generation</text>
+    <text x="620" y="452" fill="#8b949e" font-size="10">&#x25CF; Narrow scope optimize</text>
+    <text x="620" y="470" fill="#8b949e" font-size="10">&#x25CF; Token estimation</text>
+    <text x="620" y="488" fill="#8b949e" font-size="10">&#x25CF; Cache identification</text>
+    <text x="620" y="506" fill="#8b949e" font-size="10">&#x25CF; Cross-session memory</text>
+    <rect x="614" y="544" width="142" height="20" rx="4" fill="rgba(210,153,34,0.15)"/>
+    <text x="685" y="558" text-anchor="middle" fill="#f0883e" font-size="9" font-weight="600">context/ | agent_md.py</text>
+    <rect x="614" y="570" width="142" height="20" rx="4" fill="rgba(210,153,34,0.1)"/>
+    <text x="685" y="584" text-anchor="middle" fill="#d29922" font-size="9">progressive | memory</text>
+  </g>
+
+  <!-- Pillar 5: GC -->
+  <g filter="url(#shadow)">
+    <rect x="790" y="360" width="170" height="250" rx="12" fill="#21262d" stroke="#da3633" stroke-width="1.5"/>
+    <rect x="790" y="360" width="170" height="36" rx="12" fill="url(#redGrad)"/>
+    <rect x="790" y="382" width="170" height="14" fill="url(#redGrad)"/>
+    <text x="875" y="383" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">&#x1F9F9; GC</text>
+    <text x="810" y="416" fill="#8b949e" font-size="10">&#x25CF; Architecture drift</text>
+    <text x="810" y="434" fill="#8b949e" font-size="10">&#x25CF; Stale doc detection</text>
+    <text x="810" y="452" fill="#8b949e" font-size="10">&#x25CF; Dead code removal</text>
+    <text x="810" y="470" fill="#8b949e" font-size="10">&#x25CF; Budget overrun audit</text>
+    <text x="810" y="488" fill="#8b949e" font-size="10">&#x25CF; Orphaned test files</text>
+    <text x="810" y="506" fill="#8b949e" font-size="10">&#x25CF; Baseline regression</text>
+    <rect x="804" y="544" width="142" height="20" rx="4" fill="rgba(218,54,51,0.15)"/>
+    <text x="875" y="558" text-anchor="middle" fill="#f85149" font-size="9" font-weight="600">gc/ | runner.py</text>
+    <rect x="804" y="570" width="142" height="20" rx="4" fill="rgba(218,54,51,0.1)"/>
+    <text x="875" y="584" text-anchor="middle" fill="#da3633" font-size="9">baseline | agents/</text>
+  </g>
+
+  <!-- Pillar 6: Self-Heal -->
+  <g filter="url(#shadow)">
+    <rect x="980" y="360" width="170" height="250" rx="12" fill="#21262d" stroke="#2ea043" stroke-width="1.5"/>
+    <rect x="980" y="360" width="170" height="36" rx="12" fill="url(#tealGrad)"/>
+    <rect x="980" y="382" width="170" height="14" fill="url(#tealGrad)"/>
+    <text x="1065" y="383" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">&#x1F527; SELF-HEAL</text>
+    <text x="1000" y="416" fill="#8b949e" font-size="10">&#x25CF; Lint auto-fix (ruff)</text>
+    <text x="1000" y="434" fill="#8b949e" font-size="10">&#x25CF; Type error reports</text>
+    <text x="1000" y="452" fill="#8b949e" font-size="10">&#x25CF; Test failure resolution</text>
+    <text x="1000" y="470" fill="#8b949e" font-size="10">&#x25CF; Circuit breaker</text>
+    <text x="1000" y="488" fill="#8b949e" font-size="10">&#x25CF; 3-attempt loop</text>
+    <text x="1000" y="506" fill="#8b949e" font-size="10">&#x25CF; Failure report gen</text>
+    <rect x="994" y="544" width="142" height="20" rx="4" fill="rgba(46,160,67,0.15)"/>
+    <text x="1065" y="558" text-anchor="middle" fill="#3fb950" font-size="9" font-weight="600">heal/ | pipeline.py</text>
+    <rect x="994" y="570" width="142" height="20" rx="4" fill="rgba(46,160,67,0.1)"/>
+    <text x="1065" y="584" text-anchor="middle" fill="#2ea043" font-size="9">circuit_breaker | healers/</text>
+  </g>
+
+  <!-- ========== BOTTOM: Shared Layer ========== -->
+  <line x1="115" y1="620" x2="115" y2="650" stroke="#484f58" stroke-width="1"/>
+  <line x1="305" y1="620" x2="305" y2="650" stroke="#484f58" stroke-width="1"/>
+  <line x1="495" y1="620" x2="495" y2="650" stroke="#484f58" stroke-width="1"/>
+  <line x1="685" y1="620" x2="685" y2="650" stroke="#484f58" stroke-width="1"/>
+  <line x1="875" y1="620" x2="875" y2="650" stroke="#484f58" stroke-width="1"/>
+  <line x1="1065" y1="620" x2="1065" y2="650" stroke="#484f58" stroke-width="1"/>
+  <line x1="115" y1="650" x2="1065" y2="650" stroke="#484f58" stroke-width="1"/>
+  <line x1="535" y1="650" x2="535" y2="668" stroke="#484f58" stroke-width="1.5"/>
+
+  <!-- Internal Utils -->
+  <g filter="url(#shadow)">
+    <rect x="260" y="668" width="550" height="40" rx="8" fill="#1c2128" stroke="#30363d" stroke-width="1.5"/>
+    <text x="535" y="685" text-anchor="middle" fill="#8b949e" font-size="10" font-weight="600" letter-spacing="1">SHARED INTERNALS</text>
+    <text x="535" y="700" text-anchor="middle" fill="#484f58" font-size="10">_internal/ &#x2192; ast_utils | subprocess_utils | types | validation</text>
+  </g>
+
+  <!-- ========== Stats Bar ========== -->
+  <rect x="0" y="730" width="1200" height="80" fill="rgba(0,0,0,0.3)"/>
+  <line x1="0" y1="730" x2="1200" y2="730" stroke="#30363d" stroke-width="1"/>
+
+  <!-- Stat items -->
+  <text x="100" y="759" text-anchor="middle" fill="#3fb950" font-size="28" font-weight="700">6</text>
+  <text x="100" y="778" text-anchor="middle" fill="#484f58" font-size="10" letter-spacing="1">PILLARS</text>
+
+  <text x="280" y="759" text-anchor="middle" fill="#58a6ff" font-size="28" font-weight="700">55+</text>
+  <text x="280" y="778" text-anchor="middle" fill="#484f58" font-size="10" letter-spacing="1">METRICS</text>
+
+  <text x="460" y="759" text-anchor="middle" fill="#bc8cff" font-size="28" font-weight="700">8</text>
+  <text x="460" y="778" text-anchor="middle" fill="#484f58" font-size="10" letter-spacing="1">QUALITY CHECKS</text>
+
+  <text x="640" y="759" text-anchor="middle" fill="#f0883e" font-size="28" font-weight="700">11</text>
+  <text x="640" y="778" text-anchor="middle" fill="#484f58" font-size="10" letter-spacing="1">MCP TOOLS</text>
+
+  <text x="820" y="759" text-anchor="middle" fill="#f85149" font-size="28" font-weight="700">5</text>
+  <text x="820" y="778" text-anchor="middle" fill="#484f58" font-size="10" letter-spacing="1">IDE INTEGRATIONS</text>
+
+  <text x="1000" y="759" text-anchor="middle" fill="#3fb950" font-size="28" font-weight="700">320</text>
+  <text x="1000" y="778" text-anchor="middle" fill="#484f58" font-size="10" letter-spacing="1">TESTS</text>
+
+  <!-- Footer -->
+  <rect x="0" y="830" width="1200" height="70" fill="rgba(0,0,0,0.2)"/>
+  <text x="600" y="855" text-anchor="middle" fill="#58a6ff" font-size="14" font-weight="600">github.com/vivekgana/armature</text>
+  <text x="600" y="878" text-anchor="middle" fill="#484f58" font-size="11">pip install armature-harness  |  Open Source (MIT)  |  v0.2.1</text>
+
+  <!-- Bottom accent bar -->
+  <rect x="0" y="897" width="1200" height="3" fill="url(#accent)"/>
+</svg>
