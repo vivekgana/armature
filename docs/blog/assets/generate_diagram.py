@@ -4,7 +4,7 @@ from __future__ import annotations
 from PIL import Image, ImageDraw, ImageFont
 import os
 
-W, H = 1200, 1580
+W, H = 1200, 1650
 BG_TOP = (15, 15, 30)
 BG_BOT = (22, 33, 62)
 
@@ -130,20 +130,20 @@ def draw_quality_section(draw, x, y, w):
     rounded_rect(draw, (x, y, x+w, y+230), 14, fill=(20, 30, 55), outline=(33, 80, 140))
 
     title_font = try_font(16, bold=True)
-    draw.text((x + 24, y + 18), "Quality Metrics Deep Dive  —  Current + Roadmap", fill=(100, 181, 246), font=title_font)
+    draw.text((x + 24, y + 18), "Quality Checks  —  v0.2.1 Implemented + Roadmap", fill=(100, 181, 246), font=title_font)
 
     categories = [
-        ("Code Health", ["Cyclomatic complexity", "Cognitive complexity", "Nesting depth", "Duplication %", "Maintainability index"]),
-        ("Test Quality", ["Mutation score", "Branch coverage", "Flaky test detection", "Test-to-code ratio", "Execution time"]),
-        ("Security", ["CVE dependency audit", "Static analysis (SAST)", "Secret detection", "License compliance", "OWASP score"]),
-        ("AI-Specific", ["Agent edit accuracy", "Rework rate", "First-pass gate rate", "Token efficiency", "Quality / 1K tokens"]),
+        ("Implemented", ["Lint scoring (ruff/eslint)", "Type-check (mypy/tsc)", "Test pass/fail + coverage", "Cyclomatic complexity", "Weighted gate scoring"]),
+        ("New in v0.2.1", ["Bandit security scan", "Test-to-code LOC ratio", "Docstring coverage (AST)", "Dependency CVE audit", "Baseline regression deltas"]),
+        ("Scoring", ["Weighted mean aggregation", "3 gate levels (70/85/95%)", "Per-check weight config", "Tool-missing graceful skip", "Internal check support"]),
+        ("Roadmap", ["Cognitive complexity", "Mutation testing", "Flaky test detection", "Change failure rate", "Agent edit accuracy"]),
     ]
 
     card_w = (w - 80) // 4
     card_h = 170
     card_y = y + 52
-    icons_text = ["</>", "T", "S", "AI"]
-    icon_colors = [(100, 181, 246), (129, 199, 132), (239, 154, 154), (255, 183, 77)]
+    icons_text = ["v1", "v2", "Sc", ">>"]
+    icon_colors = [(100, 181, 246), (129, 199, 132), (255, 183, 77), (239, 154, 154)]
 
     cat_font = try_font(10, bold=True)
     item_font = try_font(11)
@@ -192,8 +192,8 @@ def main():
     # Stats bar
     stats = [
         ("6", "GOVERNANCE PILLARS", (76, 175, 80)),
-        ("50+", "TRACKED METRICS", (33, 150, 243)),
-        ("11", "MCP TOOLS", (156, 39, 176)),
+        ("55+", "TRACKED METRICS", (33, 150, 243)),
+        ("8", "QUALITY CHECKS", (156, 39, 176)),
         ("4", "AI PROVIDERS", (255, 152, 0)),
         ("10", "MODELS ROUTED", (244, 67, 54)),
     ]
@@ -218,15 +218,15 @@ def main():
             "Anomaly detection flags",
             "Auto-calibration profiles |NEW",
         ], "budget"),
-        ("QUALITY", "Code quality scoring", [
-            "Lint violations & score |WEIGHTED",
-            "Type-check errors & score",
-            "Test pass/fail & coverage %",
-            "Quality gate levels",
-            "Baseline regression detection",
-            "Drift direction tracking",
-            "Complexity scoring |PLANNED",
-            "Mutation test score |PLANNED",
+        ("QUALITY", "8 weighted checks", [
+            "Lint violations & score |W:25",
+            "Type-check errors & score |W:25",
+            "Test pass/fail & coverage |W:20",
+            "Cyclomatic complexity (radon) |W:15",
+            "Security scan (bandit) |W:20",
+            "Test-to-code ratio |W:10",
+            "Docstring coverage (AST) |W:10",
+            "Dependency CVE audit |W:15",
         ], "quality"),
         ("ARCHITECTURE", "Boundary enforcement", [
             "Layer boundary violations |ENFORCED",
@@ -291,7 +291,7 @@ def main():
     tw = bb[2] - bb[0]
     draw.text(((W - tw) // 2, footer_y + 14), url_text, fill=(100, 181, 246), font=url_font)
 
-    tag_text = "pip install armature-harness   |   Open Source (MIT)   |   v0.2.0"
+    tag_text = "pip install armature-harness   |   Open Source (MIT)   |   v0.2.1"
     bb2 = draw.textbbox((0, 0), tag_text, font=tag_font)
     tw2 = bb2[2] - bb2[0]
     draw.text(((W - tw2) // 2, footer_y + 40), tag_text, fill=(110, 110, 130), font=tag_font)
