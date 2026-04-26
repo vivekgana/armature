@@ -191,166 +191,165 @@ def build_ossature_summary(
     )
 
 
+def _quality_check_gap(
+    enforced: bool, check_name: str, oss: OssatureCapabilitiesSummary,
+) -> tuple[str, str]:
+    """Determine gap status and ossature display value for a quality check."""
+    if not enforced:
+        gap = "N/A"
+    elif not oss.has_output_dir:
+        gap = "UNKNOWN"
+    elif check_name in oss.quality_checks_passed:
+        gap = "MEETS"
+    else:
+        gap = "GAP"
+    if check_name in oss.quality_checks_passed:
+        oss_val = "Pass"
+    elif check_name in oss.quality_checks_failed:
+        oss_val = "Fail"
+    else:
+        oss_val = "Unknown"
+    return gap, oss_val
+
+
 def _compute_dimensions(
     arm: SpecRequirementsSummary, oss: OssatureCapabilitiesSummary
 ) -> list[ComparisonDimension]:
     dims: list[ComparisonDimension] = []
 
-    # 1. Language compatibility
-    lang_gap = "MEETS" if not oss.unsupported_language else "GAP"
-    dims.append(ComparisonDimension(
-        dimension="Language compatibility",
-        armature_value=arm.project_language,
-        ossature_value=oss.project_language,
-        gap=lang_gap,
-        notes="Ossature language unsupported by armature toolchain" if lang_gap == "GAP" else "",
-    ))
+    dims.extend(_compute_budget_dimensions(arm, oss))
+    dims.extend(_compute_testing_dimensions(arm, oss))
+    dims.extend(_compute_quality_dimensions(arm, oss))
+    dims.extend(_compute_structural_dimensions(arm, oss))
 
-    # 2. Budget tier
-    tier_gap = "MEETS" if arm.budget_tier == oss.budget_tier else "GAP"
-    dims.append(ComparisonDimension(
-        dimension="Budget tier",
-        armature_value=f"{arm.budget_tier} ({arm.budget_max_tokens:,} tokens, ${arm.budget_max_cost_usd})",
-        ossature_value=f"{oss.budget_tier} ({oss.budget_estimate_tokens:,} tokens, ${oss.budget_estimate_cost_usd})",
-        gap=tier_gap,
-    ))
+    return dims
 
-    # 3. Budget max tokens
-    token_gap = "MEETS" if oss.budget_estimate_tokens <= arm.budget_max_tokens else "GAP"
-    dims.append(ComparisonDimension(
-        dimension="Budget max tokens",
-        armature_value=f"{arm.budget_max_tokens:,}",
-        ossature_value=f"{oss.budget_estimate_tokens:,}",
-        gap=token_gap,
-    ))
 
-    # 4. Unit test coverage minimum
+def _compute_budget_dimensions(
+    arm: SpecRequirementsSummary, oss: OssatureCapabilitiesSummary,
+) -> list[ComparisonDimension]:
+    return [
+        ComparisonDimension(
+            dimension="Language compatibility",
+            armature_value=arm.project_language,
+            ossature_value=oss.project_language,
+            gap="MEETS" if not oss.unsupported_language else "GAP",
+            notes="Ossature language unsupported by armature toolchain" if oss.unsupported_language else "",
+        ),
+        ComparisonDimension(
+            dimension="Budget tier",
+            armature_value=f"{arm.budget_tier} ({arm.budget_max_tokens:,} tokens, ${arm.budget_max_cost_usd})",
+            ossature_value=(
+                f"{oss.budget_tier} ({oss.budget_estimate_tokens:,} tokens, ${oss.budget_estimate_cost_usd})"
+            ),
+            gap="MEETS" if arm.budget_tier == oss.budget_tier else "GAP",
+        ),
+        ComparisonDimension(
+            dimension="Budget max tokens",
+            armature_value=f"{arm.budget_max_tokens:,}",
+            ossature_value=f"{oss.budget_estimate_tokens:,}",
+            gap="MEETS" if oss.budget_estimate_tokens <= arm.budget_max_tokens else "GAP",
+        ),
+    ]
+
+
+def _compute_testing_dimensions(
+    arm: SpecRequirementsSummary, oss: OssatureCapabilitiesSummary,
+) -> list[ComparisonDimension]:
     if not oss.has_output_dir:
-        cov_gap = "UNKNOWN"
-        cov_notes = "No output directory — cannot assess coverage"
+        cov_gap, cov_notes = "UNKNOWN", "No output directory — cannot assess coverage"
     elif oss.quality_score * 100 >= arm.max_coverage_min:
-        cov_gap = "MEETS"
-        cov_notes = ""
+        cov_gap, cov_notes = "MEETS", ""
     else:
         cov_gap = "GAP"
         cov_notes = f"Quality score {oss.quality_score:.0%} below {arm.max_coverage_min}% min"
-    dims.append(ComparisonDimension(
-        dimension="Unit test coverage minimum",
-        armature_value=f"{arm.max_coverage_min}%",
-        ossature_value=f"{oss.quality_score:.0%}" if oss.has_output_dir else "N/A",
-        gap=cov_gap,
-        notes=cov_notes,
-    ))
 
-    # 5. Integration tests required
-    int_gap = "N/A" if arm.integration_test_required_count == 0 else "UNKNOWN"
-    dims.append(ComparisonDimension(
-        dimension="Integration tests required",
-        armature_value=f"{arm.integration_test_required_count} specs require",
-        ossature_value="Not tracked by ossature",
-        gap=int_gap,
-        notes="Ossature has no integration test concept",
-    ))
-
-    # 6. E2E tests required
-    e2e_gap = "N/A" if arm.e2e_test_required_count == 0 else "UNKNOWN"
-    dims.append(ComparisonDimension(
-        dimension="E2E tests required",
-        armature_value=f"{arm.e2e_test_required_count} specs require",
-        ossature_value="Not tracked by ossature",
-        gap=e2e_gap,
-        notes="Ossature has no e2e test concept",
-    ))
-
-    # 7. Linting enforced
-    if not arm.linting_enforced:
-        lint_gap = "N/A"
-    elif not oss.has_output_dir:
-        lint_gap = "UNKNOWN"
-    elif "lint" in oss.quality_checks_passed:
-        lint_gap = "MEETS"
-    else:
-        lint_gap = "GAP"
-    dims.append(ComparisonDimension(
-        dimension="Linting enforced",
-        armature_value="Yes" if arm.linting_enforced else "No",
-        ossature_value=(
-            "Pass" if "lint" in oss.quality_checks_passed
-            else ("Fail" if "lint" in oss.quality_checks_failed else "Unknown")
+    return [
+        ComparisonDimension(
+            dimension="Unit test coverage minimum",
+            armature_value=f"{arm.max_coverage_min}%",
+            ossature_value=f"{oss.quality_score:.0%}" if oss.has_output_dir else "N/A",
+            gap=cov_gap, notes=cov_notes,
         ),
-        gap=lint_gap,
-    ))
-
-    # 8. Type checking enforced
-    if not arm.type_check_enforced:
-        tc_gap = "N/A"
-    elif not oss.has_output_dir:
-        tc_gap = "UNKNOWN"
-    elif "type_check" in oss.quality_checks_passed:
-        tc_gap = "MEETS"
-    else:
-        tc_gap = "GAP"
-    dims.append(ComparisonDimension(
-        dimension="Type checking enforced",
-        armature_value="Yes" if arm.type_check_enforced else "No",
-        ossature_value=(
-            "Pass" if "type_check" in oss.quality_checks_passed
-            else ("Fail" if "type_check" in oss.quality_checks_failed else "Unknown")
+        ComparisonDimension(
+            dimension="Integration tests required",
+            armature_value=f"{arm.integration_test_required_count} specs require",
+            ossature_value="Not tracked by ossature",
+            gap="N/A" if arm.integration_test_required_count == 0 else "UNKNOWN",
+            notes="Ossature has no integration test concept",
         ),
-        gap=tc_gap,
-    ))
+        ComparisonDimension(
+            dimension="E2E tests required",
+            armature_value=f"{arm.e2e_test_required_count} specs require",
+            ossature_value="Not tracked by ossature",
+            gap="N/A" if arm.e2e_test_required_count == 0 else "UNKNOWN",
+            notes="Ossature has no e2e test concept",
+        ),
+    ]
 
-    # 9. Acceptance criteria count
-    dims.append(ComparisonDimension(
-        dimension="Acceptance criteria count",
-        armature_value=f"{arm.total_ac_count} ({arm.testable_ac_count} testable)",
-        ossature_value=f"{oss.spec_count} specs (ACs in free text)",
-        gap="N/A",
-        notes="Ossature uses unstructured AC in markdown; not directly comparable",
-    ))
 
-    # 10. Human gate count
-    dims.append(ComparisonDimension(
-        dimension="Human gate count",
-        armature_value=str(arm.human_gate_count),
-        ossature_value="0 (no gate concept)",
-        gap="GAP" if arm.human_gate_count > 0 else "N/A",
-        notes="Armature enforces human review gates; ossature does not",
-    ))
+def _compute_quality_dimensions(
+    arm: SpecRequirementsSummary, oss: OssatureCapabilitiesSummary,
+) -> list[ComparisonDimension]:
+    lint_gap, lint_val = _quality_check_gap(arm.linting_enforced, "lint", oss)
+    tc_gap, tc_val = _quality_check_gap(arm.type_check_enforced, "type_check", oss)
 
-    # 11. Architecture defined
+    return [
+        ComparisonDimension(
+            dimension="Linting enforced",
+            armature_value="Yes" if arm.linting_enforced else "No",
+            ossature_value=lint_val, gap=lint_gap,
+        ),
+        ComparisonDimension(
+            dimension="Type checking enforced",
+            armature_value="Yes" if arm.type_check_enforced else "No",
+            ossature_value=tc_val, gap=tc_gap,
+        ),
+        ComparisonDimension(
+            dimension="Quality gate threshold",
+            armature_value=f"{arm.quality_gate_merge_ready:.0%} (merge-ready)",
+            ossature_value=oss.quality_level if oss.has_output_dir else "N/A",
+            gap="MEETS" if oss.quality_level == "merge_ready" else (
+                "UNKNOWN" if not oss.has_output_dir else "GAP"
+            ),
+        ),
+    ]
+
+
+def _compute_structural_dimensions(
+    arm: SpecRequirementsSummary, oss: OssatureCapabilitiesSummary,
+) -> list[ComparisonDimension]:
     arm_arch = f"{arm.architecture_layers} layers, {arm.architecture_boundaries} boundaries"
     oss_arch = f"{oss.architecture_component_count} components" if oss.has_architecture_specs else "None"
     arch_gap = "MEETS" if oss.has_architecture_specs and arm.architecture_layers > 0 else (
         "N/A" if arm.architecture_layers == 0 else "GAP"
     )
-    dims.append(ComparisonDimension(
-        dimension="Architecture defined",
-        armature_value=arm_arch,
-        ossature_value=oss_arch,
-        gap=arch_gap,
-    ))
 
-    # 12. Quality gate threshold
-    dims.append(ComparisonDimension(
-        dimension="Quality gate threshold",
-        armature_value=f"{arm.quality_gate_merge_ready:.0%} (merge-ready)",
-        ossature_value=oss.quality_level if oss.has_output_dir else "N/A",
-        gap="MEETS" if oss.quality_level == "merge_ready" else (
-            "UNKNOWN" if not oss.has_output_dir else "GAP"
+    return [
+        ComparisonDimension(
+            dimension="Acceptance criteria count",
+            armature_value=f"{arm.total_ac_count} ({arm.testable_ac_count} testable)",
+            ossature_value=f"{oss.spec_count} specs (ACs in free text)",
+            gap="N/A", notes="Ossature uses unstructured AC in markdown; not directly comparable",
         ),
-    ))
-
-    # 13. Spec traceability
-    dims.append(ComparisonDimension(
-        dimension="Spec traceability",
-        armature_value="Enabled (AC-to-test pattern)",
-        ossature_value="Not supported",
-        gap="GAP",
-        notes="Armature traces ACs to test docstrings; ossature has no equivalent",
-    ))
-
-    return dims
+        ComparisonDimension(
+            dimension="Human gate count",
+            armature_value=str(arm.human_gate_count),
+            ossature_value="0 (no gate concept)",
+            gap="GAP" if arm.human_gate_count > 0 else "N/A",
+            notes="Armature enforces human review gates; ossature does not",
+        ),
+        ComparisonDimension(
+            dimension="Architecture defined",
+            armature_value=arm_arch, ossature_value=oss_arch, gap=arch_gap,
+        ),
+        ComparisonDimension(
+            dimension="Spec traceability",
+            armature_value="Enabled (AC-to-test pattern)",
+            ossature_value="Not supported",
+            gap="GAP", notes="Armature traces ACs to test docstrings; ossature has no equivalent",
+        ),
+    ]
 
 
 def compare_projects(

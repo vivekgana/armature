@@ -47,8 +47,16 @@ def handle_tool_call(tool_name: str, arguments: dict) -> dict:
     return handler(arguments)
 
 
-def get_tool_definitions() -> list[dict]:
+def get_tool_definitions() -> list[dict[str, object]]:
     """Return MCP tool definitions for Armature capabilities."""
+    return [
+        *_quality_tool_definitions(),
+        *_budget_tool_definitions(),
+        *_lifecycle_tool_definitions(),
+    ]
+
+
+def _quality_tool_definitions() -> list[dict[str, object]]:
     return [
         {
             "name": "armature_check",
@@ -84,6 +92,11 @@ def get_tool_definitions() -> list[dict]:
                 },
             },
         },
+    ]
+
+
+def _budget_tool_definitions() -> list[dict[str, object]]:
+    return [
         {
             "name": "armature_budget",
             "description": "Track or report development session costs per spec/phase.",
@@ -102,9 +115,7 @@ def get_tool_definitions() -> list[dict]:
         {
             "name": "armature_preplan",
             "description": "Pre-plan budget for an ENTIRE build upfront. Estimates all tasks, "
-                           "picks ONE uniform strategy, allocates equal per-task budgets. "
-                           "Every task -- first and last -- gets the same quality context. "
-                           "No progressive degradation.",
+                           "picks ONE uniform strategy, allocates equal per-task budgets.",
             "inputSchema": {
                 "type": "object",
                 "properties": {
@@ -134,10 +145,8 @@ def get_tool_definitions() -> list[dict]:
         },
         {
             "name": "armature_benchmark",
-            "description": "Scan project scope (LOC, files, architecture) and check if budget "
-                           "tiers are right-sized. Warns if budget is too low (quality suffers) "
-                           "or too high (wasteful). Returns per-task-type cost estimates. "
-                           "Set include_industry=true to compare against SWE-bench/DevBench targets.",
+            "description": "Scan project scope and check if budget tiers are right-sized. "
+                           "Returns per-task-type cost estimates.",
             "inputSchema": {
                 "type": "object",
                 "properties": {
@@ -152,8 +161,7 @@ def get_tool_definitions() -> list[dict]:
         },
         {
             "name": "armature_estimate",
-            "description": "Estimate token count for a set of files before sending to the LLM. "
-                           "Use to pre-size requests and avoid budget overruns.",
+            "description": "Estimate token count for a set of files before sending to the LLM.",
             "inputSchema": {
                 "type": "object",
                 "properties": {
@@ -165,6 +173,49 @@ def get_tool_definitions() -> list[dict]:
                 "required": ["files"],
             },
         },
+        {
+            "name": "armature_route",
+            "description": "Route a task to the cheapest adequate model based on intent and quality floor.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "intent": {"type": "string",
+                               "description": "Task intent: code_gen, complex_code_gen, explain, "
+                                              "test_gen, research, lint_fix, reasoning"},
+                    "estimated_input": {"type": "integer", "default": 10000},
+                    "estimated_output": {"type": "integer", "default": 4000},
+                },
+                "required": ["intent"],
+            },
+        },
+        {
+            "name": "armature_calibrate",
+            "description": "Calibrate budget multipliers from a completed spec.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "spec_id": {"type": "string", "description": "Completed spec ID to calibrate from"},
+                    "action": {"type": "string", "enum": ["calibrate", "status"],
+                               "default": "calibrate"},
+                },
+                "required": ["spec_id"],
+            },
+        },
+        {
+            "name": "armature_cache_stats",
+            "description": "Get semantic cache statistics: hit rate, tokens saved, entries by intent.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "spec_id": {"type": "string", "description": "Spec ID for per-spec stats (optional)"},
+                },
+            },
+        },
+    ]
+
+
+def _lifecycle_tool_definitions() -> list[dict[str, object]]:
+    return [
         {
             "name": "armature_baseline",
             "description": "Capture or compare quality baselines for regression detection.",
@@ -197,47 +248,6 @@ def get_tool_definitions() -> list[dict]:
                     "spec_id": {"type": "string"},
                 },
                 "required": ["spec_id"],
-            },
-        },
-        {
-            "name": "armature_route",
-            "description": "Route a task to the cheapest adequate model based on intent "
-                           "and quality floor. Returns model name, cost estimate, and alternatives.",
-            "inputSchema": {
-                "type": "object",
-                "properties": {
-                    "intent": {"type": "string",
-                               "description": "Task intent: code_gen, complex_code_gen, explain, "
-                                              "test_gen, research, lint_fix, reasoning"},
-                    "estimated_input": {"type": "integer", "default": 10000},
-                    "estimated_output": {"type": "integer", "default": 4000},
-                },
-                "required": ["intent"],
-            },
-        },
-        {
-            "name": "armature_calibrate",
-            "description": "Calibrate budget multipliers from a completed spec. Compares "
-                           "actual usage vs benchmark predictions and updates the calibration "
-                           "profile using exponential moving average.",
-            "inputSchema": {
-                "type": "object",
-                "properties": {
-                    "spec_id": {"type": "string", "description": "Completed spec ID to calibrate from"},
-                    "action": {"type": "string", "enum": ["calibrate", "status"],
-                               "default": "calibrate"},
-                },
-                "required": ["spec_id"],
-            },
-        },
-        {
-            "name": "armature_cache_stats",
-            "description": "Get semantic cache statistics: hit rate, tokens saved, entries by intent.",
-            "inputSchema": {
-                "type": "object",
-                "properties": {
-                    "spec_id": {"type": "string", "description": "Spec ID for per-spec stats (optional)"},
-                },
             },
         },
     ]
