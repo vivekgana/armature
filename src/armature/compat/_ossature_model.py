@@ -99,7 +99,7 @@ def _parse_depends(raw: str) -> list[str]:
     return [s for s in _DEPENDS_SPLIT_RE.split(cleaned) if s]
 
 
-def parse_ossature_toml(path: Path) -> dict:
+def parse_ossature_toml(path: Path) -> dict[str, object]:
     """Parse an ossature.toml file and return the raw dict."""
     with open(path, "rb") as f:
         return tomllib.load(f)

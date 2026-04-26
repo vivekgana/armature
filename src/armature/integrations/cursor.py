@@ -36,10 +36,10 @@ def generate_cursor_rules(config: ArmatureConfig) -> Path:
     # Conformance rules
     if config.architecture.conformance:
         lines.append("## Class Conformance")
-        for rule in config.architecture.conformance:
-            lines.append(f"- Classes matching `*{rule.pattern}*` must inherit from `{rule.base_class}`")
-            if rule.required_methods:
-                lines.append(f"  Required methods: {', '.join(rule.required_methods)}")
+        for conf_rule in config.architecture.conformance:
+            lines.append(f"- Classes matching `*{conf_rule.pattern}*` must inherit from `{conf_rule.base_class}`")
+            if conf_rule.required_methods:
+                lines.append(f"  Required methods: {', '.join(conf_rule.required_methods)}")
         lines.append("")
 
     # Quality gates

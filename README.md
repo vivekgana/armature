@@ -6,6 +6,22 @@
 
 Armature is a harness engineering framework for AI coding agents. It wraps agents (Claude Code, Cursor, Copilot, Windsurf, Aider) in automated guides, sensors, budget controls, architectural enforcement, garbage collection, and self-healing pipelines.
 
+<p align="center">
+  <img src="docs/blog/assets/armature-banner.svg" alt="Armature Banner" width="100%"/>
+</p>
+
+## System Architecture
+
+<p align="center">
+  <img src="docs/blog/assets/architecture-diagram.svg" alt="Armature Architecture" width="100%"/>
+</p>
+
+## Usage Flow
+
+<p align="center">
+  <img src="docs/blog/assets/usage-flow-diagram.svg" alt="Armature Usage Flow" width="100%"/>
+</p>
+
 ## Quick Start
 
 ```bash
@@ -29,12 +45,31 @@ armature heal --failures lint
 
 | Pillar | What | CLI |
 |--------|------|-----|
-| **Budget** | Token/cost tracking per spec/phase, optimization suggestions | `armature budget` |
-| **Quality** | Lint + type + test checks, quality gates (draft/review/merge), shift-left hooks | `armature check` |
+| **Budget** | Token/cost tracking, multi-provider routing, semantic cache, auto-calibration | `armature budget` |
+| **Quality** | 8 weighted checks (lint, type, test, security, complexity, deps, docstring, ratio) | `armature check` |
 | **Context** | CLAUDE.md/AGENTS.md generation, progressive disclosure, cross-session memory | `armature hooks` |
 | **Architecture** | Layer boundary enforcement, class conformance, schema sync | `armature check` |
 | **GC** | Architecture drift, stale docs, dead code, budget audit | `armature gc` |
 | **Self-Heal** | Auto-fix lint, report type/test errors, circuit breaker escalation | `armature heal` |
+
+## Quality Checks (v0.2.1)
+
+8 weighted checks with configurable gates:
+
+| Check | Tool | Weight | Type |
+|-------|------|--------|------|
+| Lint | ruff | 25 | External |
+| Type-check | mypy | 25 | External |
+| Tests | pytest | 20 | External |
+| Security | bandit | 20 | External |
+| Complexity | radon | 15 | External |
+| Dependency audit | pip-audit | 15 | External |
+| Docstring coverage | AST analysis | 10 | Internal |
+| Test-to-code ratio | LOC analysis | 10 | Internal |
+
+**Scoring:** `weighted_score = sum(score * weight) / sum(weight)`
+
+**Gates:** Draft (70%) | Review Ready (85%) | Merge Ready (95%)
 
 ## Configuration
 
@@ -52,8 +87,21 @@ quality:
     lint: { tool: ruff, weight: 25 }
     type_check: { tool: mypy, weight: 25 }
     test: { tool: pytest, weight: 20, coverage_min: 85 }
+    security: { tool: bandit, weight: 20 }
+    complexity: { kind: internal, weight: 15, threshold: 10.0 }
+    dependency_audit: { tool: pip-audit, weight: 15 }
+    docstring: { kind: internal, weight: 10 }
+    test_ratio: { kind: internal, weight: 10, threshold: 0.5 }
   post_write:
     enabled: true  # shift-left: check on every file write
+
+budget:
+  enabled: true
+  providers:
+    strategy: cost_optimized
+    enabled_models: [claude-sonnet, claude-haiku, claude-opus]
+  cache: { enabled: true }
+  calibration: { enabled: true, auto_calibrate: true }
 
 architecture:
   enabled: true
@@ -72,6 +120,17 @@ heal:
 integrations:
   claude_code: { enabled: true }
 ```
+
+## Implementation Roadmap
+
+| Version | Features | Status |
+|---------|----------|--------|
+| v0.1.x | Core framework, 3 quality checks (lint, type, test), budget tracking | Shipped |
+| v0.2.0 | Budget 2.5x increases, multi-provider routing, semantic cache, calibration | Shipped |
+| v0.2.1 | 5 new quality checks, weighted scoring, baseline regression deltas | Shipped |
+| v0.3.0 | Cognitive complexity, mutation testing, flaky test detection | Planned |
+| v0.4.0 | Change failure rate, agent edit accuracy, cross-project dashboards | Planned |
+| v1.0.0 | Stable API, full TypeScript parity, plugin architecture | Planned |
 
 ## IDE Integrations
 

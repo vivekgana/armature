@@ -136,10 +136,12 @@ class InternalCheckConfig(BaseModel):
     min_coverage_pct: float | None = None
 
 
-def _check_discriminator(v: dict | BaseModel) -> str:
+def _check_discriminator(v: dict[str, object] | BaseModel) -> str:
     if isinstance(v, dict):
-        return v.get("kind", "tool")
-    return getattr(v, "kind", "tool")
+        val = v.get("kind", "tool")
+        return str(val) if val is not None else "tool"
+    result = getattr(v, "kind", "tool")
+    return str(result)
 
 
 AnyCheckConfig = Annotated[
