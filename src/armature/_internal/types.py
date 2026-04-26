@@ -62,6 +62,7 @@ class CheckResult:
     violation_count: int = 0
     details: str = ""
     score: float = 1.0  # 0.0 to 1.0
+    weight: int = 25
 
 
 @dataclass

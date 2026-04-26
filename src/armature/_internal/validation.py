@@ -11,6 +11,7 @@ ALLOWED_TOOLS = frozenset({
     "ruff", "flake8", "pylint", "eslint", "biome",
     "mypy", "pyright", "tsc", "pytype",
     "pytest", "unittest", "jest", "vitest",
+    "radon", "bandit", "pip-audit", "npm",
 })
 
 ALLOWED_LANGUAGES = frozenset({

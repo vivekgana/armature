@@ -49,6 +49,7 @@ class BaselineManager:
         if not path.exists():
             return None
         data = json.loads(path.read_text(encoding="utf-8"))
+        known = {"timestamp", "lint_violations", "type_errors", "test_passed", "test_failed", "coverage_pct"}
         return BaselineSnapshot(
             timestamp=data.get("timestamp", ""),
             lint_violations=data.get("lint_violations", 0),
@@ -56,6 +57,7 @@ class BaselineManager:
             test_passed=data.get("test_passed", 0),
             test_failed=data.get("test_failed", 0),
             coverage_pct=data.get("coverage_pct", 0.0),
+            extra={k: v for k, v in data.items() if k not in known},
         )
 
     def diff(self, baseline: BaselineSnapshot, current: BaselineSnapshot) -> dict:
@@ -64,11 +66,32 @@ class BaselineManager:
         type_delta = current.type_errors - baseline.type_errors
         test_fail_delta = current.test_failed - baseline.test_failed
 
+        complexity_delta = (
+            int(current.extra.get("complexity_over_threshold", 0))
+            - int(baseline.extra.get("complexity_over_threshold", 0))
+        )
+        security_delta = (
+            int(current.extra.get("security_findings", 0))
+            - int(baseline.extra.get("security_findings", 0))
+        )
+        vuln_delta = (
+            int(current.extra.get("vuln_count", 0))
+            - int(baseline.extra.get("vuln_count", 0))
+        )
+
+        has_regression = (
+            lint_delta > 0 or type_delta > 0 or test_fail_delta > 0
+            or complexity_delta > 0 or security_delta > 0 or vuln_delta > 0
+        )
+
         return {
             "lint_delta": lint_delta,
             "type_delta": type_delta,
             "test_fail_delta": test_fail_delta,
-            "has_regression": lint_delta > 0 or type_delta > 0 or test_fail_delta > 0,
+            "complexity_delta": complexity_delta,
+            "security_delta": security_delta,
+            "vuln_delta": vuln_delta,
+            "has_regression": has_regression,
             "drift": "growing" if (lint_delta > 0 or type_delta > 0) else
                      "improving" if (lint_delta < 0 or type_delta < 0) else "stable",
         }

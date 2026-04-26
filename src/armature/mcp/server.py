@@ -261,11 +261,20 @@ def _tool_check(args: dict) -> dict:
             return {"error": f"File not found: {file_path}"}
         file_path = str(resolved)
 
-    results = run_quality_checks(config.quality, root, file_path=file_path)
+    results = run_quality_checks(
+        config.quality, root, file_path=file_path,
+        project_src_dir=config.project.src_dir,
+        project_test_dir=config.project.test_dir,
+    )
+    total_weight = sum(r.weight for r in results)
+    weighted_score = sum(r.score * r.weight for r in results) / total_weight if total_weight else 1.0
     return {
-        "checks": [{"name": r.name, "passed": r.passed, "violations": r.violation_count, "details": r.details}
-                    for r in results],
-        "score": sum(r.score for r in results) / len(results) if results else 1.0,
+        "checks": [
+            {"name": r.name, "passed": r.passed, "violations": r.violation_count,
+             "details": r.details, "weight": r.weight, "score": round(r.score, 3)}
+            for r in results
+        ],
+        "score": round(weighted_score, 3),
     }
 
 
@@ -523,15 +532,19 @@ def _tool_baseline(args: dict) -> dict:
         return {"error": str(e)}
     manager = BaselineManager(root / ".armature" / "baselines")
 
+    baseline_kwargs = dict(
+        project_src_dir=config.project.src_dir,
+        project_test_dir=config.project.test_dir,
+    )
     if args["action"] == "capture":
-        snapshot = capture_baseline_snapshot(config.quality, root)
+        snapshot = capture_baseline_snapshot(config.quality, root, **baseline_kwargs)
         path = manager.save(spec_id, snapshot)
         return {"saved": str(path), "lint": snapshot.lint_violations, "type_errors": snapshot.type_errors}
     else:
         baseline = manager.load(spec_id)
         if baseline is None:
             return {"error": f"No baseline for {spec_id}"}
-        current = capture_baseline_snapshot(config.quality, root)
+        current = capture_baseline_snapshot(config.quality, root, **baseline_kwargs)
         diff = manager.diff(baseline, current)
         return diff
 

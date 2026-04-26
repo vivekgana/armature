@@ -1,6 +1,6 @@
 [project]
 name = "armature-harness"
-version = "0.2.0"
+version = "0.2.1"
 description = "Harness engineering framework for AI coding agents -- the invisible skeleton that shapes agent output"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -29,7 +29,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-python = ["ruff>=0.3.0", "mypy>=1.8.0", "pytest>=8.0.0"]
+python = ["ruff>=0.3.0", "mypy>=1.8.0", "pytest>=8.0.0", "radon>=6.0.0", "bandit>=1.7.0", "pip-audit>=2.7.0"]
 typescript = []
 all = ["armature-harness[python]", "armature-harness[typescript]"]
 dev = [

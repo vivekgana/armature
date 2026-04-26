@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import re
+from typing import Annotated, Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Discriminator, Field, Tag, field_validator
 
 from armature._internal.validation import (
     _DANGEROUS_ARG_CHARS,
@@ -105,6 +106,7 @@ class BudgetConfig(BaseModel):
 
 class ToolCheckConfig(BaseModel):
     """Configuration for a single quality check tool."""
+    kind: Literal["tool"] = "tool"
     tool: str = ""
     args: list[str] = Field(default_factory=list)
     weight: int = 25
@@ -124,6 +126,26 @@ class ToolCheckConfig(BaseModel):
             if any(c in arg for c in _DANGEROUS_ARG_CHARS):
                 raise ValueError(f"Dangerous character in tool argument: {arg!r}")
         return v
+
+
+class InternalCheckConfig(BaseModel):
+    """Configuration for an internal (pure Python) quality check."""
+    kind: Literal["internal"] = "internal"
+    weight: int = 10
+    threshold: float | None = None
+    min_coverage_pct: float | None = None
+
+
+def _check_discriminator(v: dict | BaseModel) -> str:
+    if isinstance(v, dict):
+        return v.get("kind", "tool")
+    return getattr(v, "kind", "tool")
+
+
+AnyCheckConfig = Annotated[
+    Annotated[ToolCheckConfig, Tag("tool")] | Annotated[InternalCheckConfig, Tag("internal")],
+    Discriminator(_check_discriminator),
+]
 
 
 class ComplexityConfig(BaseModel):
@@ -151,10 +173,15 @@ class QualityConfig(BaseModel):
     gates: dict[str, float] = Field(default_factory=lambda: {
         "draft": 0.70, "review_ready": 0.85, "merge_ready": 0.95,
     })
-    checks: dict[str, ToolCheckConfig] = Field(default_factory=lambda: {
+    checks: dict[str, AnyCheckConfig] = Field(default_factory=lambda: {
         "lint": ToolCheckConfig(tool="ruff", args=["check", "--statistics"], weight=25),
         "type_check": ToolCheckConfig(tool="mypy", args=["--no-error-summary"], weight=25),
         "test": ToolCheckConfig(tool="pytest", args=["-x", "--tb=short"], weight=20, coverage_min=90),
+        "complexity": InternalCheckConfig(weight=15, threshold=10.0),
+        "security": ToolCheckConfig(tool="bandit", args=["-r", "-f", "json", "-q"], weight=20),
+        "test_ratio": InternalCheckConfig(weight=10, threshold=0.5),
+        "docstring": InternalCheckConfig(weight=10, min_coverage_pct=50.0),
+        "dependency_audit": ToolCheckConfig(tool="pip-audit", args=["--format", "json"], weight=15),
     })
     complexity: ComplexityConfig = Field(default_factory=ComplexityConfig)
     conformance: ConformanceWeight = Field(default_factory=ConformanceWeight)

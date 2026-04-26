@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Armature Metrics Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+  }
+
+  .dashboard {
+    width: 1200px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 48px;
+    backdrop-filter: blur(20px);
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .header h1 {
+    font-size: 36px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #4CAF50, #2196F3, #9C27B0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+
+  .header .subtitle {
+    font-size: 16px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 400;
+  }
+
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+
+  .pillar {
+    background: rgba(255,255,255,0.04);
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: transform 0.2s;
+  }
+
+  .pillar:hover { transform: translateY(-2px); }
+
+  .pillar-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .pillar-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .pillar-title {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .pillar-desc {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    font-weight: 400;
+  }
+
+  .metrics-list {
+    list-style: none;
+  }
+
+  .metrics-list li {
+    font-size: 12.5px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255,255,255,0.85);
+  }
+
+  .metrics-list li:last-child { border-bottom: none; }
+
+  .metric-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  /* Pillar Colors */
+  .p-budget .pillar-icon { background: linear-gradient(135deg, #4CAF50, #66BB6A); }
+  .p-budget .metric-dot { background: #4CAF50; }
+  .p-budget .badge { background: rgba(76,175,80,0.15); color: #81C784; }
+
+  .p-quality .pillar-icon { background: linear-gradient(135deg, #2196F3, #42A5F5); }
+  .p-quality .metric-dot { background: #2196F3; }
+  .p-quality .badge { background: rgba(33,150,243,0.15); color: #64B5F6; }
+
+  .p-arch .pillar-icon { background: linear-gradient(135deg, #9C27B0, #AB47BC); }
+  .p-arch .metric-dot { background: #9C27B0; }
+  .p-arch .badge { background: rgba(156,39,176,0.15); color: #CE93D8; }
+
+  .p-context .pillar-icon { background: linear-gradient(135deg, #FF9800, #FFB74D); }
+  .p-context .metric-dot { background: #FF9800; }
+  .p-context .badge { background: rgba(255,152,0,0.15); color: #FFB74D; }
+
+  .p-gc .pillar-icon { background: linear-gradient(135deg, #f44336, #EF5350); }
+  .p-gc .metric-dot { background: #f44336; }
+  .p-gc .badge { background: rgba(244,67,54,0.15); color: #EF9A9A; }
+
+  .p-heal .pillar-icon { background: linear-gradient(135deg, #009688, #26A69A); }
+  .p-heal .metric-dot { background: #009688; }
+  .p-heal .badge { background: rgba(0,150,136,0.15); color: #80CBC4; }
+
+  /* Quality Deep Dive Section */
+  .quality-deep-dive {
+    background: rgba(33,150,243,0.05);
+    border: 1px solid rgba(33,150,243,0.15);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 32px;
+  }
+
+  .qdv-header {
+    font-size: 18px;
+    font-weight: 700;
+    color: #64B5F6;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .qdv-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .qdv-card {
+    background: rgba(255,255,255,0.04);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .qdv-card-title {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .qdv-card-metrics {
+    list-style: none;
+  }
+
+  .qdv-card-metrics li {
+    font-size: 12px;
+    color: rgba(255,255,255,0.8);
+    padding: 4px 0;
+  }
+
+  .qdv-card-icon {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+
+  /* Bottom Stats Bar */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: rgba(255,255,255,0.04);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .stat-number {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .stat-card:nth-child(1) .stat-number { color: #4CAF50; }
+  .stat-card:nth-child(2) .stat-number { color: #2196F3; }
+  .stat-card:nth-child(3) .stat-number { color: #9C27B0; }
+  .stat-card:nth-child(4) .stat-number { color: #FF9800; }
+  .stat-card:nth-child(5) .stat-number { color: #f44336; }
+
+  .footer {
+    text-align: center;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .footer-url {
+    font-size: 16px;
+    font-weight: 700;
+    color: #64B5F6;
+    letter-spacing: 0.5px;
+  }
+
+  .footer-tag {
+    font-size: 12px;
+    color: rgba(255,255,255,0.3);
+    margin-top: 6px;
+  }
+
+  .new-badge {
+    font-size: 9px;
+    padding: 1px 6px;
+    border-radius: 6px;
+    background: rgba(255,152,0,0.2);
+    color: #FFB74D;
+    font-weight: 700;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+<div class="dashboard">
+
+  <div class="header">
+    <h1>Armature Harness — Metrics Dashboard</h1>
+    <div class="subtitle">50+ metrics across 6 governance pillars for AI coding agents</div>
+  </div>
+
+  <!-- Stats Bar -->
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="stat-number">6</div>
+      <div class="stat-label">Governance Pillars</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">50+</div>
+      <div class="stat-label">Tracked Metrics</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">11</div>
+      <div class="stat-label">MCP Tools</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">4</div>
+      <div class="stat-label">AI Providers</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">10</div>
+      <div class="stat-label">Models Routed</div>
+    </div>
+  </div>
+
+  <!-- Six Pillars -->
+  <div class="pillars">
+    <!-- Budget -->
+    <div class="pillar p-budget">
+      <div class="pillar-header">
+        <div class="pillar-icon">&#x1F4B0;</div>
+        <div>
+          <div class="pillar-title">BUDGET</div>
+          <div class="pillar-desc">Token & cost governance</div>
+        </div>
+      </div>
+      <ul class="metrics-list">
+        <li><span class="metric-dot"></span>Per-spec token & cost tracking<span class="badge">JSONL</span></li>
+        <li><span class="metric-dot"></span>Phase allocation vs targets</li>
+        <li><span class="metric-dot"></span>Per-provider cost breakdown</li>
+        <li><span class="metric-dot"></span>Circuit breaker triggers</li>
+        <li><span class="metric-dot"></span>Semantic cache hit rate</li>
+        <li><span class="metric-dot"></span>Model routing decisions</li>
+        <li><span class="metric-dot"></span>Anomaly detection flags</li>
+        <li><span class="metric-dot"></span>Auto-calibration profiles<span class="badge">NEW</span></li>
+      </ul>
+    </div>
+
+    <!-- Quality -->
+    <div class="pillar p-quality">
+      <div class="pillar-header">
+        <div class="pillar-icon">&#x2705;</div>
+        <div>
+          <div class="pillar-title">QUALITY</div>
+          <div class="pillar-desc">Code quality scoring</div>
+        </div>
+      </div>
+      <ul class="metrics-list">
+        <li><span class="metric-dot"></span>Lint violations & score<span class="badge">WEIGHTED</span></li>
+        <li><span class="metric-dot"></span>Type-check errors & score</li>
+        <li><span class="metric-dot"></span>Test pass/fail & coverage %</li>
+        <li><span class="metric-dot"></span>Quality gate levels</li>
+        <li><span class="metric-dot"></span>Baseline regression detection</li>
+        <li><span class="metric-dot"></span>Drift direction tracking</li>
+        <li><span class="metric-dot"></span>Complexity scoring<span class="new-badge">PLANNED</span></li>
+        <li><span class="metric-dot"></span>Mutation test score<span class="new-badge">PLANNED</span></li>
+      </ul>
+    </div>
+
+    <!-- Architecture -->
+    <div class="pillar p-arch">
+      <div class="pillar-header">
+        <div class="pillar-icon">&#x1F3D7;</div>
+        <div>
+          <div class="pillar-title">ARCHITECTURE</div>
+          <div class="pillar-desc">Boundary enforcement</div>
+        </div>
+      </div>
+      <ul class="metrics-list">
+        <li><span class="metric-dot"></span>Layer boundary violations<span class="badge">ENFORCED</span></li>
+        <li><span class="metric-dot"></span>Conformance violations</li>
+        <li><span class="metric-dot"></span>Import rule enforcement</li>
+        <li><span class="metric-dot"></span>Base class compliance</li>
+        <li><span class="metric-dot"></span>Required method checks</li>
+        <li><span class="metric-dot"></span>Schema-DDL sync</li>
+        <li><span class="metric-dot"></span>Coupling analysis<span class="new-badge">PLANNED</span></li>
+      </ul>
+    </div>
+
+    <!-- Context -->
+    <div class="pillar p-context">
+      <div class="pillar-header">
+        <div class="pillar-icon">&#x1F4CB;</div>
+        <div>
+          <div class="pillar-title">CONTEXT</div>
+          <div class="pillar-desc">Progressive disclosure</div>
+        </div>
+      </div>
+      <ul class="metrics-list">
+        <li><span class="metric-dot"></span>Context window utilization</li>
+        <li><span class="metric-dot"></span>File read token estimates</li>
+        <li><span class="metric-dot"></span>Cacheable content %</li>
+        <li><span class="metric-dot"></span>Narrow scope optimization</li>
+        <li><span class="metric-dot"></span>Spec token footprint</li>
+        <li><span class="metric-dot"></span>Conversation token tracking</li>
+      </ul>
+    </div>
+
+    <!-- GC -->
+    <div class="pillar p-gc">
+      <div class="pillar-header">
+        <div class="pillar-icon">&#x1F9F9;</div>
+        <div>
+          <div class="pillar-title">GARBAGE COLLECTION</div>
+          <div class="pillar-desc">Drift & dead code detection</div>
+        </div>
+      </div>
+      <ul class="metrics-list">
+        <li><span class="metric-dot"></span>Stale doc references<span class="badge">AUTO</span></li>
+        <li><span class="metric-dot"></span>Oversized functions</li>
+        <li><span class="metric-dot"></span>Orphaned test files</li>
+        <li><span class="metric-dot"></span>Architecture drift</li>
+        <li><span class="metric-dot"></span>Budget overrun alerts</li>
+        <li><span class="metric-dot"></span>Dead code detection</li>
+      </ul>
+    </div>
+
+    <!-- Heal -->
+    <div class="pillar p-heal">
+      <div class="pillar-header">
+        <div class="pillar-icon">&#x1F527;</div>
+        <div>
+          <div class="pillar-title">SELF-HEAL</div>
+          <div class="pillar-desc">Auto-fix pipeline</div>
+        </div>
+      </div>
+      <ul class="metrics-list">
+        <li><span class="metric-dot"></span>Lint auto-fix success rate<span class="badge">3-TRY</span></li>
+        <li><span class="metric-dot"></span>Type error remaining count</li>
+        <li><span class="metric-dot"></span>Test failure resolution</li>
+        <li><span class="metric-dot"></span>Circuit breaker state</li>
+        <li><span class="metric-dot"></span>Heal attempt history</li>
+        <li><span class="metric-dot"></span>Failure report generation</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Quality Deep Dive -->
+  <div class="quality-deep-dive">
+    <div class="qdv-header">&#x1F50D; Quality Metrics Deep Dive — Current + Roadmap</div>
+    <div class="qdv-grid">
+      <div class="qdv-card">
+        <div class="qdv-card-icon">&#x1F6E1;</div>
+        <div class="qdv-card-title">Code Health</div>
+        <ul class="qdv-card-metrics">
+          <li>Cyclomatic complexity</li>
+          <li>Cognitive complexity</li>
+          <li>Nesting depth</li>
+          <li>Duplication %</li>
+          <li>Maintainability index</li>
+        </ul>
+      </div>
+      <div class="qdv-card">
+        <div class="qdv-card-icon">&#x1F9EA;</div>
+        <div class="qdv-card-title">Test Quality</div>
+        <ul class="qdv-card-metrics">
+          <li>Mutation score</li>
+          <li>Branch coverage</li>
+          <li>Flaky test detection</li>
+          <li>Test-to-code ratio</li>
+          <li>Execution time</li>
+        </ul>
+      </div>
+      <div class="qdv-card">
+        <div class="qdv-card-icon">&#x1F512;</div>
+        <div class="qdv-card-title">Security</div>
+        <ul class="qdv-card-metrics">
+          <li>CVE dependency audit</li>
+          <li>Static analysis (SAST)</li>
+          <li>Secret detection</li>
+          <li>License compliance</li>
+          <li>OWASP score</li>
+        </ul>
+      </div>
+      <div class="qdv-card">
+        <div class="qdv-card-icon">&#x1F916;</div>
+        <div class="qdv-card-title">AI-Specific</div>
+        <ul class="qdv-card-metrics">
+          <li>Agent edit accuracy</li>
+          <li>Rework rate</li>
+          <li>First-pass gate rate</li>
+          <li>Token efficiency</li>
+          <li>Quality per 1K tokens</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-url">github.com/vivekgana/armature</div>
+    <div class="footer-tag">pip install armature-harness &nbsp; | &nbsp; Open Source (MIT) &nbsp; | &nbsp; v0.2.0</div>
+  </div>
+
+</div>
+</body>
+</html>
