@@ -238,20 +238,7 @@ class AdaptiveOptimizer:
         tasks: list[TaskSpec],
         complexity: str = "medium",
     ) -> BuildBudgetPlan:
-        """Pre-plan budget for an entire build -- uniform allocation.
-
-        This is the core method. Given all tasks upfront, it:
-        1. Estimates tokens for every task
-        2. Sums total need
-        3. Determines a SINGLE strategy that fits all tasks within budget
-        4. Allocates equal per-task budgets
-        5. Returns a plan where every task has identical quality constraints
-
-        Args:
-            spec_id: Spec identifier
-            tasks: All tasks in the build plan
-            complexity: Budget tier (low/medium/high/critical)
-        """
+        """Pre-plan budget for an entire build -- uniform allocation."""
         if not tasks:
             return BuildBudgetPlan(
                 spec_id=spec_id, strategy="normal",
@@ -262,40 +249,44 @@ class AdaptiveOptimizer:
                 reserve_pct=VERIFY_FIX_RESERVE,
             )
 
-        # Step 1: Get budget ceiling
         tier = self.config.defaults.get(complexity)
         total_budget = tier.max_tokens if tier else 500_000
-
-        # Reserve tokens for verify/fix cycles
         usable_budget = int(total_budget * (1 - VERIFY_FIX_RESERVE))
 
-        # Step 2: Estimate every task
         for task in tasks:
             task.estimated_tokens = self.estimate_task(task)
-
         raw_total = sum(t.estimated_tokens for t in tasks)
 
-        # Step 3: Determine uniform strategy
         strategy, applied_optimizations = self._select_uniform_strategy(
             raw_total, usable_budget, tasks
         )
 
-        # Step 4: Calculate per-task budget (uniform)
-        # After applying optimizations, estimate the effective total
         combined_savings = self._combined_savings(applied_optimizations)
         effective_total = int(raw_total * (1 - combined_savings / 100))
-
-        per_task_budget = usable_budget // len(tasks) if tasks else usable_budget
-        # Input/output split: 70/30 (code generation is output-heavy)
-        per_task_max_input = int(per_task_budget * 0.70)
-        per_task_max_output = int(per_task_budget * 0.30)
-
+        per_task_budget = usable_budget // len(tasks)
         utilization = (effective_total / usable_budget * 100) if usable_budget > 0 else 0
         feasible = effective_total <= usable_budget
 
-        warnings: list[str] = []
+        warnings = self._build_warnings(complexity, effective_total, usable_budget, utilization, feasible)
+        task_budgets = self._allocate_task_budgets(
+            tasks, raw_total, usable_budget, per_task_budget, applied_optimizations,
+        )
 
-        # Scope-based budget fit check (warns if tier is wrong for project size)
+        return BuildBudgetPlan(
+            spec_id=spec_id, strategy=strategy,
+            total_budget_tokens=total_budget, total_estimated_tokens=raw_total,
+            budget_utilization_pct=utilization,
+            per_task_max_input=int(per_task_budget * 0.70),
+            per_task_max_output=int(per_task_budget * 0.30),
+            task_budgets=task_budgets, optimizations=applied_optimizations,
+            warnings=warnings, feasible=feasible, reserve_pct=VERIFY_FIX_RESERVE,
+        )
+
+    def _build_warnings(
+        self, complexity: str, effective_total: int, usable_budget: int,
+        utilization: float, feasible: bool,
+    ) -> list[str]:
+        warnings: list[str] = []
         try:
             from armature.budget.benchmark import check_budget_fit, scan_project
             from armature.config.schema import ArmatureConfig
@@ -305,8 +296,7 @@ class AdaptiveOptimizer:
                 if scope_warning.level in ("too_low", "too_high", "mismatched_tier"):
                     warnings.append(f"SCOPE: {scope_warning.message}")
         except Exception:
-            pass  # benchmark scan is best-effort, never blocks planning
-
+            pass
         if not feasible:
             deficit = effective_total - usable_budget
             warnings.append(
@@ -319,12 +309,13 @@ class AdaptiveOptimizer:
                 f"Budget utilization at {utilization:.0f}%. Little room for "
                 f"verify-fix cycles. Consider proactive quality checks."
             )
+        return warnings
 
-        # Step 5: Build per-task allocations with model routing
-        task_budgets = []
+    def _allocate_task_budgets(
+        self, tasks: list[TaskSpec], raw_total: int, usable_budget: int,
+        per_task_budget: int, applied_optimizations: list[OptimizationAction],
+    ) -> list[TaskBudget]:
         optimization_names = [o.strategy for o in applied_optimizations]
-
-        # Set up router from config
         router = ModelRouter(
             enabled_models=self.config.providers.enabled_models,
             quality_floor=self.config.providers.quality_floor,
@@ -332,19 +323,12 @@ class AdaptiveOptimizer:
         )
         use_routing = self.config.providers.strategy != "single_model"
 
+        task_budgets = []
         for task in tasks:
-            # Proportional allocation: larger tasks get proportionally more,
-            # but capped at per_task_budget to keep it fair
-            if raw_total > 0:
-                task_share = task.estimated_tokens / raw_total
-                task_tokens = int(usable_budget * task_share)
-            else:
-                task_tokens = per_task_budget
-
+            task_tokens = int(usable_budget * task.estimated_tokens / raw_total) if raw_total > 0 else per_task_budget
             task_input = int(task_tokens * 0.70)
             task_output = int(task_tokens * 0.30)
 
-            # Route task to cheapest adequate model
             intent = self._infer_intent(task)
             if use_routing:
                 decision = router.route(intent, task_input, task_output)
@@ -353,29 +337,11 @@ class AdaptiveOptimizer:
                 model = self.config.providers.default_model
 
             task_budgets.append(TaskBudget(
-                task_id=task.task_id,
-                max_input_tokens=task_input,
-                max_output_tokens=task_output,
-                context_files=task.context_files,
-                optimization_applied=optimization_names,
-                model=model,
-                intent=intent,
+                task_id=task.task_id, max_input_tokens=task_input,
+                max_output_tokens=task_output, context_files=task.context_files,
+                optimization_applied=optimization_names, model=model, intent=intent,
             ))
-
-        return BuildBudgetPlan(
-            spec_id=spec_id,
-            strategy=strategy,
-            total_budget_tokens=total_budget,
-            total_estimated_tokens=raw_total,
-            budget_utilization_pct=utilization,
-            per_task_max_input=per_task_max_input,
-            per_task_max_output=per_task_max_output,
-            task_budgets=task_budgets,
-            optimizations=applied_optimizations,
-            warnings=warnings,
-            feasible=feasible,
-            reserve_pct=VERIFY_FIX_RESERVE,
-        )
+        return task_budgets
 
     def plan_phase(
         self,
