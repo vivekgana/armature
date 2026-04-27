@@ -12,35 +12,35 @@
 - [Benchmarking Design](BENCHMARKING_DESIGN.md) -- Performance benchmarking system design
 - [Spec-Driven Development](SPEC_DRIVEN_DEVELOPMENT_GUIDELINES.md) -- Guidelines for spec-driven workflows
 
-## Pillar Guides
+## Pillar Deep Dives (Unique Features)
 
-| Pillar | Description |
-|--------|-------------|
-| Budget | Token/cost tracking, optimization, calibration |
-| Quality | Lint, type, test checks with quality gates |
-| Context | CLAUDE.md generation, progressive disclosure |
-| Architecture | Layer boundaries, class conformance |
-| GC | Dead code, stale docs, architecture drift |
-| Self-Heal | Auto-fix lint, circuit breaker escalation |
+| Pillar | Description | Guide |
+|--------|-------------|-------|
+| Budget | Multi-provider routing, per-spec tracking, auto-calibration, circuit breakers | [MULTI_PROVIDER_BUDGET.md](MULTI_PROVIDER_BUDGET.md) |
+| Quality | 8 weighted checks with quality gates (lint, type, test, security, complexity, deps, docstring, ratio) | — |
+| Context | CLAUDE.md generation, progressive disclosure, cross-session memory, token optimization | [CONTEXT_ENGINEERING.md](CONTEXT_ENGINEERING.md) |
+| Architecture | Layer boundaries, class conformance, schema sync | — |
+| GC | Dead code, stale docs, architecture drift, budget audit | — |
+| Self-Heal | Auto-fix lint, 3-attempt retry, circuit breaker escalation, failure reports | [SELF_HEALING_PIPELINE.md](SELF_HEALING_PIPELINE.md) |
 
-## Integration Guides
+## Integration Guide — 5 AI Coding Agents
 
-Armature integrates with the following IDEs and CI systems (see [INSTALLATION.md](INSTALLATION.md)):
+Comprehensive setup for all supported IDEs and CI systems:
 
-- Claude Code
-- Cursor
-- GitHub Copilot
-- Windsurf
-- GitHub Actions
-- Pre-commit hooks
+- [IDE_INTEGRATION_GUIDE.md](IDE_INTEGRATION_GUIDE.md) -- Claude Code, Cursor, Copilot, Windsurf, GitHub Actions
+- [INSTALLATION.md](INSTALLATION.md) -- CLI install, MCP server setup, marketplace plugins
 
-## Examples
+Supported agents:
+- **Claude Code** -- deepest integration (hooks + MCP + 13 tools + permissions)
+- **Cursor** -- rules file + MCP server
+- **GitHub Copilot** -- instructions file + VS Code MCP
+- **Windsurf** -- rules file
+- **GitHub Actions** -- CI workflow generator
 
-See the [examples/](../examples/) directory for complete project setups:
+## Examples & Reports
 
-- `python-fastapi/` -- FastAPI project with armature
-- `typescript-nextjs/` -- Next.js project with armature
-- `monorepo/` -- Monorepo with multiple packages
+- [Sample Project Report](examples/SAMPLE_PROJECT_REPORT.md) -- Full example of quality, budget, self-healing, and benchmark reports for an enterprise project
+- See the [examples/](../examples/) directory for complete project setups
 
 ## Claude Code Skills
 
