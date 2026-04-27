@@ -8,6 +8,6 @@ from importlib.metadata import PackageNotFoundError, version
 try:
     __version__ = version("armature-harness")
 except PackageNotFoundError:
-    __version__ = "0.2.2"
+    __version__ = "0.2.3"
 
 __all__ = ["__version__"]
