@@ -128,6 +128,7 @@ integrations:
 | v0.1.x | Core framework, 3 quality checks (lint, type, test), budget tracking | Shipped |
 | v0.2.0 | Budget 2.5x increases, multi-provider routing, semantic cache, calibration | Shipped |
 | v0.2.1 | 5 new quality checks, weighted scoring, baseline regression deltas | Shipped |
+| v0.2.2 | Architecture diagrams, code deduplication, type error fixes, function refactoring | Shipped |
 | v0.3.0 | Cognitive complexity, mutation testing, flaky test detection | Planned |
 | v0.4.0 | Change failure rate, agent edit accuracy, cross-project dashboards | Planned |
 | v1.0.0 | Stable API, full TypeScript parity, plugin architecture | Planned |

@@ -206,6 +206,7 @@ flowchart LR
 | v0.1.x | Core framework, 3 quality checks, budget tracking | Shipped |
 | v0.2.0 | Budget 2.5x, multi-provider routing, semantic cache | Shipped |
 | v0.2.1 | 5 new quality checks, weighted scoring, baseline deltas | Shipped |
+| v0.2.2 | Architecture diagrams, deduplication, type fixes, refactoring | Shipped |
 | v0.3.0 | Cognitive complexity, mutation testing, flaky test detection | Planned |
 | v0.4.0 | Change failure rate, agent edit accuracy, dashboards | Planned |
 
