@@ -130,11 +130,11 @@ def draw_quality_section(draw, x, y, w):
     rounded_rect(draw, (x, y, x+w, y+230), 14, fill=(20, 30, 55), outline=(33, 80, 140))
 
     title_font = try_font(16, bold=True)
-    draw.text((x + 24, y + 18), "Quality Checks  —  v0.2.1 Implemented + Roadmap", fill=(100, 181, 246), font=title_font)
+    draw.text((x + 24, y + 18), "Quality Checks  —  v0.2.2 Implemented + Roadmap", fill=(100, 181, 246), font=title_font)
 
     categories = [
         ("Implemented", ["Lint scoring (ruff/eslint)", "Type-check (mypy/tsc)", "Test pass/fail + coverage", "Cyclomatic complexity", "Weighted gate scoring"]),
-        ("New in v0.2.1", ["Bandit security scan", "Test-to-code LOC ratio", "Docstring coverage (AST)", "Dependency CVE audit", "Baseline regression deltas"]),
+        ("New in v0.2.2", ["Bandit security scan", "Test-to-code LOC ratio", "Docstring coverage (AST)", "Dependency CVE audit", "Baseline regression deltas"]),
         ("Scoring", ["Weighted mean aggregation", "3 gate levels (70/85/95%)", "Per-check weight config", "Tool-missing graceful skip", "Internal check support"]),
         ("Roadmap", ["Cognitive complexity", "Mutation testing", "Flaky test detection", "Change failure rate", "Agent edit accuracy"]),
     ]
@@ -291,7 +291,7 @@ def main():
     tw = bb[2] - bb[0]
     draw.text(((W - tw) // 2, footer_y + 14), url_text, fill=(100, 181, 246), font=url_font)
 
-    tag_text = "pip install armature-harness   |   Open Source (MIT)   |   v0.2.1"
+    tag_text = "pip install armature-harness   |   Open Source (MIT)   |   v0.2.2"
     bb2 = draw.textbbox((0, 0), tag_text, font=tag_font)
     tw2 = bb2[2] - bb2[0]
     draw.text(((W - tw2) // 2, footer_y + 40), tag_text, fill=(110, 110, 130), font=tag_font)

@@ -1,6 +1,6 @@
 [project]
 name = "armature-harness"
-version = "0.2.1"
+version = "0.2.2"
 description = "Harness engineering framework for AI coding agents -- the invisible skeleton that shapes agent output"
 readme = "README.md"
 requires-python = ">=3.11"
