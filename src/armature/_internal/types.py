@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import StrEnum
+from typing import Any
 
 
 class Severity(StrEnum):
@@ -95,3 +96,45 @@ class BaselineSnapshot:
     test_failed: int = 0
     coverage_pct: float = 0.0
     extra: dict[str, object] = field(default_factory=dict)
+
+
+@dataclass
+class BenchmarkTaskResult:
+    """Result of running one benchmark task with one agent."""
+    task_id: str
+    agent: str
+    quality_score: float
+    budget_tokens: int
+    budget_cost_usd: float
+    heal_attempts: int
+    heal_fixed: int
+    cache_hits: int
+    cache_total: int
+    duration_seconds: float
+    passed: bool
+    check_results: list[CheckResult] = field(default_factory=list)
+
+
+@dataclass
+class AgentArenaResult:
+    """Aggregated results for one agent across all arena tasks."""
+    agent: str
+    task_results: list[BenchmarkTaskResult]
+    composite_score: float
+    grade: str
+    quality_avg: float
+    efficiency_score: float
+    heal_rate: float
+    cache_hit_rate: float
+
+
+@dataclass
+class CorrelationResult:
+    """Quality-correctness correlation analysis result."""
+    pearson_r: float
+    spearman_rho: float
+    p_value: float
+    roc_auc: float
+    optimal_threshold: float
+    per_check_importance: dict[str, float] = field(default_factory=dict)
+    quality_bands: list[dict[str, Any]] = field(default_factory=list)

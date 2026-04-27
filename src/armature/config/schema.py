@@ -362,6 +362,17 @@ class IntegrationsConfig(BaseModel):
     github_actions: GitHubActionsConfig = Field(default_factory=GitHubActionsConfig)
 
 
+# --- Benchmark ---
+
+class BenchmarkConfig(BaseModel):
+    """Benchmark configuration for Agent Arena and SWE-bench correlation."""
+    enabled: bool = False
+    arena_tasks_path: str = "data/arena_tasks.yaml"
+    correlation_dataset: str = "swebench-lite"
+    output_dir: str = ".armature/benchmarks/"
+    replay_dir: str = ".armature/benchmarks/replays/"
+
+
 # --- Root Config ---
 
 class ArmatureConfig(BaseModel):
@@ -375,3 +386,4 @@ class ArmatureConfig(BaseModel):
     heal: HealConfig = Field(default_factory=HealConfig)
     specs: SpecConfig = Field(default_factory=SpecConfig)
     integrations: IntegrationsConfig = Field(default_factory=IntegrationsConfig)
+    benchmark: BenchmarkConfig = Field(default_factory=BenchmarkConfig)

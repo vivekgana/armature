@@ -41,6 +41,7 @@ from armature.cli.heal_cmd import heal_cmd  # noqa: E402
 from armature.cli.hooks_cmd import hooks_cmd  # noqa: E402
 from armature.cli.init_cmd import init_cmd  # noqa: E402
 from armature.cli.report_cmd import report_cmd  # noqa: E402
+from armature.cli.benchmark_cmd import benchmark_cmd  # noqa: E402
 from armature.cli.spec_cmd import spec_cmd  # noqa: E402
 
 cli.add_command(init_cmd, "init")
@@ -53,6 +54,7 @@ cli.add_command(report_cmd, "report")
 cli.add_command(hooks_cmd, "hooks")
 cli.add_command(compat_cmd, "compat")
 cli.add_command(spec_cmd, "spec")
+cli.add_command(benchmark_cmd, "benchmark")
 
 
 @cli.command("pre-dev")

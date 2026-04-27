@@ -38,6 +38,8 @@ def handle_tool_call(tool_name: str, arguments: dict) -> dict:
         "armature_route": _tool_route,
         "armature_calibrate": _tool_calibrate,
         "armature_cache_stats": _tool_cache_stats,
+        "armature_arena": _tool_arena,
+        "armature_correlation": _tool_correlation,
     }
 
     handler = handlers.get(tool_name)
@@ -53,6 +55,38 @@ def get_tool_definitions() -> list[dict[str, object]]:
         *_quality_tool_definitions(),
         *_budget_tool_definitions(),
         *_lifecycle_tool_definitions(),
+        *_benchmark_tool_definitions(),
+    ]
+
+
+def _benchmark_tool_definitions() -> list[dict[str, object]]:
+    return [
+        {
+            "name": "armature_arena",
+            "description": "Run Agent Arena benchmark: compare AI coding agents on quality, "
+                           "budget, self-healing, and caching across 50 tasks.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "agents": {"type": "string",
+                               "description": "Comma-separated agent names (default: all)"},
+                    "categories": {"type": "string",
+                                   "description": "Comma-separated task categories"},
+                },
+            },
+        },
+        {
+            "name": "armature_correlation",
+            "description": "Analyze correlation between Armature quality scores and code correctness "
+                           "(SWE-bench style). Returns Pearson r, ROC-AUC, and quality band pass rates.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "dataset": {"type": "string", "default": "swebench-lite",
+                                "description": "Dataset to analyze"},
+                },
+            },
+        },
     ]
 
 
@@ -768,3 +802,80 @@ def _tool_cache_stats(args: dict) -> dict:
         stats["spec"] = spec_stats
 
     return stats
+
+
+def _tool_arena(args: dict) -> dict:
+    """Run Agent Arena benchmark."""
+    from armature.benchmark.arena import AgentArena
+    from armature.benchmark.reporter import BenchmarkReporter
+    from armature.config.loader import load_config_or_defaults
+
+    config = load_config_or_defaults()
+    arena = AgentArena(config)
+
+    agents = args.get("agents", "").split(",") if args.get("agents") else None
+    categories = set(args["categories"].split(",")) if args.get("categories") else None
+
+    replay_dir_str = config.benchmark.replay_dir
+    replay_dir = Path.cwd() / replay_dir_str if replay_dir_str else None
+    if replay_dir and not replay_dir.exists():
+        replay_dir = None
+
+    results = arena.run_all(agents=agents, categories=categories, replay_dir=replay_dir)
+    comparison = arena.compare(results)
+
+    reporter = BenchmarkReporter()
+    return {
+        **comparison,
+        "formatted": reporter.format_arena_results(results),
+    }
+
+
+def _tool_correlation(args: dict) -> dict:
+    """Run quality-correctness correlation analysis."""
+    from armature.benchmark.correlation import QualityCorrelation
+    from armature.benchmark.runner import BenchmarkRunner
+    from armature.benchmark.tasks import BenchmarkTask, load_swebench_dataset
+    from armature.config.loader import load_config_or_defaults
+
+    config = load_config_or_defaults()
+    dataset = args.get("dataset", "swebench-lite")
+
+    dataset_path = Path.cwd() / "data" / "swebench_correlation.yaml"
+    swebench = load_swebench_dataset(dataset_path)
+
+    runner = BenchmarkRunner(config)
+    task_results = []
+
+    replay_dir_str = config.benchmark.replay_dir
+    replay_dir = Path.cwd() / replay_dir_str if replay_dir_str else None
+    if replay_dir and not replay_dir.exists():
+        replay_dir = None
+
+    for task in swebench.tasks:
+        bt = BenchmarkTask(
+            id=task.task_id, category=task.category,
+            description=task.description, difficulty=task.difficulty,
+            language=task.language, estimated_tokens=task.estimated_tokens,
+            verification="",
+        )
+        result = runner.run_task(bt, agent="evaluation", replay_dir=replay_dir)
+        task_results.append(result)
+
+    if not task_results:
+        return {"error": "No task results available"}
+
+    correlation = QualityCorrelation(task_results)
+    result = correlation.compute()
+
+    return {
+        "dataset": dataset,
+        "tasks_analyzed": len(task_results),
+        "pearson_r": result.pearson_r,
+        "spearman_rho": result.spearman_rho,
+        "p_value": result.p_value,
+        "roc_auc": result.roc_auc,
+        "optimal_threshold": result.optimal_threshold,
+        "per_check_importance": result.per_check_importance,
+        "quality_bands": result.quality_bands,
+    }
