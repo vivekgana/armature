@@ -1,0 +1,509 @@
+# Armature Agent Arena -- 50 Benchmark Tasks
+# =============================================
+# 5 categories × 10 tasks each.
+# Each task defines a coding challenge for AI agent evaluation.
+#
+# Fields:
+#   id: unique task identifier
+#   category: bugfix | feature | refactor | test_gen | documentation
+#   description: what the agent must do
+#   difficulty: easy | medium | hard
+#   language: python | typescript | go | rust
+#   estimated_tokens: expected token consumption
+#   verification: command to verify correctness
+#   files_touched: expected number of files changed
+
+tasks:
+  # --- BUGFIX (10 tasks) ---
+  - id: BUG-001
+    category: bugfix
+    description: "Fix off-by-one error in pagination that skips the last page"
+    difficulty: easy
+    language: python
+    estimated_tokens: 15000
+    verification: "pytest tests/test_pagination.py -v"
+    files_touched: 1
+
+  - id: BUG-002
+    category: bugfix
+    description: "Fix null pointer exception when user profile has no email"
+    difficulty: easy
+    language: python
+    estimated_tokens: 12000
+    verification: "pytest tests/test_user_profile.py -v"
+    files_touched: 1
+
+  - id: BUG-003
+    category: bugfix
+    description: "Fix race condition in concurrent order processing"
+    difficulty: hard
+    language: python
+    estimated_tokens: 45000
+    verification: "pytest tests/test_order_concurrent.py -v"
+    files_touched: 2
+
+  - id: BUG-004
+    category: bugfix
+    description: "Fix SQL injection vulnerability in search endpoint"
+    difficulty: medium
+    language: python
+    estimated_tokens: 25000
+    verification: "pytest tests/test_search_security.py -v"
+    files_touched: 1
+
+  - id: BUG-005
+    category: bugfix
+    description: "Fix timezone conversion bug in scheduling system"
+    difficulty: medium
+    language: python
+    estimated_tokens: 30000
+    verification: "pytest tests/test_scheduler.py -v"
+    files_touched: 2
+
+  - id: BUG-006
+    category: bugfix
+    description: "Fix memory leak in WebSocket connection handler"
+    difficulty: hard
+    language: python
+    estimated_tokens: 40000
+    verification: "pytest tests/test_websocket.py -v"
+    files_touched: 2
+
+  - id: BUG-007
+    category: bugfix
+    description: "Fix incorrect decimal rounding in currency calculations"
+    difficulty: easy
+    language: python
+    estimated_tokens: 10000
+    verification: "pytest tests/test_currency.py -v"
+    files_touched: 1
+
+  - id: BUG-008
+    category: bugfix
+    description: "Fix broken authentication token refresh flow"
+    difficulty: medium
+    language: python
+    estimated_tokens: 28000
+    verification: "pytest tests/test_auth_refresh.py -v"
+    files_touched: 3
+
+  - id: BUG-009
+    category: bugfix
+    description: "Fix file upload size validation bypass"
+    difficulty: medium
+    language: python
+    estimated_tokens: 22000
+    verification: "pytest tests/test_upload.py -v"
+    files_touched: 1
+
+  - id: BUG-010
+    category: bugfix
+    description: "Fix incorrect cache invalidation on entity update"
+    difficulty: hard
+    language: python
+    estimated_tokens: 35000
+    verification: "pytest tests/test_cache_invalidation.py -v"
+    files_touched: 3
+
+  # --- FEATURE (10 tasks) ---
+  - id: FEAT-001
+    category: feature
+    description: "Add cursor-based pagination to REST API list endpoints"
+    difficulty: medium
+    language: python
+    estimated_tokens: 80000
+    verification: "pytest tests/test_pagination_api.py -v"
+    files_touched: 4
+
+  - id: FEAT-002
+    category: feature
+    description: "Add full-text search with filtering and sorting"
+    difficulty: hard
+    language: python
+    estimated_tokens: 120000
+    verification: "pytest tests/test_search.py -v"
+    files_touched: 5
+
+  - id: FEAT-003
+    category: feature
+    description: "Add JWT authentication with refresh token rotation"
+    difficulty: hard
+    language: python
+    estimated_tokens: 150000
+    verification: "pytest tests/test_jwt_auth.py -v"
+    files_touched: 6
+
+  - id: FEAT-004
+    category: feature
+    description: "Add CSV/JSON export endpoint for reports"
+    difficulty: easy
+    language: python
+    estimated_tokens: 50000
+    verification: "pytest tests/test_export.py -v"
+    files_touched: 3
+
+  - id: FEAT-005
+    category: feature
+    description: "Add rate limiting middleware with sliding window"
+    difficulty: medium
+    language: python
+    estimated_tokens: 75000
+    verification: "pytest tests/test_rate_limit.py -v"
+    files_touched: 3
+
+  - id: FEAT-006
+    category: feature
+    description: "Add webhook notification system for events"
+    difficulty: medium
+    language: python
+    estimated_tokens: 90000
+    verification: "pytest tests/test_webhooks.py -v"
+    files_touched: 5
+
+  - id: FEAT-007
+    category: feature
+    description: "Add role-based access control (RBAC) to API"
+    difficulty: hard
+    language: python
+    estimated_tokens: 140000
+    verification: "pytest tests/test_rbac.py -v"
+    files_touched: 7
+
+  - id: FEAT-008
+    category: feature
+    description: "Add audit logging for all write operations"
+    difficulty: medium
+    language: python
+    estimated_tokens: 70000
+    verification: "pytest tests/test_audit_log.py -v"
+    files_touched: 4
+
+  - id: FEAT-009
+    category: feature
+    description: "Add health check endpoint with dependency status"
+    difficulty: easy
+    language: python
+    estimated_tokens: 35000
+    verification: "pytest tests/test_health.py -v"
+    files_touched: 2
+
+  - id: FEAT-010
+    category: feature
+    description: "Add soft delete with automatic cleanup scheduler"
+    difficulty: medium
+    language: python
+    estimated_tokens: 85000
+    verification: "pytest tests/test_soft_delete.py -v"
+    files_touched: 4
+
+  # --- REFACTOR (10 tasks) ---
+  - id: REF-001
+    category: refactor
+    description: "Extract payment processing into a separate service layer"
+    difficulty: medium
+    language: python
+    estimated_tokens: 60000
+    verification: "pytest tests/ -v"
+    files_touched: 5
+
+  - id: REF-002
+    category: refactor
+    description: "Split 200-line function into focused helpers"
+    difficulty: easy
+    language: python
+    estimated_tokens: 30000
+    verification: "pytest tests/ -v"
+    files_touched: 1
+
+  - id: REF-003
+    category: refactor
+    description: "Add comprehensive type annotations to untyped module"
+    difficulty: medium
+    language: python
+    estimated_tokens: 45000
+    verification: "mypy src/orders/ --strict"
+    files_touched: 4
+
+  - id: REF-004
+    category: refactor
+    description: "Replace raw SQL queries with ORM operations"
+    difficulty: hard
+    language: python
+    estimated_tokens: 80000
+    verification: "pytest tests/test_db.py -v"
+    files_touched: 6
+
+  - id: REF-005
+    category: refactor
+    description: "Convert callback-based async to async/await"
+    difficulty: medium
+    language: python
+    estimated_tokens: 55000
+    verification: "pytest tests/test_async.py -v"
+    files_touched: 3
+
+  - id: REF-006
+    category: refactor
+    description: "Deduplicate validation logic across 4 endpoints"
+    difficulty: easy
+    language: python
+    estimated_tokens: 25000
+    verification: "pytest tests/ -v"
+    files_touched: 5
+
+  - id: REF-007
+    category: refactor
+    description: "Introduce repository pattern for data access layer"
+    difficulty: hard
+    language: python
+    estimated_tokens: 90000
+    verification: "pytest tests/ -v"
+    files_touched: 8
+
+  - id: REF-008
+    category: refactor
+    description: "Extract configuration into dataclass-based settings"
+    difficulty: easy
+    language: python
+    estimated_tokens: 20000
+    verification: "pytest tests/test_config.py -v"
+    files_touched: 3
+
+  - id: REF-009
+    category: refactor
+    description: "Migrate from print statements to structured logging"
+    difficulty: medium
+    language: python
+    estimated_tokens: 40000
+    verification: "pytest tests/ -v"
+    files_touched: 8
+
+  - id: REF-010
+    category: refactor
+    description: "Apply single responsibility principle to oversized class"
+    difficulty: hard
+    language: python
+    estimated_tokens: 70000
+    verification: "pytest tests/ -v"
+    files_touched: 4
+
+  # --- TEST GENERATION (10 tasks) ---
+  - id: TEST-001
+    category: test_gen
+    description: "Generate unit tests for user registration service"
+    difficulty: medium
+    language: python
+    estimated_tokens: 40000
+    verification: "pytest tests/test_registration.py -v --cov=src/auth"
+    files_touched: 1
+
+  - id: TEST-002
+    category: test_gen
+    description: "Generate integration tests for payment processing pipeline"
+    difficulty: hard
+    language: python
+    estimated_tokens: 65000
+    verification: "pytest tests/test_payment_integration.py -v"
+    files_touched: 2
+
+  - id: TEST-003
+    category: test_gen
+    description: "Generate edge case tests for date/time handling utilities"
+    difficulty: medium
+    language: python
+    estimated_tokens: 35000
+    verification: "pytest tests/test_datetime_edge.py -v"
+    files_touched: 1
+
+  - id: TEST-004
+    category: test_gen
+    description: "Generate property-based tests for serialization layer"
+    difficulty: hard
+    language: python
+    estimated_tokens: 55000
+    verification: "pytest tests/test_serialization_props.py -v"
+    files_touched: 1
+
+  - id: TEST-005
+    category: test_gen
+    description: "Generate mock-based tests for external API client"
+    difficulty: medium
+    language: python
+    estimated_tokens: 45000
+    verification: "pytest tests/test_api_client.py -v"
+    files_touched: 1
+
+  - id: TEST-006
+    category: test_gen
+    description: "Generate performance regression tests for critical path"
+    difficulty: hard
+    language: python
+    estimated_tokens: 50000
+    verification: "pytest tests/test_performance.py -v"
+    files_touched: 1
+
+  - id: TEST-007
+    category: test_gen
+    description: "Generate snapshot tests for API response formats"
+    difficulty: easy
+    language: python
+    estimated_tokens: 25000
+    verification: "pytest tests/test_snapshots.py -v"
+    files_touched: 1
+
+  - id: TEST-008
+    category: test_gen
+    description: "Generate concurrency tests for shared state operations"
+    difficulty: hard
+    language: python
+    estimated_tokens: 60000
+    verification: "pytest tests/test_concurrency.py -v"
+    files_touched: 1
+
+  - id: TEST-009
+    category: test_gen
+    description: "Generate boundary value tests for numeric calculations"
+    difficulty: easy
+    language: python
+    estimated_tokens: 20000
+    verification: "pytest tests/test_boundaries.py -v"
+    files_touched: 1
+
+  - id: TEST-010
+    category: test_gen
+    description: "Generate error handling tests for all exception paths"
+    difficulty: medium
+    language: python
+    estimated_tokens: 40000
+    verification: "pytest tests/test_error_paths.py -v"
+    files_touched: 1
+
+  # --- DOCUMENTATION (10 tasks) ---
+  - id: DOC-001
+    category: documentation
+    description: "Generate OpenAPI/Swagger documentation for REST endpoints"
+    difficulty: medium
+    language: python
+    estimated_tokens: 30000
+    verification: "python -c \"import yaml; yaml.safe_load(open('docs/openapi.yaml'))\""
+    files_touched: 1
+
+  - id: DOC-002
+    category: documentation
+    description: "Write comprehensive README with setup, usage, and architecture"
+    difficulty: easy
+    language: python
+    estimated_tokens: 20000
+    verification: "test -f README.md && wc -l README.md"
+    files_touched: 1
+
+  - id: DOC-003
+    category: documentation
+    description: "Add docstrings to all public functions in core module"
+    difficulty: medium
+    language: python
+    estimated_tokens: 35000
+    verification: "python -m pydocstyle src/core/"
+    files_touched: 5
+
+  - id: DOC-004
+    category: documentation
+    description: "Generate database schema documentation from models"
+    difficulty: medium
+    language: python
+    estimated_tokens: 25000
+    verification: "test -f docs/schema.md"
+    files_touched: 1
+
+  - id: DOC-005
+    category: documentation
+    description: "Write deployment guide with environment-specific configs"
+    difficulty: easy
+    language: python
+    estimated_tokens: 15000
+    verification: "test -f docs/DEPLOYMENT.md"
+    files_touched: 1
+
+  - id: DOC-006
+    category: documentation
+    description: "Create architecture decision records (ADR) for key choices"
+    difficulty: medium
+    language: python
+    estimated_tokens: 40000
+    verification: "ls docs/adr/ | wc -l"
+    files_touched: 3
+
+  - id: DOC-007
+    category: documentation
+    description: "Generate changelog from git history following Keep a Changelog"
+    difficulty: easy
+    language: python
+    estimated_tokens: 18000
+    verification: "test -f CHANGELOG.md"
+    files_touched: 1
+
+  - id: DOC-008
+    category: documentation
+    description: "Write API migration guide from v1 to v2"
+    difficulty: hard
+    language: python
+    estimated_tokens: 45000
+    verification: "test -f docs/MIGRATION_V2.md"
+    files_touched: 1
+
+  - id: DOC-009
+    category: documentation
+    description: "Add inline code comments explaining complex algorithms"
+    difficulty: medium
+    language: python
+    estimated_tokens: 30000
+    verification: "grep -r 'Algorithm:' src/ | wc -l"
+    files_touched: 4
+
+  - id: DOC-010
+    category: documentation
+    description: "Generate contributor guide with coding standards and PR process"
+    difficulty: easy
+    language: python
+    estimated_tokens: 15000
+    verification: "test -f CONTRIBUTING.md"
+    files_touched: 1
+
+# Agent configurations for arena comparison
+agents:
+  claude-code:
+    model: claude-sonnet-4
+    provider: anthropic
+    description: "Claude Code CLI with hooks + MCP"
+  cursor:
+    model: claude-sonnet-4
+    provider: anthropic
+    description: "Cursor IDE with .cursor/rules + MCP"
+  copilot:
+    model: gpt-4o
+    provider: openai
+    description: "GitHub Copilot with instructions file"
+  windsurf:
+    model: mixed
+    provider: mixed
+    description: "Windsurf IDE with rules file"
+  amazon-q:
+    model: titan-plus-claude
+    provider: aws
+    description: "Amazon Q Developer"
+
+# Composite scoring weights
+scoring:
+  quality_weight: 0.40
+  efficiency_weight: 0.25
+  heal_weight: 0.20
+  cache_weight: 0.15
+
+# Grade boundaries
+grades:
+  A: 90
+  B+: 85
+  B: 80
+  B-: 75
+  C: 65
+  D: 0
