@@ -42,6 +42,9 @@ dev = [
 [project.scripts]
 armature = "armature.cli.main:cli"
 
+[project.entry-points."armature.plugins"]
+typescript-quality = "armature.plugins.typescript_plugin:TypeScriptQualityPlugin"
+
 [project.urls]
 Homepage = "https://github.com/vivekgana/armature"
 Repository = "https://github.com/vivekgana/armature"

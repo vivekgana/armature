@@ -4,6 +4,12 @@
 
 **The invisible skeleton that gives shape to what AI coding agents produce.**
 
+[![PyPI](https://img.shields.io/pypi/v/armature-harness.svg)](https://pypi.org/project/armature-harness/)
+[![GitHub Marketplace](https://img.shields.io/badge/GitHub%20Marketplace-Armature%20Quality%20Gates-blue?logo=github)](https://github.com/marketplace/actions/armature-quality-gates)
+[![VS Code Marketplace](https://img.shields.io/badge/VS%20Code-Armature-blue?logo=visualstudiocode)](https://marketplace.visualstudio.com/items?itemName=armature.armature-vscode)
+[![Smithery](https://smithery.ai/server/io.github.vivekgana/armature/badge.svg)](https://smithery.ai/server/io.github.vivekgana/armature)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
 Armature is a harness engineering framework for AI coding agents. It wraps agents (Claude Code, Cursor, Copilot, Windsurf, Aider) in automated guides, sensors, budget controls, architectural enforcement, garbage collection, and self-healing pipelines.
 
 <p align="center">
@@ -129,9 +135,34 @@ integrations:
 | v0.2.0 | Budget 2.5x increases, multi-provider routing, semantic cache, calibration | Shipped |
 | v0.2.1 | 5 new quality checks, weighted scoring, baseline regression deltas | Shipped |
 | v0.2.2 | Architecture diagrams, code deduplication, type error fixes, function refactoring | Shipped |
+| v0.2.3 | GitHub Marketplace Action, plugin architecture, VS Code extension, GitHub Checks API | Shipped |
 | v0.3.0 | Cognitive complexity, mutation testing, flaky test detection | Planned |
 | v0.4.0 | Change failure rate, agent edit accuracy, cross-project dashboards | Planned |
-| v1.0.0 | Stable API, full TypeScript parity, plugin architecture | Planned |
+| v1.0.0 | Stable API, full TypeScript parity, stable plugin API | Planned |
+
+## GitHub Marketplace
+
+Add Armature quality gates to any repository in 3 lines:
+
+```yaml
+# .github/workflows/ci.yml
+- uses: vivekgana/armature@v1
+  with:
+    fail-threshold: review_ready   # draft | review_ready | merge_ready
+    run-gc: true
+    upload-report: true            # uploads HTML scorecard as CI artifact
+```
+
+**Outputs:**
+
+| Output | Description |
+|--------|-------------|
+| `quality-score` | Weighted score 0.0–1.0 |
+| `gate-result` | `draft` \| `review_ready` \| `merge_ready` |
+| `passed` | `true` / `false` |
+| `report-path` | Path to the HTML quality report artifact |
+
+[→ View on GitHub Marketplace](https://github.com/marketplace/actions/armature-quality-gates)
 
 ## IDE Integrations
 
@@ -139,9 +170,86 @@ integrations:
 armature hooks --claude-code      # .claude/settings.local.json
 armature hooks --cursor           # .cursor/rules
 armature hooks --copilot          # .github/copilot-instructions.md
-armature hooks --github-actions   # .github/workflows/armature.yml
+armature hooks --github-actions   # .github/workflows/armature.yml (+ Checks API + report upload)
 armature hooks --pre-commit       # .pre-commit-config.yaml
 ```
+
+### VS Code Extension
+
+Install from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=armature.armature-vscode)
+or build from source:
+
+```bash
+cd vscode-extension
+npm install && npm run package
+# Install the generated .vsix via Extensions: Install from VSIX…
+```
+
+The extension runs `armature check` on every save and surfaces violations in the Problems panel.
+
+## Plugin Architecture
+
+Armature is extensible via a Python entry-points plugin system.  Any pip-installable package
+can add custom checks, healers, or GC reporters:
+
+```bash
+pip install armature-plugin-my-tool
+armature plugin list          # lists all installed plugins
+```
+
+### Built-in plugins
+
+| Plugin | Checks |
+|--------|--------|
+| `typescript-quality` | eslint (lint), tsc (types), jest (tests) — auto-activated for TypeScript projects |
+
+### Writing your own plugin
+
+```python
+# my_plugin.py
+from armature.plugins import ArmaturePlugin
+from armature._internal.types import CheckResult
+
+class MyPlugin(ArmaturePlugin):
+    name = "my-plugin"
+    version = "1.0.0"
+    description = "My custom quality check"
+
+    def on_check(self, file_path, results):
+        # Add a custom check result
+        results.append(CheckResult(name="my_check", passed=True, score=1.0, weight=10))
+        return results
+```
+
+```toml
+# pyproject.toml
+[project.entry-points."armature.plugins"]
+my-plugin = "my_plugin:MyPlugin"
+```
+
+See [`examples/armature-plugin-example/`](examples/armature-plugin-example/) for the full template.
+
+## Team / Org Configuration
+
+Share a common `armature.yaml` across all your repositories using the `extends` key:
+
+```yaml
+# armature.yaml in each repo
+extends: https://raw.githubusercontent.com/my-org/standards/main/armature-base.yaml
+
+project:
+  name: "my-service"          # overrides the base
+```
+
+Supports local file paths and HTTPS URLs. Project values always override the base.
+
+## GitHub Checks API
+
+When `GITHUB_TOKEN` is available, Armature posts inline PR annotations for every
+quality violation via the [GitHub Checks API](https://docs.github.com/en/rest/checks).
+This matches the experience of SonarCloud and CodeClimate with no additional setup.
+
+The generated workflow from `armature hooks --github-actions` includes this automatically.
 
 ## The Harness Engineering Model
 
@@ -175,6 +283,12 @@ armature budget --report SPEC-001
 
 Armature analyzes phase distribution, per-request token usage, and suggests
 optimizations: batch file reads, narrow context, progressive disclosure.
+
+## Community
+
+- **GitHub Discussions** — [Ask questions, share plugins, request features](https://github.com/vivekgana/armature/discussions)
+- **Issues** — [Bug reports and feature requests](https://github.com/vivekgana/armature/issues)
+- **Contributing** — see [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## References
 
