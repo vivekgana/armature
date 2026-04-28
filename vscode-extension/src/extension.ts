@@ -104,7 +104,7 @@ async function runCheck(filePath: string | null): Promise<void> {
   try {
     const { stdout } = await execFileAsync(executable, args, {
       cwd: workspaceRoot,
-      timeout: 60_000,
+      timeout: cfg.get<number>('checkTimeout', 60) * 1000,
     });
     const results: CheckResult[] = JSON.parse(stdout);
     updateDiagnostics(results, workspaceRoot, filePath);

@@ -64,6 +64,7 @@ jobs:
           GITHUB_TOKEN: ${{{{ secrets.GITHUB_TOKEN }}}}
           GITHUB_REPOSITORY: ${{{{ github.repository }}}}
           GITHUB_SHA: ${{{{ github.sha }}}}
+          ARMATURE_JSON_OUTPUT: ${{{{ steps.armature-check.outputs.json_output }}}}
         run: |
           python - <<'PYEOF'
           import os, json

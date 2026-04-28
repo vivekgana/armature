@@ -95,7 +95,7 @@ def _is_typescript_project(root: Path) -> bool:
                 return True
         except (json.JSONDecodeError, OSError):
             pass
-    return any(root.rglob("*.ts")) or any(root.rglob("*.tsx"))
+    return next(root.rglob("*.ts"), None) is not None or next(root.rglob("*.tsx"), None) is not None
 
 
 def _tool_available(name: str) -> bool:

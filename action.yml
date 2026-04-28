@@ -80,6 +80,9 @@ runs:
         EXIT_CODE=$?
         echo "$OUTPUT"
 
+        # Export JSON output for later steps
+        export ARMATURE_JSON_OUTPUT="$OUTPUT"
+
         # Parse weighted score from JSON results
         SCORE=$(python3 - <<'PYEOF'
 import sys, json, os

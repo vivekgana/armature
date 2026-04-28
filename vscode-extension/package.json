@@ -75,6 +75,11 @@
           "type": "boolean",
           "default": true,
           "description": "Show quality score in the status bar"
+        },
+        "armature.checkTimeout": {
+          "type": "number",
+          "default": 60,
+          "description": "Timeout in seconds for armature check (increase for large projects)"
         }
       }
     },

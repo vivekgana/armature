@@ -185,7 +185,8 @@ class TestLoadRemoteConfig:
         base.write_text("project:\n  name: base\n  language: python\n", encoding="utf-8")
 
         project = tmp_path / "armature.yaml"
-        project.write_text(f"extends: {base}\nproject:\n  name: child\n", encoding="utf-8")
+        # Use repr to safely embed the path as a quoted YAML string
+        project.write_text(f"extends: {str(base)!r}\nproject:\n  name: child\n", encoding="utf-8")
 
         config = load_config(project)
         assert config.project.name == "child"
