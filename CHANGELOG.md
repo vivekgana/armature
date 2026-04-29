@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.2.4] - 2026-04-29
+
+### Added
+
+- **Agent Arena benchmark**: Head-to-head comparison of 5 AI coding agents (Claude Code, Cursor, Copilot, Windsurf, Amazon Q) across 50 tasks in 5 categories with composite scoring (quality 40% + efficiency 25% + heal 20% + cache 15%)
+- **SWE-bench quality correlation**: Pure-Python statistical analysis (Pearson, Spearman, ROC-AUC, F1 threshold optimization) proving Armature quality scores predict code correctness — no numpy/scipy dependency
+- **Benchmark CLI commands**: `armature benchmark arena`, `armature benchmark correlation`, `armature benchmark report`
+- **Benchmark MCP tools**: `armature_arena` and `armature_correlation` for IDE/agent integration
+- **Replay mode**: Pre-recorded agent outputs for reproducible benchmarking
+- **95 new benchmark tests** across 6 test modules (scoring, correlation, arena, runner, reporter, tasks)
+
 ## [0.2.3] - 2026-04-29
 
 ### Added
