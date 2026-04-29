@@ -1,0 +1,35 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          make_latest: true
+
+      - name: Update floating major tag (e.g. v1)
+        run: |
+          TAG="${GITHUB_REF_NAME}"            # e.g. v0.2.3 or v1.2.0
+          MAJOR="${TAG%%.*}"                  # e.g. v0  or v1
+          # Only maintain a floating tag for major versions >= v1
+          if [[ "$MAJOR" =~ ^v[1-9][0-9]*$ ]]; then
+            git config user.name  "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git tag -fa "$MAJOR" -m "Update $MAJOR to $TAG"
+            git push origin "$MAJOR" --force
+          fi
