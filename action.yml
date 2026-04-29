@@ -1,0 +1,162 @@
+name: 'Armature Quality Gates'
+description: >
+  Harness engineering framework for AI coding agents -- run quality checks,
+  architecture guardrails, and self-healing pipelines as a single CI step.
+author: 'Armature Contributors'
+
+branding:
+  icon: 'shield'
+  color: 'blue'
+
+inputs:
+  config-file:
+    description: 'Path to armature.yaml config file (relative to workspace root)'
+    required: false
+    default: 'armature.yaml'
+  checks:
+    description: >
+      Comma-separated list of checks to enable
+      (lint, type_check, test, security, complexity, docstring, test_ratio, dependency_audit).
+      Defaults to config file values.
+    required: false
+    default: ''
+  fail-threshold:
+    description: 'Quality gate: draft (0.70) | review_ready (0.85) | merge_ready (0.95)'
+    required: false
+    default: 'review_ready'
+  python-version:
+    description: 'Python version to set up'
+    required: false
+    default: '3.11'
+  run-gc:
+    description: 'Run garbage collection sweep after quality checks'
+    required: false
+    default: 'false'
+  run-heal:
+    description: 'Attempt self-healing when checks fail'
+    required: false
+    default: 'false'
+  upload-report:
+    description: 'Upload an HTML quality report as a workflow artifact'
+    required: false
+    default: 'false'
+
+outputs:
+  quality-score:
+    description: 'Weighted quality score from 0.0 (worst) to 1.0 (perfect)'
+    value: ${{ steps.armature-check.outputs.quality-score }}
+  gate-result:
+    description: 'Quality gate reached: draft | review_ready | merge_ready'
+    value: ${{ steps.armature-check.outputs.gate-result }}
+  passed:
+    description: 'Whether all enabled checks passed (true/false)'
+    value: ${{ steps.armature-check.outputs.passed }}
+  report-path:
+    description: 'Path to the generated HTML quality report (when upload-report is true)'
+    value: ${{ steps.generate-report.outputs.report-path }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install Armature
+      shell: bash
+      run: |
+        pip install --quiet "armature-harness[python]"
+
+    - name: Run Armature Check
+      id: armature-check
+      shell: bash
+      env:
+        ARMATURE_CONFIG: ${{ inputs.config-file }}
+        ARMATURE_CHECKS: ${{ inputs.checks }}
+      run: |
+        set +e
+        OUTPUT=$(armature check --json 2>&1)
+        EXIT_CODE=$?
+        echo "$OUTPUT"
+
+        # Export JSON output for later steps
+        export ARMATURE_JSON_OUTPUT="$OUTPUT"
+
+        # Parse weighted score from JSON results
+        SCORE=$(python3 - <<'PYEOF'
+import sys, json, os
+
+raw = os.environ.get("ARMATURE_JSON_OUTPUT", "")
+try:
+    data = json.loads(raw)
+    weighted = sum(r.get("score", 1.0) * r.get("weight", 25) for r in data)
+    total_w  = sum(r.get("weight", 25) for r in data)
+    print(f"{weighted / total_w:.3f}" if total_w else "1.000")
+except Exception:
+    print("0.000")
+PYEOF
+)
+        # Fallback: if JSON parse failed use exit code as signal
+        if [ "$SCORE" = "0.000" ] && [ "$EXIT_CODE" -eq 0 ]; then
+          SCORE="1.000"
+        fi
+
+        # Determine gate level
+        GATE=$(python3 -c "
+s = float('$SCORE')
+if s >= 0.95:   print('merge_ready')
+elif s >= 0.85: print('review_ready')
+else:           print('draft')
+")
+
+        PASSED="false"
+        [ "$EXIT_CODE" -eq 0 ] && PASSED="true"
+
+        echo "quality-score=$SCORE"  >> "$GITHUB_OUTPUT"
+        echo "gate-result=$GATE"     >> "$GITHUB_OUTPUT"
+        echo "passed=$PASSED"        >> "$GITHUB_OUTPUT"
+
+        # Apply threshold gate
+        THRESHOLD="${{ inputs.fail-threshold }}"
+        FAIL=0
+        if   [ "$THRESHOLD" = "merge_ready"  ] && [ "$GATE" != "merge_ready"  ]; then FAIL=1
+        elif [ "$THRESHOLD" = "review_ready" ] && [ "$GATE" = "draft"         ]; then FAIL=1
+        fi
+        exit $FAIL
+
+    - name: Run Armature Heal
+      if: inputs.run-heal == 'true' && steps.armature-check.outputs.passed == 'false'
+      shell: bash
+      env:
+        ARMATURE_CONFIG: ${{ inputs.config-file }}
+      run: |
+        armature heal || true
+
+    - name: Run Armature GC
+      if: inputs.run-gc == 'true'
+      shell: bash
+      env:
+        ARMATURE_CONFIG: ${{ inputs.config-file }}
+      run: |
+        armature gc --json || true
+
+    - name: Generate HTML Report
+      id: generate-report
+      if: inputs.upload-report == 'true'
+      shell: bash
+      env:
+        ARMATURE_CONFIG: ${{ inputs.config-file }}
+      run: |
+        REPORT_PATH=".armature/report.html"
+        mkdir -p .armature
+        armature report --html --output "$REPORT_PATH" || true
+        echo "report-path=$REPORT_PATH" >> "$GITHUB_OUTPUT"
+
+    - name: Upload Quality Report
+      if: inputs.upload-report == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: armature-quality-report
+        path: .armature/report.html
+        if-no-files-found: warn

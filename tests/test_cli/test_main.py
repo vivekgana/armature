@@ -69,3 +69,11 @@ class TestCLI:
     def test_post_dev_command_registered(self, runner: CliRunner):
         result = runner.invoke(cli, ["post-dev", "--help"])
         assert result.exit_code == 0
+
+    def test_plugin_command_registered(self, runner: CliRunner):
+        result = runner.invoke(cli, ["plugin", "--help"])
+        assert result.exit_code == 0
+
+    def test_plugin_list_subcommand(self, runner: CliRunner):
+        result = runner.invoke(cli, ["plugin", "list", "--help"])
+        assert result.exit_code == 0

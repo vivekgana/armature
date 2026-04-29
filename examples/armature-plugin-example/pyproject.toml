@@ -1,0 +1,15 @@
+[project]
+name = "armature-plugin-example"
+version = "0.1.0"
+description = "Example Armature plugin -- template for community authors"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+dependencies = ["armature-harness>=0.2.3"]
+
+[project.entry-points."armature.plugins"]
+example-plugin = "armature_example_plugin:ExamplePlugin"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

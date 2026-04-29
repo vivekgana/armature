@@ -1,0 +1,108 @@
+{
+  "name": "armature-vscode",
+  "displayName": "Armature Quality Gates",
+  "description": "Run Armature quality checks on save and display violations in the Problems panel",
+  "version": "0.1.0",
+  "publisher": "armature",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vivekgana/armature"
+  },
+  "homepage": "https://github.com/vivekgana/armature",
+  "bugs": {
+    "url": "https://github.com/vivekgana/armature/issues"
+  },
+  "icon": "images/icon.png",
+  "galleryBanner": {
+    "color": "#3b82f6",
+    "theme": "dark"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Linters",
+    "Testing",
+    "Other"
+  ],
+  "keywords": [
+    "armature",
+    "ai",
+    "coding-agent",
+    "quality",
+    "lint",
+    "harness"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "armature.runCheck",
+        "title": "Armature: Run Quality Check"
+      },
+      {
+        "command": "armature.runCheckFile",
+        "title": "Armature: Check Current File"
+      },
+      {
+        "command": "armature.runHeal",
+        "title": "Armature: Self-Heal Failures"
+      }
+    ],
+    "configuration": {
+      "title": "Armature",
+      "properties": {
+        "armature.checkOnSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Run armature check on every file save"
+        },
+        "armature.configFile": {
+          "type": "string",
+          "default": "armature.yaml",
+          "description": "Path to armature.yaml relative to workspace root"
+        },
+        "armature.executablePath": {
+          "type": "string",
+          "default": "armature",
+          "description": "Path to the armature executable (defaults to the one on PATH)"
+        },
+        "armature.showStatusBar": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show quality score in the status bar"
+        },
+        "armature.checkTimeout": {
+          "type": "number",
+          "default": 60,
+          "description": "Timeout in seconds for armature check (increase for large projects)"
+        }
+      }
+    },
+    "menus": {
+      "editor/context": [
+        {
+          "command": "armature.runCheckFile",
+          "group": "armature"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package",
+    "publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0",
+    "@vscode/vsce": "^2.23.0"
+  }
+}

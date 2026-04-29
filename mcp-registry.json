@@ -2,7 +2,7 @@
   "name": "armature",
   "display_name": "Armature",
   "description": "Harness engineering framework for AI coding agents -- budget-controlled quality checks, architecture guardrails, and self-healing pipelines",
-  "version": "0.1.0",
+  "version": "0.2.3",
   "homepage": "https://github.com/vivekgana/armature",
   "repository": "https://github.com/vivekgana/armature",
   "license": "MIT",
