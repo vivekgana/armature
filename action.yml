@@ -1,7 +1,5 @@
 name: 'Armature Quality Gates'
-description: >
-  Harness engineering framework for AI coding agents -- run quality checks,
-  architecture guardrails, and self-healing pipelines as a single CI step.
+description: 'AI code quality gates'
 author: 'Armature Contributors'
 
 branding:
