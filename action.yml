@@ -79,50 +79,30 @@ runs:
         OUTPUT=$(armature check --json 2>&1)
         EXIT_CODE=$?
         echo "$OUTPUT"
-
-        # Export JSON output for later steps
-        export ARMATURE_JSON_OUTPUT="$OUTPUT"
-
-        # Parse weighted score from JSON results
-        SCORE=$(python3 - <<'PYEOF'
-import sys, json, os
-
-raw = os.environ.get("ARMATURE_JSON_OUTPUT", "")
-try:
-    data = json.loads(raw)
-    weighted = sum(r.get("score", 1.0) * r.get("weight", 25) for r in data)
-    total_w  = sum(r.get("weight", 25) for r in data)
-    print(f"{weighted / total_w:.3f}" if total_w else "1.000")
-except Exception:
-    print("0.000")
-PYEOF
-)
-        # Fallback: if JSON parse failed use exit code as signal
+        SCORE=$(echo "$OUTPUT" | python3 -c "
+        import sys, json
+        raw = sys.stdin.read()
+        try:
+            data = json.loads(raw)
+            w = sum(r.get('score',1.0)*r.get('weight',25) for r in data)
+            t = sum(r.get('weight',25) for r in data)
+            print(f'{w/t:.3f}' if t else '1.000')
+        except Exception:
+            print('0.000')
+        ")
         if [ "$SCORE" = "0.000" ] && [ "$EXIT_CODE" -eq 0 ]; then
           SCORE="1.000"
         fi
-
-        # Determine gate level
-        GATE=$(python3 -c "
-s = float('$SCORE')
-if s >= 0.95:   print('merge_ready')
-elif s >= 0.85: print('review_ready')
-else:           print('draft')
-")
-
+        GATE=$(python3 -c "s=float('$SCORE');print('merge_ready' if s>=0.95 else 'review_ready' if s>=0.85 else 'draft')")
         PASSED="false"
         [ "$EXIT_CODE" -eq 0 ] && PASSED="true"
-
-        echo "quality-score=$SCORE"  >> "$GITHUB_OUTPUT"
-        echo "gate-result=$GATE"     >> "$GITHUB_OUTPUT"
-        echo "passed=$PASSED"        >> "$GITHUB_OUTPUT"
-
-        # Apply threshold gate
+        echo "quality-score=$SCORE" >> "$GITHUB_OUTPUT"
+        echo "gate-result=$GATE" >> "$GITHUB_OUTPUT"
+        echo "passed=$PASSED" >> "$GITHUB_OUTPUT"
         THRESHOLD="${{ inputs.fail-threshold }}"
         FAIL=0
-        if   [ "$THRESHOLD" = "merge_ready"  ] && [ "$GATE" != "merge_ready"  ]; then FAIL=1
-        elif [ "$THRESHOLD" = "review_ready" ] && [ "$GATE" = "draft"         ]; then FAIL=1
-        fi
+        if [ "$THRESHOLD" = "merge_ready" ] && [ "$GATE" != "merge_ready" ]; then FAIL=1; fi
+        if [ "$THRESHOLD" = "review_ready" ] && [ "$GATE" = "draft" ]; then FAIL=1; fi
         exit $FAIL
 
     - name: Run Armature Heal
